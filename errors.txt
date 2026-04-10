@@ -1,0 +1,5 @@
+.next/dev/types/validator.ts(42,39): error TS2306: File 'D:/NextJS Projects/saptechno-crm/app/companies/page.tsx' is not a module.
+.next/types/validator.ts(42,39): error TS2306: File 'D:/NextJS Projects/saptechno-crm/app/companies/page.tsx' is not a module.
+app/dashboard/page.tsx(1,26): error TS2307: Cannot find module '@/components/dashboard/StatCard' or its corresponding type declarations.
+app/dashboard/page.tsx(2,31): error TS2307: Cannot find module '@/components/dashboard/OverviewChart' or its corresponding type declarations.
+app/dashboard/page.tsx(3,30): error TS2307: Cannot find module '@/components/dashboard/TrafficChart' or its corresponding type declarations.
