@@ -14,7 +14,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Total Revenue" value="$48,295" change="+12.5%" positive />
         <StatCard title="Active Users" value="2,847" change="+8.2%" positive />
         <StatCard title="Orders" value="1,432" change="-3.1%" />
@@ -22,8 +22,8 @@ export default function DashboardPage() {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2">
           <OverviewChart />
         </div>
 
