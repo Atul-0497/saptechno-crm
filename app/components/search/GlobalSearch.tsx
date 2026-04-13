@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {debounce} from "lodash/debounce";
+import { debounce } from "lodash"; 
 import { useRouter } from "next/navigation";
 import { searchAPI } from "../../lib/api/search";
 
