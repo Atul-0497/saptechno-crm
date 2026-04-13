@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { Company } from "@/app/types/company";
 import { Pencil, Trash2, ArrowUpDown, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
 interface Props {
@@ -34,7 +34,6 @@ export default function CompanyTable({
 
   const pageSize = 6;
 
-  // 🔥 COLUMN VISIBILITY
   const [columns, setColumns] = useState({
     CompanyId: true,
     Name: true,
@@ -50,18 +49,12 @@ export default function CompanyTable({
     }));
   };
 
-  // 🔍 FILTER
   const filtered = useMemo(() => {
     return data
-      .filter((c) =>
-        c.Name?.toLowerCase().includes(search.toLowerCase())
-      )
-      .filter((c) =>
-        statusFilter ? c.Active === statusFilter : true
-      );
+      .filter((c) => c.Name?.toLowerCase().includes(search.toLowerCase()))
+      .filter((c) => (statusFilter ? c.Active === statusFilter : true));
   }, [data, search, statusFilter]);
 
-  // 🔄 SORT
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
       const valA = (a[sortKey] || "").toString().toLowerCase();
@@ -73,15 +66,10 @@ export default function CompanyTable({
     });
   }, [filtered, sortKey, sortDir]);
 
-  // 📄 PAGINATION
-  const paginated = sorted.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
+  const paginated = sorted.slice((page - 1) * pageSize, page * pageSize);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
 
-  // 🔁 SORT HANDLER
   const handleSort = (key: keyof Company) => {
     if (sortKey === key) {
       setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -91,12 +79,9 @@ export default function CompanyTable({
     }
   };
 
-  // ☑️ SELECT
   const toggleSelect = (id: string) => {
     setSelected((prev) =>
-      prev.includes(id)
-        ? prev.filter((i) => i !== id)
-        : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
@@ -108,22 +93,42 @@ export default function CompanyTable({
     }
   };
 
-  // 📊 EXPORT
-  const handleExport = () => {
-    const exportData = sorted.map((c) => ({
-      ID: c.CompanyId,
-      Name: c.Name,
-      Email: c.Email,
-      Mobile: c.Mobile,
-      Status: c.Active === "1" ? "Active" : "Inactive",
-    }));
+  const handleExport = async () => {
+    if (!sorted.length) {
+      alert("No data to export");
+      return;
+    }
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Companies");
 
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Companies");
+    worksheet.columns = [
+      { header: "ID", key: "ID", width: 15 },
+      { header: "Name", key: "Name", width: 25 },
+      { header: "Email", key: "Email", width: 30 },
+      { header: "Mobile", key: "Mobile", width: 20 },
+      { header: "Status", key: "Status", width: 15 },
+    ];
 
-    const buffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    saveAs(new Blob([buffer]), "companies.xlsx");
+    sorted.forEach((c) => {
+      worksheet.addRow({
+        ID: c.CompanyId,
+        Name: c.Name,
+        Email: c.Email,
+        Mobile: c.Mobile,
+        Status: c.Active === "1" ? "Active" : "Inactive",
+      });
+    });
+
+    worksheet.getRow(1).font = { bold: true };
+
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    saveAs(
+      new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      }),
+      "companies.xlsx",
+    );
   };
 
   if (loading) {
@@ -132,10 +137,8 @@ export default function CompanyTable({
 
   return (
     <div className="bg-white rounded-2xl shadow border p-5 space-y-5">
-
       {/* 🔥 HEADER */}
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
-
         <div className="flex gap-3 w-full">
           <input
             placeholder="Search companies..."
@@ -190,9 +193,7 @@ export default function CompanyTable({
                 <input
                   type="checkbox"
                   checked={columns[key as keyof typeof columns]}
-                  onChange={() =>
-                    toggleColumn(key as keyof typeof columns)
-                  }
+                  onChange={() => toggleColumn(key as keyof typeof columns)}
                 />
                 {key}
               </label>
@@ -204,7 +205,6 @@ export default function CompanyTable({
       {/* TABLE */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-
           <thead className="bg-gray-50 border-b text-gray-600">
             <tr>
               <th className="p-4">
@@ -216,13 +216,19 @@ export default function CompanyTable({
               </th>
 
               {columns.CompanyId && (
-                <th className="p-4 cursor-pointer" onClick={() => handleSort("CompanyId")}>
+                <th
+                  className="p-4 cursor-pointer"
+                  onClick={() => handleSort("CompanyId")}
+                >
                   ID <ArrowUpDown size={14} />
                 </th>
               )}
 
               {columns.Name && (
-                <th className="p-4 cursor-pointer" onClick={() => handleSort("Name")}>
+                <th
+                  className="p-4 cursor-pointer"
+                  onClick={() => handleSort("Name")}
+                >
                   Name <ArrowUpDown size={14} />
                 </th>
               )}
@@ -231,7 +237,10 @@ export default function CompanyTable({
               {columns.Mobile && <th className="p-4">Mobile</th>}
 
               {columns.Active && (
-                <th className="p-4 cursor-pointer" onClick={() => handleSort("Active")}>
+                <th
+                  className="p-4 cursor-pointer"
+                  onClick={() => handleSort("Active")}
+                >
                   Status <ArrowUpDown size={14} />
                 </th>
               )}
@@ -281,7 +290,6 @@ export default function CompanyTable({
                         e.stopPropagation();
                         onEdit(c);
                         console.log("CLICK Update", c);
-                        
                       }}
                       className="p-2 hover:bg-blue-100 rounded-lg text-blue-600"
                     >
@@ -303,13 +311,11 @@ export default function CompanyTable({
               </tr>
             ))}
           </tbody>
-
         </table>
       </div>
 
       {/* PAGINATION */}
       <div className="flex justify-between items-center border-t pt-3">
-
         <span className="text-sm text-gray-500">
           Page {page} of {totalPages}
         </span>
@@ -331,7 +337,6 @@ export default function CompanyTable({
             Next
           </button>
         </div>
-
       </div>
     </div>
   );

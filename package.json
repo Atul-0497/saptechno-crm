@@ -13,6 +13,7 @@
     "@tanstack/react-query": "^5.97.0",
     "axios": "^1.15.0",
     "clsx": "^2.1.1",
+    "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "lodash": "^4.18.1",
     "lodash.debounce": "^4.0.8",
@@ -24,11 +25,11 @@
     "react-hot-toast": "^2.6.0",
     "recharts": "^3.8.1",
     "tailwind-merge": "^3.5.0",
-    "xlsx": "^0.18.5",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
