@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Company}  from "@/app/types/company";
+import { Company } from "@/app/types/company";
 
 const api = axios.create({
   baseURL: "/api/company", // proxy
@@ -9,6 +9,7 @@ const request = async (type: string, data?: any) => {
   const payload = {
     type,
     inputdata: data ? JSON.stringify(data) : "{}",
+
   };
 
   console.log("🔥 API REQUEST:", payload);
@@ -47,7 +48,7 @@ export const companyAPI = {
     }),
 
   delete: (id: string) =>
-    request("SELECTDELETE", {
+    request("DELETECOMPANY", {
       CompanyId: String(id),
     }),
 };
