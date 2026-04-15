@@ -1,64 +1,62 @@
 "use client";
 
 import { Search, Plus, Moon, LayoutGrid, Bell, Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useMobileMenu } from "../../contexts/MobileMenuContext";
 
 export const Topbar = () => {
   const { toggle } = useMobileMenu();
+  const pathname = usePathname();
+  const primaryAction = pathname.startsWith("/companies") ? "New Company" : "New Order";
 
   return (
-    <header className="h-[76px] bg-white border-b flex items-center justify-between px-4 sm:px-6 z-10 sticky top-0">
-      <div className="flex items-center gap-3 sm:gap-4 flex-1">
-        {/* Mobile menu button */}
+    <header className="sticky top-0 z-10 flex h-[76px] items-center justify-between border-b border-gray-200 bg-white/95 px-4 backdrop-blur sm:px-6">
+      <div className="flex flex-1 items-center gap-3 sm:gap-4">
         <button
           onClick={toggle}
-          className="md:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          className="-ml-2 rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 md:hidden"
         >
           <Menu size={24} />
         </button>
 
-        {/* Left side - Search */}
-        <div className="hidden sm:flex flex-1 max-w-lg">
-          <div className="flex items-center bg-gray-50/50 hover:bg-gray-100/50 transition-colors border px-4 py-2.5 rounded-full w-full max-w-md group">
-            <Search size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+        <div className="hidden max-w-lg flex-1 sm:flex">
+          <div className="group flex w-full max-w-md items-center rounded-full border border-gray-200 bg-gray-50/70 px-4 py-2.5 transition-colors hover:bg-gray-100/70">
+            <Search size={18} className="text-gray-400 transition-colors group-hover:text-cyan-600" />
             <input
-              className="bg-transparent outline-none ml-3 w-full text-sm text-gray-700 placeholder-gray-400"
+              className="ml-3 w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400"
               placeholder="Search anything..."
             />
-            <div className="hidden md:flex items-center gap-1 border rounded px-1.5 py-0.5 text-[10px] text-gray-400 font-medium">
-              <span>⌘K</span>
+            <div className="hidden items-center gap-1 rounded border border-gray-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-gray-400 md:flex">
+              <span>Ctrl K</span>
             </div>
           </div>
         </div>
-        
-        {/* Mobile search icon */}
-        <button className="sm:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+
+        <button className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 sm:hidden">
           <Search size={20} />
         </button>
       </div>
 
-      {/* Right side - Actions */}
       <div className="flex items-center gap-3 sm:gap-6">
-        <button className="bg-blue-600 hover:bg-blue-700 transition-colors text-white px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
+        <button className="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 sm:px-5 sm:py-2.5">
           <Plus size={16} />
-          <span className="hidden sm:inline">New Order</span>
+          <span className="hidden sm:inline">{primaryAction}</span>
         </button>
 
-        <div className="flex items-center gap-2 sm:gap-4 text-gray-400">
-          <button className="hidden sm:block hover:text-gray-600 transition-colors">
+        <div className="flex items-center gap-2 text-gray-400 sm:gap-4">
+          <button className="hidden transition-colors hover:text-gray-600 sm:block">
             <Moon size={20} />
           </button>
-          <button className="hidden md:block hover:text-gray-600 transition-colors">
+          <button className="hidden transition-colors hover:text-gray-600 md:block">
             <LayoutGrid size={20} />
           </button>
-          <button className="hover:text-gray-600 transition-colors relative p-1 md:p-0">
+          <button className="relative p-1 transition-colors hover:text-gray-600 md:p-0">
             <Bell size={20} />
-            <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white sm:translate-x-0.5 sm:-translate-y-0.5"></span>
+            <span className="absolute right-0 top-0 h-2 w-2 rounded-full border-2 border-white bg-red-500 sm:-translate-y-0.5 sm:translate-x-0.5" />
           </button>
         </div>
 
-        {/* User profile */}
-        <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-50 text-blue-600 font-medium flex items-center justify-center hover:bg-blue-100 transition-colors shrink-0 text-xs sm:text-base">
+        <button className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-100 sm:h-10 sm:w-10 sm:text-base">
           AS
         </button>
       </div>

@@ -1,19 +1,19 @@
-interface StatCardProps {
-  title: string;
-  value: string | number;
-  change: string;
-  positive?: boolean;
-}
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
-export const StatCard = ({ title, value, change, positive }: StatCardProps) => {
+export const StatCard = ({ title, value, change, positive }: any) => {
   return (
-    <div className="bg-white p-5 rounded-xl border">
-      <h3 className="text-gray-500 text-sm font-medium">{title}</h3>
-      <div className="mt-2 flex items-baseline justify-between">
-        <span className="text-2xl font-bold">{value}</span>
-        <span className={`text-sm font-medium ${positive ? "text-emerald-600" : "text-rose-600"}`}>
-          {change}
-        </span>
+    <div className="bg-white p-5 rounded-xl shadow-sm border">
+      <div className="text-sm text-gray-500">{title}</div>
+
+      <div className="text-2xl font-bold mt-2">{value}</div>
+
+      <div
+        className={`flex items-center gap-1 text-sm mt-2 ${
+          positive ? "text-green-600" : "text-red-500"
+        }`}
+      >
+        {positive ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+        {change}
       </div>
     </div>
   );

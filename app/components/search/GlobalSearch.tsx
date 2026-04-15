@@ -1,22 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { debounce } from "lodash"; 
 import { useRouter } from "next/navigation";
 import { searchAPI } from "../../lib/api/search";
+import type { Company } from "@/app/types/company";
 
 export default function GlobalSearch() {
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<Company[]>([]);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const search = debounce(async (q: string) => {
+  const search = useMemo(() => debounce(async (q: string) => {
     if (!q) return setResults([]);
 
     const data = await searchAPI.searchCompanies(q);
     setResults(data || []);
     setOpen(true);
-  }, 400);
+  }, 400), []);
 
   return (
     <div className="relative w-full max-w-md">

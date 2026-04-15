@@ -1,54 +1,89 @@
-import axios from "axios";
-import { Company } from "@/app/types/company";
 
-const api = axios.create({
-  baseURL: "/api/company", // proxy
+import type { Company, CompanyPayload } from "@/app/types/company";
+
+const baseURL = "/api/company";
+const REQUEST_TIMEOUT_MS = 30000;
+
+const toStoredProcedureInput = (data: CompanyPayload) => ({
+  CompanyId: data.CompanyId,
+  Name: data.Name,
+  Address: data.Address,
+  Email: data.Email,
+  Mobile: data.Mobile,
+  PlanStart: data.PlanStart,
+  PlanEnd: data.PlanEnd,
+  Active: data.Active,
 });
 
-const request = async (type: string, data?: any) => {
+const request = async <T>(type: string, data?: CompanyPayload): Promise<T> => {
   const payload = {
-    type,
-    inputdata: data ? JSON.stringify(data) : "{}",
+   type,
+   inputdata: data ? JSON.stringify(toStoredProcedureInput(data)) : "{}",
+ };
 
-  };
+ let res: Response;
+ const controller = new AbortController();
+ const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-  console.log("🔥 API REQUEST:", payload);
+ try {
+   res = await fetch(baseURL, {
+     method: "POST",
+     headers: { "Content-Type": "application/json" },
+     body: JSON.stringify(payload),
+     signal: controller.signal,
+   });
+ } catch (error) {
+   if (error instanceof Error && error.name === "AbortError") {
+     throw new Error("Company request timed out. Please try again.");
+   }
 
-  const res = await api.post("", payload);
+   throw new Error("Unable to reach the local company API. Make sure the dev server is running.");
+ } finally {
+   window.clearTimeout(timeout);
+ }
 
-  console.log("🔥 API RESPONSE:", res.data);
+ const text = await res.text();
+ let response: unknown = text;
 
-  return res.data;
+ if (text) {
+   try {
+     response = JSON.parse(text);
+   } catch {
+     response = text;
+   }
+ }
+
+ if (!res.ok) {
+   const message =
+     response &&
+     typeof response === "object" &&
+     "message" in response &&
+     typeof response.message === "string"
+       ? response.message
+       : "Company request failed.";
+
+   throw new Error(message);
+ }
+
+ if (typeof response === "string") {
+  if (!response) return undefined as T;
+
+  try {
+    return JSON.parse(response) as T;
+  } catch {
+    return response as T;
+  }
+ }
+
+ return response as T;
 };
 
 export const companyAPI = {
-  getAll: () => request("SELECTCOMPANY"),
+ getAll: () => request<Company[]>("SELECTCOMPANY"),
 
-  create: (data: any) =>
-    request("INSERTCOMPANY", {
-      Name: data.Name || "",
-      Address: data.Address || "",
-      Email: data.Email || "",
-      Mobile: data.Mobile || "",
-      PlanStart: data.PlanStart || "",
-      PlanEnd: data.PlanEnd || "",
-      Active: data.Active || "1",
-    }),
+ create: (data: CompanyPayload) => request<unknown>("INSERTCOMPANY", data),
 
-  update: (data: any) =>
-    request("UPDATECOMPANY", {
-      CompanyId: String(data.CompanyId),
-      Name: data.Name || "",
-      Address: data.Address || "",
-      Email: data.Email || "",
-      Mobile: data.Mobile || "",
-      PlanStart: data.PlanStart || "",
-      PlanEnd: data.PlanEnd || "",
-      Active: data.Active || "1",
-    }),
+ update: (data: CompanyPayload) => request<unknown>("UPDATECOMPANY", data),
 
-  delete: (id: string) =>
-    request("DELETECOMPANY", {
-      CompanyId: String(id),
-    }),
+ delete: (data: CompanyPayload) => request<unknown>("DELETECOMPANY", data),
 };

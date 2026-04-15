@@ -2,18 +2,22 @@
 
 import { useParams } from "next/navigation";
 import { useCompany } from "@/app/hooks/useCompany";
+import { isCompanyActive } from "@/app/lib/utils/companyStatus";
 
 export default function CompanyDetailPage() {
   const { id } = useParams();
   const { data } = useCompany();
+  const companies = data;
 
-  const company = data.find(
-    (c: any) => String(c.CompanyId) === String(id)
+  const company = companies.find(
+    (c) => String(c.CompanyId) === String(id)
   );
 
   if (!company) {
     return <div className="p-6">Company not found</div>;
   }
+
+  const isActive = isCompanyActive(company.Active);
 
   return (
     <div className="space-y-6">
@@ -50,12 +54,12 @@ export default function CompanyDetailPage() {
           <p className="text-sm text-gray-500">Status</p>
           <span
             className={`px-3 py-1 rounded-full text-sm ${
-              company.Active === "1"
+              isActive
                 ? "bg-green-100 text-green-700"
                 : "bg-red-100 text-red-600"
             }`}
           >
-            {company.Active === "1" ? "Active" : "Inactive"}
+            {isActive ? "Active" : "Inactive"}
           </span>
         </div>
 

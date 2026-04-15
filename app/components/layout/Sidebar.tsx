@@ -2,7 +2,6 @@
 
 import {
   LayoutGrid,
-  Building2,
   BarChart2,
   ShoppingBag,
   Shield,
@@ -18,14 +17,13 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Building,
-  LucideIcon
+  Building
 } from "lucide-react";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { MenuItem, MenuGroup } from "../../types/layout.types";
+import { MenuGroup } from "../../types/layout.types";
 import { useMobileMenu } from "../../contexts/MobileMenuContext";
 
 const menuGroups: MenuGroup[] = [
@@ -211,4 +209,4 @@ export const Sidebar = () => {
       </aside>
     </>
   );
-};
+};
