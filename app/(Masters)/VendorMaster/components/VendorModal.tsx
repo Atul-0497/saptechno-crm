@@ -51,9 +51,9 @@ export default function VendorModal({
 
   const updateField =
     (field: keyof VendorFormValues) =>
-    (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      setForm((current) => ({ ...current, [field]: event.target.value }));
-    };
+      (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        setForm((current) => ({ ...current, [field]: event.target.value }));
+      };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -67,66 +67,66 @@ export default function VendorModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/50 px-4 py-6 backdrop-blur-sm">
       <form
         onSubmit={handleSubmit}
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg bg-white shadow-2xl"
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl transition-all dark:bg-slate-900 dark:border dark:border-slate-800"
       >
-        <div className="flex items-start justify-between gap-4 border-b border-gray-100 px-5 py-4">
+        <div className="flex items-start justify-between gap-4 border-b border-gray-100 px-6 py-5 dark:border-slate-800">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-md bg-cyan-50 px-2.5 py-1 text-xs font-semibold text-cyan-700">
+            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
               <Truck size={14} />
-              {data ? "Edit vendor" : "New vendor"}
+              {data ? "Edit Vendor" : "New Vendor"}
             </div>
-            <h2 className="mt-3 text-xl font-semibold text-gray-950">
-              {data ? "Update vendor profile" : "Create new vendor"}
+            <h2 className="mt-4 text-2xl font-extrabold text-gray-950 dark:text-white">
+              {data ? "Update Vendor Profile" : "Create New Vendor"}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-xl p-2 text-gray-400 transition hover:bg-gray-100 dark:hover:bg-slate-800 dark:hover:text-white"
           >
-            <X size={20} />
+            <X size={24} />
           </button>
         </div>
 
-        <div className="grid gap-4 px-5 py-5 sm:grid-cols-2">
+        <div className="grid gap-5 px-6 py-6 sm:grid-cols-2">
           <label className="sm:col-span-2">
-            <span className="text-sm font-medium text-gray-700">Vendor Name</span>
+            <span className="text-sm font-bold text-gray-700 dark:text-slate-300">Vendor Name</span>
             <input
               value={form.VendorName || ""}
               onChange={updateField("VendorName")}
               placeholder="Full business name"
               required
-              className="mt-2 h-11 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+              className="mt-2 h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition-all focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
             />
           </label>
 
           <label>
-            <span className="text-sm font-medium text-gray-700">Email Address</span>
+            <span className="text-sm font-bold text-gray-700 dark:text-slate-300">Email Address</span>
             <input
               type="email"
               value={form.Email || ""}
               onChange={updateField("Email")}
               placeholder="vendor@example.com"
-              className="mt-2 h-11 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+              className="mt-2 h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition-all focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
             />
           </label>
 
           <label>
-            <span className="text-sm font-medium text-gray-700">Mobile No</span>
+            <span className="text-sm font-bold text-gray-700 dark:text-slate-300">Mobile No</span>
             <input
               value={form.Mobile || ""}
               onChange={updateField("Mobile")}
               placeholder="Phone number"
-              className="mt-2 h-11 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm text-gray-900 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+              className="mt-2 h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none transition-all focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
             />
           </label>
 
           <label className="sm:col-span-1">
-            <span className="text-sm font-medium text-gray-700">City</span>
+            <span className="text-sm font-bold text-gray-700 dark:text-slate-300">City</span>
             <select
               value={form.CityId || ""}
               onChange={updateField("CityId")}
-              className="mt-2 h-11 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-800 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+              className="mt-2 h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-800 outline-none transition-all hover:bg-gray-50 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-800/50 dark:focus:border-blue-500"
             >
               <option value="">Select city</option>
               {cities.map((city) => (
@@ -138,11 +138,11 @@ export default function VendorModal({
           </label>
 
           <label className="sm:col-span-1">
-            <span className="text-sm font-medium text-gray-700">Status</span>
+            <span className="text-sm font-bold text-gray-700 dark:text-slate-300">Status</span>
             <select
               value={normalizeActiveFlag(form.Active ?? "1")}
               onChange={updateField("Active")}
-              className="mt-2 h-11 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-800 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+              className="mt-2 h-12 w-full rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-800 outline-none transition-all hover:bg-gray-50 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-800/50 dark:focus:border-blue-500"
             >
               <option value="1">Active</option>
               <option value="0">Inactive</option>
@@ -150,31 +150,31 @@ export default function VendorModal({
           </label>
 
           <label className="sm:col-span-2">
-            <span className="text-sm font-medium text-gray-700">Full Address</span>
+            <span className="text-sm font-bold text-gray-700 dark:text-slate-300">Full Address</span>
             <textarea
               value={form.Address || ""}
               onChange={updateField("Address")}
               rows={3}
               placeholder="Physical street address..."
-              className="mt-2 w-full rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-900 outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100"
+              className="mt-2 w-full rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-900 outline-none transition-all focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
             />
           </label>
         </div>
 
-        <div className="flex flex-col-reverse gap-3 border-t border-gray-100 px-5 py-4 sm:flex-row sm:justify-end">
+        <div className="flex flex-col-reverse gap-3 border-t border-gray-100 px-6 py-5 dark:border-slate-800 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="h-10 rounded-lg border border-gray-200 px-4 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            className="h-12 rounded-xl border border-gray-200 px-6 text-sm font-bold text-gray-700 transition-all hover:bg-gray-50 active:scale-[0.98] dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="h-10 rounded-lg bg-gray-950 px-5 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="bg-premium-gradient relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-8 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitting ? "Saving..." : "Save vendor"}
+            {submitting ? "Saving..." : "Save Vendor"}
           </button>
         </div>
       </form>

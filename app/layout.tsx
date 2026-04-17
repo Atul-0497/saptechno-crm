@@ -5,31 +5,34 @@ import { MobileMenuProvider } from "./contexts/MobileMenuContext";
 import ReactQueryProvider from "./providers/ReactQueryProvider"; 
 import { Toaster } from "react-hot-toast";
 
+import { ThemeProvider } from "./components/providers/ThemeProvider";
+
+import { CustomizationProvider } from "./contexts/CustomizationContext";
+
+import { MainLayout } from "./components/layout/MainLayout";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="overflow-x-hidden">
-        <ReactQueryProvider>
-          <MobileMenuProvider>
-            <div className="flex h-screen bg-gray-100 overflow-hidden w-full">
-              
-              <Sidebar />
-
-              <div className="flex-1 flex flex-col min-w-0">
-                <Topbar />
-                  <Toaster position="top-right" />
-                <div className="p-4 sm:p-6 overflow-y-auto flex-1">
-                  {children}
-                </div>
-              </div>
-
-            </div>
-          </MobileMenuProvider>
-        </ReactQueryProvider> {/* ✅ END */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <CustomizationProvider>
+            <ReactQueryProvider>
+              <MobileMenuProvider>
+                <MainLayout>{children}</MainLayout>
+              </MobileMenuProvider>
+            </ReactQueryProvider>
+          </CustomizationProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

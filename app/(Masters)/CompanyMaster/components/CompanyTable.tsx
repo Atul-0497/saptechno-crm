@@ -54,211 +54,211 @@ export default function CompanyTable({
   return (
     <div className="overflow-hidden">
       <div className="hidden min-w-full lg:block">
-        <table className="min-w-full divide-y divide-gray-100">
-          <thead className="bg-gray-50/80">
-            <tr>
-              <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Company
-              </th>
-              <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Contact
-              </th>
-              <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Plan
-              </th>
-              <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Status
-              </th>
-              <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100 bg-white">
-            {loading &&
-              Array.from({ length: 5 }).map((_, index) => (
-                <tr key={index}>
-                  {Array.from({ length: 5 }).map((__, cellIndex) => (
-                    <td key={cellIndex} className="px-5 py-4">
-                      <div className="h-4 w-full max-w-36 animate-pulse rounded bg-gray-100" />
-                    </td>
-                  ))}
-                </tr>
-              ))}
+        <table className="min-w-full divide-y divide-gray-100 dark:divide-slate-800">
+        <thead className="bg-gray-50/80 dark:bg-slate-800/50">
+          <tr>
+            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+              Company
+            </th>
+            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+              Contact
+            </th>
+            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+              Plan
+            </th>
+            <th className="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+              Status
+            </th>
+            <th className="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100 bg-white dark:divide-slate-800 dark:bg-transparent">
+          {loading &&
+            Array.from({ length: 5 }).map((_, index) => (
+              <tr key={index}>
+                {Array.from({ length: 5 }).map((__, cellIndex) => (
+                  <td key={cellIndex} className="px-5 py-4">
+                    <div className="h-4 w-full max-w-36 animate-pulse rounded bg-gray-100 dark:bg-slate-800" />
+                  </td>
+                ))}
+              </tr>
+            ))}
 
-            {!loading &&
-              data.map((company) => {
-                const isActive = isCompanyActive(company.Active);
+          {!loading &&
+            data.map((company) => {
+              const isActive = isCompanyActive(company.Active);
 
-                return (
-                  <tr key={company.CompanyId} className="transition hover:bg-cyan-50/30">
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white">
-                          {getInitials(company.Name)}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="font-semibold text-gray-950">{company.Name || "Untitled company"}</div>
-                          <div className="mt-1 flex items-center gap-1 text-xs text-gray-500">
-                            <Building2 size={13} />
-                            <span className="truncate">{company.Address || "No address added"}</span>
-                          </div>
+              return (
+                <tr key={company.CompanyId} className="transition hover:bg-cyan-50/30 dark:hover:bg-slate-800/40">
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white dark:bg-slate-800 dark:text-slate-200">
+                        {getInitials(company.Name)}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-semibold text-gray-950 dark:text-white">{company.Name || "Untitled company"}</div>
+                        <div className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-slate-400">
+                          <Building2 size={13} />
+                          <span className="truncate">{company.Address || "No address added"}</span>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="space-y-1 text-sm">
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Mail size={15} className="text-gray-400" />
-                          <span>{company.Email || "No email"}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-500">
-                          <Phone size={15} className="text-gray-400" />
-                          <span>{company.Mobile || "No mobile"}</span>
-                        </div>
-                        {company.Website && (
-                          <div className="flex items-center gap-2 text-gray-400 text-xs">
-                            <Globe size={13} className="text-gray-400" />
-                            <a href={company.Website.startsWith('http') ? company.Website : `https://${company.Website}`} target="_blank" rel="noreferrer" className="truncate hover:text-cyan-600">
-                              {company.Website.replace(/^https?:\/\//, "")}
-                            </a>
-                          </div>
-                        )}
+                    </div>
+                  </td>
+                  <td className="px-5 py-4">
+                    <div className="space-y-1 text-sm">
+                      <div className="flex items-center gap-2 text-gray-700 dark:text-slate-300">
+                        <Mail size={15} className="text-gray-400" />
+                        <span>{company.Email || "No email"}</span>
                       </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-start gap-2 text-sm text-gray-700">
-                        <CalendarDays size={16} className="mt-0.5 text-gray-400" />
-                        <div>
-                          <div>{formatDate(company.PlanStart)}</div>
-                          <div className="text-xs text-gray-500">to {formatDate(company.PlanEnd)}</div>
-                        </div>
+                      <div className="flex items-center gap-2 text-gray-500 dark:text-slate-400">
+                        <Phone size={15} className="text-gray-400" />
+                        <span>{company.Mobile || "No mobile"}</span>
                       </div>
-                    </td>
-                    <td className="px-5 py-4">
+                      {company.Website && (
+                        <div className="flex items-center gap-2 text-gray-400 text-xs">
+                          <Globe size={13} className="text-gray-400" />
+                          <a href={company.Website.startsWith('http') ? company.Website : `https://${company.Website}`} target="_blank" rel="noreferrer" className="truncate hover:text-cyan-600 dark:hover:text-cyan-400">
+                            {company.Website.replace(/^https?:\/\//, "")}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-5 py-4">
+                    <div className="flex items-start gap-2 text-sm text-gray-700 dark:text-slate-300">
+                      <CalendarDays size={16} className="mt-0.5 text-gray-400" />
+                      <div>
+                        <div className="dark:text-white">{formatDate(company.PlanStart)}</div>
+                        <div className="text-xs text-gray-500 dark:text-slate-400">to {formatDate(company.PlanEnd)}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4">
+                    <button
+                      onClick={() => onToggleActive(company)}
+                      className={`inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-semibold transition ${isActive
+                        ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30"
+                        : "bg-rose-50 text-rose-700 hover:bg-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:hover:bg-rose-900/30"
+                        }`}
+                    >
+                      <span className={`h-2 w-2 rounded-full ${isActive ? "bg-emerald-500" : "bg-rose-500"}`} />
+                      {isActive ? "Active" : "Inactive"}
+                    </button>
+                  </td>
+                  <td className="px-5 py-4">
+                    <div className="flex justify-end gap-2">
                       <button
                         onClick={() => onToggleActive(company)}
-                        className={`inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-semibold transition ${
-                          isActive
-                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                            : "bg-rose-50 text-rose-700 hover:bg-rose-100"
-                        }`}
+                        title={isActive ? "Deactivate" : "Activate"}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800/80 dark:hover:text-cyan-400"
                       >
-                        <span className={`h-2 w-2 rounded-full ${isActive ? "bg-emerald-500" : "bg-rose-500"}`} />
-                        {isActive ? "Active" : "Inactive"}
+                        <Power size={16} />
                       </button>
-                    </td>
-                    <td className="px-5 py-4">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => onToggleActive(company)}
-                          title={isActive ? "Deactivate" : "Activate"}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700"
-                        >
-                          <Power size={16} />
-                        </button>
-                        <button
-                          onClick={() => onEdit(company)}
-                          className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-gray-200 px-3 text-sm font-medium text-gray-700 transition hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700"
-                        >
-                          <Pencil size={16} />
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => onDelete(company.CompanyId)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="divide-y divide-gray-100 lg:hidden">
-        {loading &&
-          Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="p-4">
-              <div className="h-24 animate-pulse rounded-lg bg-gray-100" />
-            </div>
-          ))}
-
-        {!loading &&
-          data.map((company) => {
-            const isActive = isCompanyActive(company.Active);
-
-            return (
-              <article key={company.CompanyId} className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white">
-                      {getInitials(company.Name)}
+                      <button
+                        onClick={() => onEdit(company)}
+                        className="inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-gray-200 px-3 text-sm font-medium text-gray-700 transition hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800/80 dark:hover:text-cyan-400"
+                      >
+                        <Pencil size={16} />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => onDelete(company.CompanyId)}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:border-slate-800 dark:text-slate-400 dark:hover:border-rose-900/20 dark:hover:text-rose-400"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
-                    <div className="min-w-0">
-                      <h3 className="truncate font-semibold text-gray-950">{company.Name || "Untitled company"}</h3>
-                      <p className="truncate text-sm text-gray-500">{company.Email || "No email"}</p>
-                    </div>
-                  </div>
-                  <MoreHorizontal className="text-gray-300" size={20} />
-                </div>
+                  </td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
+    </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                  <div className="rounded-lg bg-gray-50 p-3">
-                    <div className="text-xs font-medium text-gray-500">Mobile</div>
-                    <div className="mt-1 truncate text-gray-800">{company.Mobile || "No mobile"}</div>
-                  </div>
-                  <div className="rounded-lg bg-gray-50 p-3">
-                    <div className="text-xs font-medium text-gray-500">Plan end</div>
-                    <div className="mt-1 truncate text-gray-800">{formatDate(company.PlanEnd)}</div>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <button
-                    onClick={() => onToggleActive(company)}
-                    className={`inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-semibold ${
-                      isActive ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
-                    }`}
-                  >
-                    <span className={`h-2 w-2 rounded-full ${isActive ? "bg-emerald-500" : "bg-rose-500"}`} />
-                    {isActive ? "Active" : "Inactive"}
-                  </button>
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => onEdit(company)}
-                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => onDelete(company.CompanyId)}
-                      className="rounded-lg border border-rose-200 px-3 py-2 text-sm font-medium text-rose-700"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-      </div>
-
-      {!loading && data.length === 0 && (
-        <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-50 text-cyan-600">
-            <Building2 size={24} />
+    <div className="divide-y divide-gray-100 lg:hidden dark:divide-slate-800">
+      {loading &&
+        Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="p-4">
+            <div className="h-24 animate-pulse rounded-lg bg-gray-100 dark:bg-slate-800" />
           </div>
-          <h3 className="mt-4 text-base font-semibold text-gray-950">No companies found</h3>
-          <p className="mt-2 max-w-sm text-sm text-gray-500">
-            Add your first company or adjust the search and status filters.
-          </p>
+        ))}
+
+      {!loading &&
+        data.map((company) => {
+          const isActive = isCompanyActive(company.Active);
+
+          return (
+            <article key={company.CompanyId} className="p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white dark:bg-slate-800 dark:text-slate-200">
+                    {getInitials(company.Name)}
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="truncate font-semibold text-gray-950 dark:text-white">{company.Name || "Untitled company"}</h3>
+                    <p className="truncate text-sm text-gray-500 dark:text-slate-400">{company.Email || "No email"}</p>
+                  </div>
+                </div>
+                <MoreHorizontal className="text-gray-300 dark:text-slate-600" size={20} />
+              </div>
+
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-lg bg-gray-50 p-3 dark:bg-slate-800/50">
+                  <div className="text-xs font-medium text-gray-500 dark:text-slate-500">Mobile</div>
+                  <div className="mt-1 truncate text-gray-800 dark:text-slate-300">{company.Mobile || "No mobile"}</div>
+                </div>
+                <div className="rounded-lg bg-gray-50 p-3 dark:bg-slate-800/50">
+                  <div className="text-xs font-medium text-gray-500 dark:text-slate-500">Plan end</div>
+                  <div className="mt-1 truncate text-gray-800 dark:text-slate-300">{formatDate(company.PlanEnd)}</div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <button
+                  onClick={() => onToggleActive(company)}
+                  className={`inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-semibold ${isActive
+                    ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
+                    : "bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-400"
+                    }`}
+                >
+                  <span className={`h-2 w-2 rounded-full ${isActive ? "bg-emerald-500" : "bg-rose-500"}`} />
+                  {isActive ? "Active" : "Inactive"}
+                </button>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => onEdit(company)}
+                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 dark:border-slate-700 dark:text-slate-300"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => onDelete(company.CompanyId)}
+                    className="rounded-lg border border-rose-200 px-3 py-2 text-sm font-medium text-rose-700 dark:border-rose-900/30 dark:text-rose-400"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+    </div>
+
+    {!loading && data.length === 0 && (
+      <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-cyan-50 text-cyan-600">
+          <Building2 size={24} />
         </div>
-      )}
+        <h3 className="mt-4 text-base font-semibold text-gray-950">No companies found</h3>
+        <p className="mt-2 max-w-sm text-sm text-gray-500">
+          Add your first company or adjust the search and status filters.
+        </p>
+      </div>
+    )}
     </div>
   );
 }

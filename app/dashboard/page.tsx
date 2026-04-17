@@ -8,14 +8,14 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Title */}
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-gray-500 text-sm">
-          Welcome back, Atul. Here's what's happening today.
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-950 dark:text-white">Dashboard</h1>
+        <p className="text-gray-500 dark:text-slate-400 font-bold text-sm mt-1">
+          Welcome back, Atul. Here's a premium overview of your performance.
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="Total Revenue" value="$48,295" change="+12.5%" positive />
         <StatCard title="Active Users" value="2,847" change="+8.2%" positive />
         <StatCard title="Orders" value="1,432" change="-3.1%" />
@@ -23,12 +23,14 @@ export default function DashboardPage() {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
           <OverviewChart />
         </div>
 
-        <TrafficChart />
+        <div className="lg:col-span-1">
+          <TrafficChart />
+        </div>
       </div>
     </div>
   );

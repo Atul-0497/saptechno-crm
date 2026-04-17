@@ -1,172 +1,31 @@
 "use client";
 
-import {
-  Activity,
-  BarChart3,
-  Box,
-  BriefcaseBusiness,
-  Building2,
-  CalendarDays,
-  CheckSquare,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  CircleDot,
-  ClipboardList,
-  FileBox,
-  FileText,
-  Folder,
-  Factory,
-  Globe,
-  Handshake,
-  Home,
-  LogOut,
-  Megaphone,
-  MoreHorizontal,
-  Package,
-  Plus,
-  ReceiptText,
-  Search,
-  ShoppingCart,
-  Tags,
-  UserCircle,
-  Users,
-  WalletCards,
-  Zap,
-} from "lucide-react";
-import clsx from "clsx";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ComponentType } from "react";
+import { 
+  ChevronDown, 
+  ChevronLeft, 
+  ChevronRight, 
+  ChevronUp, 
+  Zap,
+  MoreHorizontal,
+  LogOut,
+} from "lucide-react";
+import clsx from "clsx";
 import { useMobileMenu } from "../../contexts/MobileMenuContext";
-
-type Icon = ComponentType<{ size?: number; className?: string }>;
-
-type SidebarItem = {
-  name: string;
-  href: string;
-  icon: Icon;
-};
-
-type SidebarSection = {
-  name: string;
-  icon: Icon;
-  href?: string;
-  defaultOpen?: boolean;
-  actions?: boolean;
-  children?: SidebarItem[];
-};
-
-const topItems: SidebarItem[] = [
-  { name: "Home", href: "/dashboard", icon: Home },
-  { name: "Reports", href: "/reports", icon: BarChart3 },
-  { name: "Analytics", href: "/analytics", icon: Activity },
-  { name: "My Requests", href: "/requests", icon: BriefcaseBusiness },
-];
-
-const sections: SidebarSection[] = [
-  {
-    name: "Workqueue",
-    icon: ClipboardList,
-    href: "/workqueue",
-  },
-  {
-    name: "Companies",
-    icon: Folder,
-    defaultOpen: true,
-    actions: true,
-    children: [
-      { name: "Company", href: "/CompanyMaster", icon: Building2 },
-      { name: "Leads", href: "/leads", icon: CircleDot },
-      { name: "Contacts", href: "/contacts", icon: UserCircle },
-      { name: "Deals", href: "/deals", icon: WalletCards },
-      { name: "Forecasts", href: "/forecasts", icon: FileText },
-      { name: "Documents", href: "/documents", icon: FileBox },
-      { name: "Campaigns", href: "/campaigns", icon: Megaphone },
-    ],
-  },
-  {
-    name: "Masters",
-    icon: Folder,
-    defaultOpen: true,
-    actions: true,
-    children: [
-      { name: "Company", href: "/CompanyMaster", icon: Building2 },
-      { name: "Department", href: "/DepartmentMaster", icon: Building2 },
-      { name: "Designation", href: "/DesignationMaster", icon: BriefcaseBusiness },
-      { name: "Employee", href: "/EmployeesMaster", icon: Users },
-      { name: "Vendor", href: "/VendorMaster", icon: Building2 },
-      { name: "Product", href: "/Productmaster", icon: Package },
-      { name: "Dealer", href: "/DealerMaster", icon: Handshake },
-      { name: "Lead Source", href: "/LeadSourcemaster", icon: Megaphone },
-      { name: "Industry", href: "/IndustryMaster", icon: Factory },
-      { name: "Country", href: "/Location/Country", icon: Globe },
-      { name: "State", href: "/Location/State", icon: Globe },
-      { name: "City", href: "/Location/City", icon: Globe },
-    ],
-  },
-  {
-    name: "Sales",
-    icon: Folder,
-    defaultOpen: true,
-    actions: true,
-    children: [
-      { name: "Leads", href: "/leads", icon: CircleDot },
-      { name: "Contacts", href: "/contacts", icon: UserCircle },
-      { name: "Companies", href: "/CompanyMaster", icon: Building2 },
-      { name: "Deals", href: "/deals", icon: WalletCards },
-      { name: "Forecasts", href: "/forecasts", icon: FileText },
-      { name: "Documents", href: "/documents", icon: FileBox },
-      { name: "Campaigns", href: "/campaigns", icon: Megaphone },
-    ],
-  },
-  {
-    name: "Activities",
-    icon: Folder,
-    children: [
-      { name: "Tasks", href: "/tasks", icon: CheckSquare },
-      { name: "Meetings", href: "/meetings", icon: CalendarDays },
-      { name: "Calls", href: "/calls", icon: Activity },
-    ],
-  },
-  {
-    name: "Inventory",
-    icon: Folder,
-    children: [
-      { name: "Products", href: "/products", icon: Package },
-      { name: "Price Books", href: "/price-books", icon: Tags },
-      { name: "Quotes", href: "/quotes", icon: ReceiptText },
-      { name: "Sales Orders", href: "/orders", icon: FileText },
-      { name: "Purchase Orders", href: "/purchase-orders", icon: ShoppingCart },
-      { name: "Invoices", href: "/invoices", icon: FileText },
-      { name: "Vendors", href: "/vendors", icon: Building2 },
-    ],
-  },
-  {
-    name: "Support",
-    icon: Folder,
-    children: [
-      { name: "Cases", href: "/cases", icon: Box },
-      { name: "Solutions", href: "/solutions", icon: CheckSquare },
-    ],
-  },
-  {
-    name: "Integrations",
-    icon: Folder,
-    children: [
-      { name: "Connections", href: "/connections", icon: Handshake },
-      { name: "Marketplace", href: "/marketplace", icon: Box },
-    ],
-  },
-  { name: "Services", href: "/services", icon: Handshake },
-  { name: "Projects", href: "/projects", icon: CheckSquare },
-  { name: "Voice of the Customer", href: "/voice-of-the-customer", icon: Users },
-];
+import { useCustomization } from "../../contexts/CustomizationContext";
+import { 
+  TOP_NAV_ITEMS as topItems, 
+  NAV_SECTIONS as sections,
+  type NavItem as SidebarItem,
+  type NavSection as SidebarSection
+} from "../../constants/navigation";
 
 export const Sidebar = () => {
   const pathname = usePathname();
   const { isOpen, close } = useMobileMenu();
+  const { layout } = useCustomization();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(() =>
@@ -212,60 +71,71 @@ export const Sidebar = () => {
 
       <aside
         className={clsx(
-          "fixed z-50 flex h-full shrink-0 flex-col overflow-visible bg-[#111827] text-gray-400 shadow-xl transition-all duration-300 ease-in-out md:relative md:translate-x-0",
-          effectivelyCollapsed ? "md:w-[80px]" : "w-[240px] md:w-[240px]",
+          "fixed z-50 flex h-full shrink-0 flex-col overflow-visible bg-slate-950 text-slate-400 shadow-2xl transition-all duration-300 ease-in-out dark:bg-slate-950",
+          layout === "sidebar" ? "md:relative md:translate-x-0" : "md:hidden",
+          effectivelyCollapsed ? "md:w-[80px]" : "w-[260px] md:w-[260px]",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <button
           onClick={() => setIsCollapsed((current) => !current)}
-          className="absolute -right-3 top-6 z-20 hidden rounded-full border border-gray-700 bg-[#111827] p-1 text-white transition-colors hover:bg-gray-800 md:block"
+          className="absolute -right-3 top-6 z-20 hidden rounded-full border border-slate-800 bg-slate-950 p-1.5 text-white transition-all hover:scale-110 hover:bg-slate-900 md:block"
           aria-label={effectivelyCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {effectivelyCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {effectivelyCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
 
         <Link
           href="/"
           onClick={isMobile ? close : undefined}
           className={clsx(
-            "flex h-[68px] shrink-0 items-center gap-3 overflow-hidden border-b border-gray-800 px-4",
+            "flex h-[76px] shrink-0 items-center gap-3 overflow-hidden border-b border-slate-900 px-6",
             effectivelyCollapsed && "justify-center px-0"
           )}
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
-            <Zap size={20} fill="currentColor" />
+          <div className="bg-premium-gradient flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white shadow-lg shadow-blue-500/20">
+            <Zap size={22} fill="currentColor" />
           </div>
           {!effectivelyCollapsed && (
-            <span className="truncate text-lg font-semibold text-white">Saptechno-CRM</span>
+            <span className="bg-gradient-to-r from-white to-slate-400 bg-clip-text text-xl font-bold tracking-tight text-transparent">Saptechno</span>
           )}
         </Link>
 
         <nav
           className={clsx(
-            "flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-            effectivelyCollapsed ? "px-3 py-5" : "px-2 py-3"
+            "flex-1 overflow-y-auto pt-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            effectivelyCollapsed ? "px-4" : "px-4"
           )}
         >
           {effectivelyCollapsed ? (
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {[...topItems, ...sections].map((item, index) => {
                 const IconComponent = item.icon;
                 const active = "children" in item ? isActive(item.href) || sectionHasActiveChild(item) : isActive(item.href);
 
                 return (
                   <li key={item.name}>
-                    {index === 4 || index === 10 ? <div className="mx-auto mb-4 h-px w-6 bg-gray-700/70" /> : null}
+                    {index === 4 || index === 10 ? <div className="mx-auto mb-6 h-px w-8 bg-slate-800/50" /> : null}
                     <Link
                       href={"href" in item && item.href ? item.href : "#"}
                       title={item.name}
-                      onClick={handleLinkClick}
+                      onClick={(e) => {
+                        if (effectivelyCollapsed && "children" in item) {
+                          e.preventDefault();
+                          setIsCollapsed(false);
+                          setOpenSections((current) => ({ ...current, [item.name]: true }));
+                        } else {
+                          handleLinkClick();
+                        }
+                      }}
                       className={clsx(
-                        "mx-auto flex h-11 w-11 items-center justify-center rounded-lg transition-colors",
-                        active ? "bg-gray-800 text-blue-500" : "text-gray-400 hover:bg-gray-800/70 hover:text-white"
+                        "mx-auto flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200",
+                        active 
+                          ? "bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20" 
+                          : "text-slate-500 hover:bg-slate-900 hover:text-white hover:shadow-lg"
                       )}
                     >
-                      <IconComponent size={19} />
+                      <IconComponent size={20} />
                     </Link>
                   </li>
                 );
@@ -273,9 +143,9 @@ export const Sidebar = () => {
             </ul>
           ) : (
             <>
-              <div className="mb-3 px-3 text-[11px] font-semibold tracking-wider text-gray-500">OVERVIEW</div>
+              <div className="mb-4 px-4 text-[11px] font-extrabold tracking-widest text-slate-500 uppercase dark:text-slate-400">OVERVIEW</div>
 
-              <ul className="space-y-1">
+              <ul className="space-y-1.5">
                 {topItems.map((item, index) => {
                   const IconComponent = item.icon;
                   const active = isActive(item.href);
@@ -286,19 +156,17 @@ export const Sidebar = () => {
                         href={item.href}
                         onClick={handleLinkClick}
                         className={clsx(
-                          "flex h-[34px] items-center gap-3 rounded px-3 py-2 text-[14px] font-medium transition-colors",
-                          active ? "bg-gray-800 text-white" : "hover:bg-gray-800/70 hover:text-white",
-                          index === 2 && "mb-1"
+                          "group flex h-11 items-center gap-3 rounded-lg px-4 py-2 text-[15px] font-semibold transition-all duration-200",
+                          active 
+                            ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                            : "text-slate-400 hover:bg-slate-900 hover:text-white dark:text-slate-200"
                         )}
                       >
                         <IconComponent
-                          size={17}
+                          size={18}
                           className={clsx(
-                            "shrink-0",
-                            item.name === "Home" && "text-[#7793ff]",
-                            item.name === "Reports" && "text-[#ec3f84]",
-                            item.name === "Analytics" && "text-[#b35cff]",
-                            item.name === "My Requests" && "text-[#22d092]"
+                            "shrink-0 transition-colors",
+                            !active && "text-slate-500 group-hover:text-primary"
                           )}
                         />
                         <span>{item.name}</span>
@@ -308,28 +176,20 @@ export const Sidebar = () => {
                 })}
               </ul>
 
-              <div className="-mx-2 my-3 border-t border-gray-800" />
+              <div className="my-6 h-px bg-slate-900" />
 
-              <div className="mb-3 flex items-center gap-2 px-1">
-                <div className="flex h-[23px] w-[23px] shrink-0 items-center justify-center rounded bg-[#8838ff] text-[10px] font-bold text-white">
-                  CT
+              <div className="mb-4 px-2">
+                <div className="flex items-center gap-3 rounded-xl bg-slate-900/50 p-2.5 ring-1 ring-slate-800">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-[10px] font-bold text-white shadow-lg shadow-indigo-500/20">
+                    CT
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-xs font-bold text-white">CRM Teamspace</div>
+                    <div className="text-[10px] text-slate-500">Free Plan</div>
+                  </div>
+                  <ChevronDown size={14} className="text-slate-600" />
                 </div>
-                <button className="flex min-w-0 flex-1 items-center gap-1 text-left text-[15px] font-semibold text-white">
-                  <span className="truncate">CRM Teamspace</span>
-                  <ChevronDown size={15} className="shrink-0 text-gray-400" />
-                </button>
-                <button className="rounded px-1 py-1 text-gray-400 transition-colors hover:bg-gray-800/70 hover:text-white">
-                  <MoreHorizontal size={18} />
-                </button>
               </div>
-
-              <label className="mb-3 flex items-center gap-2 rounded border border-gray-700 bg-gray-900/40 px-3 py-2 text-gray-500 focus-within:border-gray-500">
-                <Search size={16} className="shrink-0" />
-                <input
-                  className="min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-gray-500"
-                  placeholder="Search"
-                />
-              </label>
 
               <ul className="space-y-1">
                 {sections.map((section) => {
@@ -339,32 +199,40 @@ export const Sidebar = () => {
                   const hasChildren = Boolean(section.children?.length);
                   const content = (
                     <div className="flex min-w-0 items-center gap-3">
-                      <IconComponent
-                        size={16}
-                        className={clsx("shrink-0", section.name === "Workqueue" ? "text-gray-500" : "text-blue-500")}
-                      />
-                      <span className="truncate">
+                      <div className={clsx(
+                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-all",
+                        active ? "bg-primary/20 text-primary" : "text-slate-500 group-hover:text-slate-300"
+                      )}>
+                        <IconComponent size={18} />
+                      </div>
+                      <span className="truncate py-2">
                         {section.name}
-                        {section.name === "Workqueue" && <span className="ml-1 text-[#dfc72c]">++</span>}
+                        {section.name === "Workqueue" && (
+                          <span className="ml-1.5 rounded-full bg-yellow-500/10 px-1.5 py-0.5 text-[8px] font-bold text-yellow-500 ring-1 ring-yellow-500/20">
+                            NEW
+                          </span>
+                        )}
                       </span>
                     </div>
                   );
 
                   return (
-                    <li key={section.name}>
+                    <li key={section.name} className="px-1">
                       {hasChildren ? (
-                        <div
-                          className={clsx(
-                            "flex items-center rounded transition-colors",
-                            active ? "bg-gray-800 text-white" : "hover:bg-gray-800/70 hover:text-white"
-                          )}
-                        >
+                        <div className="group">
                           <button
                             onClick={() => toggleSection(section.name)}
-                            className="flex min-w-0 flex-1 items-center justify-between px-3 py-2 text-left text-[14px] font-semibold"
+                            className={clsx(
+                              "flex w-full items-center justify-between rounded-lg px-2 text-left text-[15px] font-semibold transition-all duration-200",
+                              active 
+                                ? "text-white" 
+                                : "text-slate-400 hover:bg-slate-900/50 hover:text-white dark:text-slate-200"
+                            )}
                           >
                             {content}
-                            {open ? <ChevronUp size={15} className="shrink-0" /> : <ChevronDown size={15} className="shrink-0" />}
+                            <div className="pr-1">
+                              {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                            </div>
                           </button>
                         </div>
                       ) : (
@@ -372,8 +240,8 @@ export const Sidebar = () => {
                           href={section.href ?? "#"}
                           onClick={handleLinkClick}
                           className={clsx(
-                            "flex items-center justify-between rounded px-3 py-2 text-[14px] font-semibold transition-colors",
-                            active ? "bg-gray-800 text-white" : "hover:bg-gray-800/70 hover:text-white"
+                            "flex items-center justify-between rounded-lg px-2 text-[15px] font-semibold transition-all duration-200",
+                            active ? "bg-slate-900 text-white" : "text-slate-400 hover:bg-slate-900/50 hover:text-white dark:text-slate-200"
                           )}
                         >
                           {content}
@@ -381,7 +249,7 @@ export const Sidebar = () => {
                       )}
 
                       {hasChildren && open && (
-                        <ul className="mt-1 space-y-1 pb-1">
+                        <ul className="mt-1 space-y-0.5 border-l border-slate-800 ml-6 pb-2 pl-2">
                           {section.children?.map((item) => {
                             const ChildIcon = item.icon;
                             const childActive = isActive(item.href);
@@ -392,11 +260,16 @@ export const Sidebar = () => {
                                   href={item.href}
                                   onClick={handleLinkClick}
                                   className={clsx(
-                                    "ml-8 flex items-center gap-3 rounded px-3 py-1.5 text-[14px] transition-colors",
-                                    childActive ? "bg-gray-800 text-white" : "text-gray-300 hover:bg-gray-800/70 hover:text-white"
+                                    "flex items-center gap-3 rounded-md px-3 py-2 text-[14px] font-medium transition-all duration-200",
+                                    childActive 
+                                      ? "bg-slate-900 text-primary font-bold" 
+                                      : "text-slate-500 hover:text-slate-100 dark:text-slate-300"
                                   )}
                                 >
-                                  <ChildIcon size={15} className="shrink-0 text-[#94a3bd]" />
+                                  <ChildIcon size={14} className={clsx(
+                                    "shrink-0",
+                                    childActive ? "text-primary" : "text-slate-600"
+                                  )} />
                                   <span className="truncate">{item.name}</span>
                                 </Link>
                               </li>
@@ -414,23 +287,26 @@ export const Sidebar = () => {
 
         <div
           className={clsx(
-            "mt-auto flex shrink-0 border-t border-gray-800 p-3",
-            effectivelyCollapsed ? "flex-col items-center gap-4" : "items-center justify-between"
+            "mt-auto flex shrink-0 border-t border-slate-900 p-4",
+            effectivelyCollapsed ? "flex-col items-center gap-6" : "items-center justify-between"
           )}
         >
           <div className={clsx("flex min-w-0 items-center", effectivelyCollapsed ? "justify-center" : "gap-3")}>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-medium text-white">
+            <div className="bg-premium-gradient flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white shadow-lg shadow-blue-500/20 ring-2 ring-slate-900">
               AS
             </div>
             {!effectivelyCollapsed && (
               <div className="min-w-0">
-                <div className="truncate text-sm font-semibold text-white">Atul</div>
-                <div className="truncate text-xs text-gray-500">Admin</div>
+                <div className="truncate text-sm font-bold text-white">Atul</div>
+                <div className="truncate text-[10px] font-medium text-slate-500 uppercase tracking-tighter">System Admin</div>
               </div>
             )}
           </div>
-          <button className="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white" title="Logout">
-            <LogOut size={18} />
+          <button 
+            className="group flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-red-500/10 hover:text-red-500" 
+            title="Logout"
+          >
+            <LogOut size={18} className="transition-transform group-hover:-translate-x-0.5" />
           </button>
         </div>
       </aside>

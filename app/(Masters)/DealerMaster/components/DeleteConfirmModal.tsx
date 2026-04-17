@@ -19,33 +19,33 @@ export default function DeleteConfirmModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/50 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-lg bg-white shadow-2xl">
-        <div className="flex items-start justify-between gap-4 border-b border-gray-100 px-5 py-4">
-          <div className="flex gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
-              <AlertTriangle size={20} />
+      <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl transition-all dark:bg-slate-900 dark:border dark:border-slate-800">
+        <div className="flex items-start justify-between gap-4 border-b border-gray-100 px-6 py-5 dark:border-slate-800">
+          <div className="flex gap-4 text-left">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400">
+              <AlertTriangle size={24} />
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-950">Delete dealer?</h2>
-              <p className="mt-1 text-sm leading-6 text-gray-500">
-                This will remove the dealer from your network database. This action is permanent.
+            <div className="text-left font-bold sm:font-semibold">
+              <h2 className="text-xl font-bold text-gray-950 dark:text-white">Delete Dealer?</h2>
+              <p className="mt-2 text-sm leading-relaxed text-gray-500 dark:text-slate-400 font-bold">
+                This will remove the dealer from your network database. This action is permanent and cannot be undone.
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-xl p-2 text-gray-400 transition hover:bg-gray-100 dark:hover:bg-slate-800 dark:hover:text-white"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         </div>
 
-        <div className="flex flex-col-reverse gap-3 px-5 py-4 sm:flex-row sm:justify-end">
+        <div className="flex flex-col-reverse gap-3 px-6 py-5 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="h-10 rounded-lg border border-gray-200 px-4 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            className="h-11 rounded-xl border border-gray-200 px-6 text-sm font-bold text-gray-700 transition hover:bg-gray-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
           >
             Cancel
           </button>
@@ -53,9 +53,9 @@ export default function DeleteConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className="h-10 rounded-lg bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-11 rounded-xl bg-rose-600 px-6 text-sm font-bold text-white shadow-lg shadow-rose-600/20 transition hover:bg-rose-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Deleting..." : "Delete dealer"}
+            {loading ? "Deleting..." : "Delete Dealer"}
           </button>
         </div>
       </div>
