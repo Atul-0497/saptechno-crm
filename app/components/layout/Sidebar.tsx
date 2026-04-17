@@ -1,208 +1,435 @@
 "use client";
 
 import {
-  LayoutGrid,
-  BarChart2,
-  ShoppingBag,
-  Shield,
-  Rocket,
-  LineChart,
-  ShoppingCart,
-  Package,
-  Users,
-  FileText,
-  Mail,
-  MessageSquare,
-  Zap,
-  LogOut,
+  Activity,
+  BarChart3,
+  Box,
+  BriefcaseBusiness,
+  Building2,
+  CalendarDays,
+  CheckSquare,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Building
+  ChevronUp,
+  CircleDot,
+  ClipboardList,
+  FileBox,
+  FileText,
+  Folder,
+  Factory,
+  Globe,
+  Handshake,
+  Home,
+  LogOut,
+  Megaphone,
+  MoreHorizontal,
+  Package,
+  Plus,
+  ReceiptText,
+  Search,
+  ShoppingCart,
+  Tags,
+  UserCircle,
+  Users,
+  WalletCards,
+  Zap,
 } from "lucide-react";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { MenuGroup } from "../../types/layout.types";
+import { useEffect, useState, type ComponentType } from "react";
 import { useMobileMenu } from "../../contexts/MobileMenuContext";
 
-const menuGroups: MenuGroup[] = [
+type Icon = ComponentType<{ size?: number; className?: string }>;
+
+type SidebarItem = {
+  name: string;
+  href: string;
+  icon: Icon;
+};
+
+type SidebarSection = {
+  name: string;
+  icon: Icon;
+  href?: string;
+  defaultOpen?: boolean;
+  actions?: boolean;
+  children?: SidebarItem[];
+};
+
+const topItems: SidebarItem[] = [
+  { name: "Home", href: "/dashboard", icon: Home },
+  { name: "Reports", href: "/reports", icon: BarChart3 },
+  { name: "Analytics", href: "/analytics", icon: Activity },
+  { name: "My Requests", href: "/requests", icon: BriefcaseBusiness },
+];
+
+const sections: SidebarSection[] = [
   {
-    title: "OVERVIEW",
-    items: [
-      { name: "Dashboard", href: "/dashboard", icon: LayoutGrid },
-      { name: "Companies", href: "/companies", icon: Building },
-      { name: "Analytics", href: "/analytics", icon: BarChart2 },
-      { name: "eCommerce", href: "/ecommerce", icon: ShoppingBag },
-      { name: "CRM", href: "/crm", icon: Shield },
-      { name: "SaaS", href: "/saas", icon: Rocket },
-      { name: "Charts", href: "/charts", icon: LineChart },
+    name: "Workqueue",
+    icon: ClipboardList,
+    href: "/workqueue",
+  },
+  {
+    name: "Companies",
+    icon: Folder,
+    defaultOpen: true,
+    actions: true,
+    children: [
+      { name: "Company", href: "/CompanyMaster", icon: Building2 },
+      { name: "Leads", href: "/leads", icon: CircleDot },
+      { name: "Contacts", href: "/contacts", icon: UserCircle },
+      { name: "Deals", href: "/deals", icon: WalletCards },
+      { name: "Forecasts", href: "/forecasts", icon: FileText },
+      { name: "Documents", href: "/documents", icon: FileBox },
+      { name: "Campaigns", href: "/campaigns", icon: Megaphone },
     ],
   },
   {
-    title: "COMMERCE",
-    items: [
-      { name: "Orders", href: "/orders", icon: ShoppingCart, badge: 12 },
+    name: "Masters",
+    icon: Folder,
+    defaultOpen: true,
+    actions: true,
+    children: [
+      { name: "Company", href: "/CompanyMaster", icon: Building2 },
+      { name: "Department", href: "/DepartmentMaster", icon: Building2 },
+      { name: "Designation", href: "/DesignationMaster", icon: BriefcaseBusiness },
+      { name: "Employee", href: "/EmployeesMaster", icon: Users },
+      { name: "Vendor", href: "/VendorMaster", icon: Building2 },
+      { name: "Product", href: "/Productmaster", icon: Package },
+      { name: "Dealer", href: "/DealerMaster", icon: Handshake },
+      { name: "Lead Source", href: "/LeadSourcemaster", icon: Megaphone },
+      { name: "Industry", href: "/IndustryMaster", icon: Factory },
+      { name: "Country", href: "/Location/Country", icon: Globe },
+      { name: "State", href: "/Location/State", icon: Globe },
+      { name: "City", href: "/Location/City", icon: Globe },
+    ],
+  },
+  {
+    name: "Sales",
+    icon: Folder,
+    defaultOpen: true,
+    actions: true,
+    children: [
+      { name: "Leads", href: "/leads", icon: CircleDot },
+      { name: "Contacts", href: "/contacts", icon: UserCircle },
+      { name: "Companies", href: "/CompanyMaster", icon: Building2 },
+      { name: "Deals", href: "/deals", icon: WalletCards },
+      { name: "Forecasts", href: "/forecasts", icon: FileText },
+      { name: "Documents", href: "/documents", icon: FileBox },
+      { name: "Campaigns", href: "/campaigns", icon: Megaphone },
+    ],
+  },
+  {
+    name: "Activities",
+    icon: Folder,
+    children: [
+      { name: "Tasks", href: "/tasks", icon: CheckSquare },
+      { name: "Meetings", href: "/meetings", icon: CalendarDays },
+      { name: "Calls", href: "/calls", icon: Activity },
+    ],
+  },
+  {
+    name: "Inventory",
+    icon: Folder,
+    children: [
       { name: "Products", href: "/products", icon: Package },
-      { name: "Customers", href: "/companies", icon: Users },
+      { name: "Price Books", href: "/price-books", icon: Tags },
+      { name: "Quotes", href: "/quotes", icon: ReceiptText },
+      { name: "Sales Orders", href: "/orders", icon: FileText },
+      { name: "Purchase Orders", href: "/purchase-orders", icon: ShoppingCart },
       { name: "Invoices", href: "/invoices", icon: FileText },
+      { name: "Vendors", href: "/vendors", icon: Building2 },
     ],
   },
   {
-    title: "APPS",
-    items: [
-      { name: "Mail", href: "/mail", icon: Mail },
-      { name: "Chat", href: "/chat", icon: MessageSquare },
+    name: "Support",
+    icon: Folder,
+    children: [
+      { name: "Cases", href: "/cases", icon: Box },
+      { name: "Solutions", href: "/solutions", icon: CheckSquare },
     ],
   },
+  {
+    name: "Integrations",
+    icon: Folder,
+    children: [
+      { name: "Connections", href: "/connections", icon: Handshake },
+      { name: "Marketplace", href: "/marketplace", icon: Box },
+    ],
+  },
+  { name: "Services", href: "/services", icon: Handshake },
+  { name: "Projects", href: "/projects", icon: CheckSquare },
+  { name: "Voice of the Customer", href: "/voice-of-the-customer", icon: Users },
 ];
 
 export const Sidebar = () => {
   const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const { isOpen, close } = useMobileMenu();
-
-  // On mobile, if the menu is open, we behave as if it's not collapsed
-  // so that the full text is shown. We use an effect to handle window resize.
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(sections.map((section) => [section.name, Boolean(section.defaultOpen)]))
+  );
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
+
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const effectivelyCollapsed = isMobile ? false : isCollapsed;
 
+  const isActive = (href?: string) => {
+    if (!href) return false;
+    return pathname === href || (pathname === "/" && href === "/dashboard");
+  };
+
+  const sectionHasActiveChild = (section: SidebarSection) =>
+    section.children?.some((item) => isActive(item.href)) ?? false;
+
+  const toggleSection = (name: string) => {
+    setOpenSections((current) => ({ ...current, [name]: !current[name] }));
+  };
+
+  const handleLinkClick = () => {
+    close();
+  };
+
   return (
     <>
-      {/* Mobile backdrop */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 bg-gray-900/50 z-40 md:hidden transition-opacity"
+        <div
+          className="fixed inset-0 z-40 bg-slate-950/50 transition-opacity md:hidden"
           onClick={close}
         />
       )}
 
       <aside
         className={clsx(
-          "bg-[#111827] text-gray-400 flex flex-col fixed md:relative h-full shrink-0 transition-all duration-300 ease-in-out z-50",
-          effectivelyCollapsed ? "md:w-[80px]" : "md:w-[240px]",
-          isOpen ? "translate-x-0 w-[240px]" : "-translate-x-full md:translate-x-0"
+          "fixed z-50 flex h-full shrink-0 flex-col overflow-visible bg-[#111827] text-gray-400 shadow-xl transition-all duration-300 ease-in-out md:relative md:translate-x-0",
+          effectivelyCollapsed ? "md:w-[80px]" : "w-[240px] md:w-[240px]",
+          isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Collapse button */}
         <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="hidden md:block absolute -right-3 top-8 bg-[#111827] text-white p-1 rounded-full border border-gray-700 hover:bg-gray-800 transition-colors z-20"
+          onClick={() => setIsCollapsed((current) => !current)}
+          className="absolute -right-3 top-6 z-20 hidden rounded-full border border-gray-700 bg-[#111827] p-1 text-white transition-colors hover:bg-gray-800 md:block"
+          aria-label={effectivelyCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {effectivelyCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
 
-        {/* Logo */}
-        <Link href="/" className="p-6 flex items-center gap-3 overflow-hidden h-[80px] shrink-0" onClick={isMobile ? close : undefined}>
-          <div className="bg-blue-600 p-2 rounded-lg text-white shrink-0">
+        <Link
+          href="/"
+          onClick={isMobile ? close : undefined}
+          className={clsx(
+            "flex h-[68px] shrink-0 items-center gap-3 overflow-hidden border-b border-gray-800 px-4",
+            effectivelyCollapsed && "justify-center px-0"
+          )}
+        >
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
             <Zap size={20} fill="currentColor" />
           </div>
           {!effectivelyCollapsed && (
-            <div className="whitespace-nowrap flex-1 opacity-100 animate-in fade-in duration-300">
-              <div className="text-white text-xl font-semibold leading-tight">Saptechno-CRM</div>
-            </div>
+            <span className="truncate text-lg font-semibold text-white">Saptechno-CRM</span>
           )}
         </Link>
 
-        <nav className="flex-1 px-4 space-y-6 overflow-y-auto overflow-x-hidden pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {menuGroups.map((group, groupIdx) => (
-            <div key={groupIdx}>
-              {effectivelyCollapsed ? (
-                <div className="w-full flex justify-center mb-3 mt-1">
-                  <div className="w-6 border-t-2 border-gray-700/50 rounded-full"></div>
-                </div>
-              ) : (
-                <div className="w-full text-left text-[11px] font-semibold text-gray-500 mb-3 px-3 tracking-wider whitespace-nowrap">
-                  {group.title}
-                </div>
-              )}
+        <nav
+          className={clsx(
+            "flex-1 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            effectivelyCollapsed ? "px-3 py-5" : "px-2 py-3"
+          )}
+        >
+          {effectivelyCollapsed ? (
+            <ul className="space-y-3">
+              {[...topItems, ...sections].map((item, index) => {
+                const IconComponent = item.icon;
+                const active = "children" in item ? isActive(item.href) || sectionHasActiveChild(item) : isActive(item.href);
+
+                return (
+                  <li key={item.name}>
+                    {index === 4 || index === 10 ? <div className="mx-auto mb-4 h-px w-6 bg-gray-700/70" /> : null}
+                    <Link
+                      href={"href" in item && item.href ? item.href : "#"}
+                      title={item.name}
+                      onClick={handleLinkClick}
+                      className={clsx(
+                        "mx-auto flex h-11 w-11 items-center justify-center rounded-lg transition-colors",
+                        active ? "bg-gray-800 text-blue-500" : "text-gray-400 hover:bg-gray-800/70 hover:text-white"
+                      )}
+                    >
+                      <IconComponent size={19} />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <>
+              <div className="mb-3 px-3 text-[11px] font-semibold tracking-wider text-gray-500">OVERVIEW</div>
 
               <ul className="space-y-1">
-                {group.items.map((item, itemIdx) => {
-                  const Icon = item.icon;
-                  const isActive = pathname === item.href || (pathname === '/' && item.href === '/dashboard');
+                {topItems.map((item, index) => {
+                  const IconComponent = item.icon;
+                  const active = isActive(item.href);
 
                   return (
-                    <li key={itemIdx}>
+                    <li key={item.name}>
                       <Link
                         href={item.href}
-                        title={effectivelyCollapsed ? item.name : undefined}
-                        onClick={isMobile ? close : undefined}
+                        onClick={handleLinkClick}
                         className={clsx(
-                          "flex items-center rounded-lg transition-colors group relative",
-                          effectivelyCollapsed ? "justify-center p-3" : "justify-between px-3 py-2.5",
-                          isActive
-                            ? "bg-gray-800/50 text-blue-500"
-                            : "hover:bg-gray-800/50 hover:text-white"
+                          "flex h-[34px] items-center gap-3 rounded px-3 py-2 text-[14px] font-medium transition-colors",
+                          active ? "bg-gray-800 text-white" : "hover:bg-gray-800/70 hover:text-white",
+                          index === 2 && "mb-1"
                         )}
                       >
-                        <div className="flex items-center gap-3">
-                          <Icon
-                            size={20}
-                            className={clsx(
-                              "shrink-0 transition-colors",
-                              isActive ? "text-blue-500" : "text-gray-400 group-hover:text-white"
-                            )}
-                          />
-                          {!effectivelyCollapsed && (
-                            <span className={clsx("whitespace-nowrap", isActive ? "font-medium" : "font-normal")}>
-                              {item.name}
-                            </span>
+                        <IconComponent
+                          size={17}
+                          className={clsx(
+                            "shrink-0",
+                            item.name === "Home" && "text-[#7793ff]",
+                            item.name === "Reports" && "text-[#ec3f84]",
+                            item.name === "Analytics" && "text-[#b35cff]",
+                            item.name === "My Requests" && "text-[#22d092]"
                           )}
-                        </div>
-                        {!effectivelyCollapsed && item.badge && (
-                          <span className="bg-blue-600 text-white text-xs font-medium px-2 py-0.5 rounded-full shrink-0">
-                            {item.badge}
-                          </span>
-                        )}
-
-                        {/* Optional dot indicator for badges when collapsed */}
-                        {effectivelyCollapsed && item.badge && (
-                          <span className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full"></span>
-                        )}
+                        />
+                        <span>{item.name}</span>
                       </Link>
                     </li>
                   );
                 })}
               </ul>
-            </div>
-          ))}
+
+              <div className="-mx-2 my-3 border-t border-gray-800" />
+
+              <div className="mb-3 flex items-center gap-2 px-1">
+                <div className="flex h-[23px] w-[23px] shrink-0 items-center justify-center rounded bg-[#8838ff] text-[10px] font-bold text-white">
+                  CT
+                </div>
+                <button className="flex min-w-0 flex-1 items-center gap-1 text-left text-[15px] font-semibold text-white">
+                  <span className="truncate">CRM Teamspace</span>
+                  <ChevronDown size={15} className="shrink-0 text-gray-400" />
+                </button>
+                <button className="rounded px-1 py-1 text-gray-400 transition-colors hover:bg-gray-800/70 hover:text-white">
+                  <MoreHorizontal size={18} />
+                </button>
+              </div>
+
+              <label className="mb-3 flex items-center gap-2 rounded border border-gray-700 bg-gray-900/40 px-3 py-2 text-gray-500 focus-within:border-gray-500">
+                <Search size={16} className="shrink-0" />
+                <input
+                  className="min-w-0 flex-1 bg-transparent text-[13px] text-white outline-none placeholder:text-gray-500"
+                  placeholder="Search"
+                />
+              </label>
+
+              <ul className="space-y-1">
+                {sections.map((section) => {
+                  const IconComponent = section.icon;
+                  const open = Boolean(openSections[section.name]);
+                  const active = isActive(section.href) || sectionHasActiveChild(section);
+                  const hasChildren = Boolean(section.children?.length);
+                  const content = (
+                    <div className="flex min-w-0 items-center gap-3">
+                      <IconComponent
+                        size={16}
+                        className={clsx("shrink-0", section.name === "Workqueue" ? "text-gray-500" : "text-blue-500")}
+                      />
+                      <span className="truncate">
+                        {section.name}
+                        {section.name === "Workqueue" && <span className="ml-1 text-[#dfc72c]">++</span>}
+                      </span>
+                    </div>
+                  );
+
+                  return (
+                    <li key={section.name}>
+                      {hasChildren ? (
+                        <div
+                          className={clsx(
+                            "flex items-center rounded transition-colors",
+                            active ? "bg-gray-800 text-white" : "hover:bg-gray-800/70 hover:text-white"
+                          )}
+                        >
+                          <button
+                            onClick={() => toggleSection(section.name)}
+                            className="flex min-w-0 flex-1 items-center justify-between px-3 py-2 text-left text-[14px] font-semibold"
+                          >
+                            {content}
+                            {open ? <ChevronUp size={15} className="shrink-0" /> : <ChevronDown size={15} className="shrink-0" />}
+                          </button>
+                        </div>
+                      ) : (
+                        <Link
+                          href={section.href ?? "#"}
+                          onClick={handleLinkClick}
+                          className={clsx(
+                            "flex items-center justify-between rounded px-3 py-2 text-[14px] font-semibold transition-colors",
+                            active ? "bg-gray-800 text-white" : "hover:bg-gray-800/70 hover:text-white"
+                          )}
+                        >
+                          {content}
+                        </Link>
+                      )}
+
+                      {hasChildren && open && (
+                        <ul className="mt-1 space-y-1 pb-1">
+                          {section.children?.map((item) => {
+                            const ChildIcon = item.icon;
+                            const childActive = isActive(item.href);
+
+                            return (
+                              <li key={item.name}>
+                                <Link
+                                  href={item.href}
+                                  onClick={handleLinkClick}
+                                  className={clsx(
+                                    "ml-8 flex items-center gap-3 rounded px-3 py-1.5 text-[14px] transition-colors",
+                                    childActive ? "bg-gray-800 text-white" : "text-gray-300 hover:bg-gray-800/70 hover:text-white"
+                                  )}
+                                >
+                                  <ChildIcon size={15} className="shrink-0 text-[#94a3bd]" />
+                                  <span className="truncate">{item.name}</span>
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
         </nav>
 
-        <div className={clsx(
-          "p-2 my-3 flex mt-auto shrink-0 transition-all duration-300",
-          effectivelyCollapsed ? "flex-col items-center gap-3 mx-1" : "flex-row items-center justify-between mx-3"
-        )}>
-          <div className={clsx(
-            "flex items-center hover:bg-gray-800/50 cursor-pointer transition-colors rounded-lg overflow-hidden",
-            effectivelyCollapsed ? "p-1 justify-center w-full" : "gap-2.5 p-1.5 min-w-0"
-          )}>
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-medium shrink-0">
+        <div
+          className={clsx(
+            "mt-auto flex shrink-0 border-t border-gray-800 p-3",
+            effectivelyCollapsed ? "flex-col items-center gap-4" : "items-center justify-between"
+          )}
+        >
+          <div className={clsx("flex min-w-0 items-center", effectivelyCollapsed ? "justify-center" : "gap-3")}>
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-medium text-white">
               AS
             </div>
             {!effectivelyCollapsed && (
-              <div className="flex-1 min-w-0 pr-2">
-                <div className="text-[13px] font-medium text-white truncate leading-tight">Atul</div>
-                <div className="text-[11px] text-gray-500 truncate mt-0.5">Admin</div>
+              <div className="min-w-0">
+                <div className="truncate text-sm font-semibold text-white">Atul</div>
+                <div className="truncate text-xs text-gray-500">Admin</div>
               </div>
             )}
           </div>
-          <button
-            title="Logout"
-            className={clsx(
-              "text-gray-400 hover:text-white rounded-md hover:bg-gray-800/50 transition-colors shrink-0",
-              effectivelyCollapsed ? "p-2" : "p-1.5"
-            )}>
+          <button className="rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white" title="Logout">
             <LogOut size={18} />
           </button>
         </div>

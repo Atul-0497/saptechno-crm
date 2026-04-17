@@ -1,0 +1,276 @@
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/companies" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="companies/...">
+          <SegmentTrieNode>
+          <ClientPageRoot Component={function Page} serverProvidedParams={{...}}>
+            <Page params={Promise} searchParams={Promise}>
+              <div className="space-y-6">
+                <section>
+                <section className="rounded-lg...">
+                  <div>
+                  <CompanyTable data={[...]} loading={true} onEdit={function onEdit} onDelete={function onDelete} ...>
+                    <div className="overflow-h...">
+                      <div className="hidden min...">
+                        <table className="min-w-full...">
+                          <thead>
+                          <tbody className="divide-y d...">
++                           <tr>
+                            ...
+                      ...
+                ...
+        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at tr (<anonymous>)
+    at eval (app\companies\components\CompanyTable.tsx:79:17)
+    at Array.map (<anonymous>)
+    at CompanyTable (app\companies\components\CompanyTable.tsx:78:41)
+    at Page (app\companies\page.tsx:248:7)
+  77 |             {loading &&
+  78 |               Array.from({ length: 5 }).map((_, index) => (
+> 79 |                 <tr key={index}>
+     |                 ^
+  80 |                   {Array.from({ length: 5 }).map((__, cellIndex) => (
+  81 |                     <td key={cellIndex} className="px-5 py-4">
+  82 |                       <div className="h-4 w-full max-w-36 animate-pulse rounded bg-gray-10...
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/companies" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="companies/...">
+          <SegmentTrieNode>
+          <ClientPageRoot Component={function Page} serverProvidedParams={{...}}>
+            <Page params={Promise} searchParams={Promise}>
+              <div className="space-y-6">
+                <section>
+                <section className="rounded-lg...">
+                  <div>
+                  <CompanyTable data={[...]} loading={true} onEdit={function onEdit} onDelete={function onDelete} ...>
+                    <div className="overflow-h...">
+                      <div className="hidden min...">
+                        <table className="min-w-full...">
+                          <thead>
+                          <tbody className="divide-y d...">
++                           <tr>
+                            ...
+                      ...
+                ...
+        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at tr (<anonymous>)
+    at eval (app\companies\components\CompanyTable.tsx:79:17)
+    at Array.map (<anonymous>)
+    at CompanyTable (app\companies\components\CompanyTable.tsx:78:41)
+    at Page (app\companies\page.tsx:248:7)
+  77 |             {loading &&
+  78 |               Array.from({ length: 5 }).map((_, index) => (
+> 79 |                 <tr key={index}>
+     |                 ^
+  80 |                   {Array.from({ length: 5 }).map((__, cellIndex) => (
+  81 |                     <td key={cellIndex} className="px-5 py-4">
+  82 |                       <div className="h-4 w-full max-w-36 animate-pulse rounded bg-gray-10...
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/companies" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="companies/...">
+          <SegmentTrieNode>
+          <ClientPageRoot Component={function Page} serverProvidedParams={{...}}>
+            <Page params={Promise} searchParams={Promise}>
+              <div className="space-y-6">
+                <section>
+                <section className="rounded-lg...">
+                  <div>
+                  <CompanyTable data={[...]} loading={true} onEdit={function onEdit} onDelete={function onDelete} ...>
+                    <div className="overflow-h...">
+                      <div className="hidden min...">
+                        <table className="min-w-full...">
+                          <thead>
+                          <tbody className="divide-y d...">
++                           <tr>
+                            ...
+                      ...
+                ...
+        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at tr (<anonymous>)
+    at eval (app\companies\components\CompanyTable.tsx:79:17)
+    at Array.map (<anonymous>)
+    at CompanyTable (app\companies\components\CompanyTable.tsx:78:41)
+    at Page (app\companies\page.tsx:248:7)
+  77 |             {loading &&
+  78 |               Array.from({ length: 5 }).map((_, index) => (
+> 79 |                 <tr key={index}>
+     |                 ^
+  80 |                   {Array.from({ length: 5 }).map((__, cellIndex) => (
+  81 |                     <td key={cellIndex} className="px-5 py-4">
+  82 |                       <div className="h-4 w-full max-w-36 animate-pulse rounded bg-gray-10...
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/companies" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="companies/...">
+          <SegmentTrieNode>
+          <ClientPageRoot Component={function Page} serverProvidedParams={{...}}>
+            <Page params={Promise} searchParams={Promise}>
+              <div className="space-y-6">
+                <section>
+                <section className="rounded-lg...">
+                  <div>
+                  <CompanyTable data={[...]} loading={true} onEdit={function onEdit} onDelete={function onDelete} ...>
+                    <div className="overflow-h...">
+                      <div className="hidden min...">
+                        <table className="min-w-full...">
+                          <thead>
+                          <tbody className="divide-y d...">
++                           <tr>
+                            ...
+                      ...
+                ...
+        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at tr (<anonymous>)
+    at eval (app\companies\components\CompanyTable.tsx:79:17)
+    at Array.map (<anonymous>)
+    at CompanyTable (app\companies\components\CompanyTable.tsx:78:41)
+    at Page (app\companies\page.tsx:248:7)
+  77 |             {loading &&
+  78 |               Array.from({ length: 5 }).map((_, index) => (
+> 79 |                 <tr key={index}>
+     |                 ^
+  80 |                   {Array.from({ length: 5 }).map((__, cellIndex) => (
+  81 |                     <td key={cellIndex} className="px-5 py-4">
+  82 |                       <div className="h-4 w-full max-w-36 animate-pulse rounded bg-gray-10...
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <RedirectErrorBoundary router={{...}}>
+      <InnerLayoutRouter url="/companies" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+        <SegmentViewNode type="page" pagePath="companies/...">
+          <SegmentTrieNode>
+          <ClientPageRoot Component={function Page} serverProvidedParams={{...}}>
+            <Page params={Promise} searchParams={Promise}>
+              <div className="space-y-6">
+                <section>
+                <section className="rounded-lg...">
+                  <div>
+                  <CompanyTable data={[...]} loading={true} onEdit={function onEdit} onDelete={function onDelete} ...>
+                    <div className="overflow-h...">
+                      <div className="hidden min...">
+                        <table className="min-w-full...">
+                          <thead>
+                          <tbody className="divide-y d...">
++                           <tr>
+                            ...
+                      ...
+                ...
+        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at tr (<anonymous>)
+    at eval (app\companies\components\CompanyTable.tsx:79:17)
+    at Array.map (<anonymous>)
+    at CompanyTable (app\companies\components\CompanyTable.tsx:78:41)
+    at Page (app\companies\page.tsx:248:7)
+  77 |             {loading &&
+  78 |               Array.from({ length: 5 }).map((_, index) => (
+> 79 |                 <tr key={index}>
+     |                 ^
+  80 |                   {Array.from({ length: 5 }).map((__, cellIndex) => (
+  81 |                     <td key={cellIndex} className="px-5 py-4">
+  82 |                       <div className="h-4 w-full max-w-36 animate-pulse rounded bg-gray-10...
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[browser] React has detected a change in the order of Hooks called by Page. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
+
+   Previous render            Next render
+   ------------------------------------------------------
+1. useContext                 useContext
+2. useState                   useSyncExternalStore
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+    at useCompany (app\hooks\useCompany.ts:14:39)
+    at Page (app\companies\page.tsx:23:65)
+  12 | export const useCompany = () => {
+  13 |   const qc = useQueryClient();
+> 14 |   const mounted = useSyncExternalStore(
+     |                                       ^
+  15 |     emptySubscribe,
+  16 |     getClientSnapshot,
+  17 |     getServerSnapshot (app\hooks\useCompany.ts:14:39)
+[browser] The final argument passed to useSyncExternalStore changed size between renders. The order and size of this array must remain constant.
+
+Previous: []
+Incoming: [()=>()=>{}] 
+    at useCompany (app\hooks\useCompany.ts:14:39)
+    at Page (app\companies\page.tsx:23:65)
+  12 | export const useCompany = () => {
+  13 |   const qc = useQueryClient();
+> 14 |   const mounted = useSyncExternalStore(
+     |                                       ^
+  15 |     emptySubscribe,
+  16 |     getClientSnapshot,
+  17 |     getServerSnapshot (app\hooks\useCompany.ts:14:39)

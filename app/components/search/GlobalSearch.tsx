@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { debounce } from "lodash"; 
+import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
-import { searchAPI } from "../../lib/api/search";
-import type { Company } from "@/app/types/company";
+import { searchAPI } from "../../lib/api/search/search";
+import type { CompanyRecord } from "@/app/types/master";
 
 export default function GlobalSearch() {
-  const [results, setResults] = useState<Company[]>([]);
+  const [results, setResults] = useState<CompanyRecord[]>([]);
+
   const [open, setOpen] = useState(false);
   const router = useRouter();
 

@@ -1,14 +1,12 @@
-import type { Company, CompanyFormValues, CompanyPayload } from "@/app/types/company";
+import { normalizeActiveFlag } from "./masterStatus";
+import type { CompanyRecord, CompanyFormValues, CompanyPayload } from "@/app/types/master";
 
 export const buildCompanyPayload = (
   form: CompanyFormValues = {},
   original: CompanyFormValues = {},
   mode: "create" | "update" | "delete"
 ): CompanyPayload => {
-  const normalizeActive = (val: string | boolean | undefined) =>
-    val === "0" || val === false || val === "false" ? "false" : "true";
-
-  const normalizeDate = (value: Company["PlanStart"]) => {
+  const normalizeDate = (value: CompanyRecord["PlanStart"]) => {
     const date = value?.split("T")[0];
     return date ? `${date}T00:00:00` : "";
   };
@@ -22,11 +20,12 @@ export const buildCompanyPayload = (
     Address: form.Address ?? original.Address ?? "",
     Email: form.Email ?? original.Email ?? "",
     Mobile: form.Mobile ?? original.Mobile ?? "",
+    Website: form.Website ?? original.Website ?? "",
 
     PlanStart: normalizeDate(form.PlanStart ?? original.PlanStart),
 
     PlanEnd: normalizeDate(form.PlanEnd ?? original.PlanEnd),
 
-    Active: normalizeActive(form.Active ?? original.Active),
+    Active: normalizeActiveFlag(form.Active ?? original.Active),
   };
 };
