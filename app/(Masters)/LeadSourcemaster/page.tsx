@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
-  Link,
+  Magnet,
   CheckCircle2,
   Plus,
   Search,
@@ -14,18 +16,16 @@ import {
 import { clsx } from "clsx";
 import { useLeadSourceMaster } from "@/app/hooks/useMasters";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { LeadSourceRecord, LeadSourceFormValues } from "@/app/types/master";
+import type { LeadSourceRecord } from "@/app/types/master";
 
 import LeadSourceTable from "./components/LeadSourceTable";
-import LeadSourceModal from "./components/LeadSourceModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 export default function Page() {
-  const { data, isLoading, create, update, remove } = useLeadSourceMaster();
-  const sources: LeadSourceRecord[] = data;
+  const router = useRouter();
+  const { data, isLoading, update, remove } = useLeadSourceMaster();
+  const sources: LeadSourceRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<LeadSourceRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -43,7 +43,10 @@ export default function Page() {
         (status === "active" && active) ||
         (status === "inactive" && !active);
 
-      const searchable = (item.Name || "").toLowerCase();
+      const searchable = [item.SourceName, item.Name]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
       return matchesStatus && (!search || searchable.includes(search));
     });
@@ -53,7 +56,7 @@ export default function Page() {
     {
       label: "Total sources",
       value: sources.length,
-      icon: Link,
+      icon: Magnet,
       tone: "bg-indigo-50 text-indigo-600",
       detail: "Lead entry points",
     },
@@ -80,32 +83,11 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: LeadSourceFormValues) => {
-    try {
-      if (editing) {
-        await update.mutateAsync({ ...form, LeadSourceId: editing.LeadSourceId ?? editing.Id } as LeadSourceRecord);
-        toast.success("Lead source updated.");
-      } else {
-        await create.mutateAsync(form as LeadSourceRecord);
-        toast.success("Lead source created.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save lead source.");
-    }
-  };
-
   const handleToggle = async (item: LeadSourceRecord) => {
     try {
       await update.mutateAsync({
         ...item,
+        Id: item.LeadSourceId || item.Id,
         Active: isMasterActive(item.Active) ? "0" : "1",
       });
     } catch (error) {
@@ -117,10 +99,10 @@ export default function Page() {
     if (!deleteId) return;
     try {
       await remove.mutateAsync(deleteId);
-      toast.success("Lead source deleted.");
+      toast.success("Lead source record removed.");
       setDeleteId(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete lead source.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -142,17 +124,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
+            <Link
+              href="/LeadSourcemaster/add"
               className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add Source</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -214,28 +193,18 @@ export default function Page() {
           data={filtered}
           loading={isLoading}
           onEdit={(item) => {
-            setEditing(item);
-            setOpen(true);
+             router.push(`/LeadSourcemaster/edit/${item.LeadSourceId || item.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
 
-      <LeadSourceModal
-        key={`${open ? "open" : "closed"}-${editing?.Id ?? "new"}`}
-        open={open}
-        data={editing}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );

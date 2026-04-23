@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Package,
   CheckCircle2,
@@ -14,18 +16,16 @@ import {
 import { clsx } from "clsx";
 import { useProductMaster } from "@/app/hooks/useMasters";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { ProductRecord, ProductFormValues } from "@/app/types/master";
+import type { ProductRecord } from "@/app/types/master";
 
 import ProductTable from "./components/ProductTable";
-import ProductModal from "./components/ProductModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 export default function Page() {
-  const { data, isLoading, create, update, remove } = useProductMaster();
-  const products: ProductRecord[] = data;
+  const router = useRouter();
+  const { data, isLoading, update, remove } = useProductMaster();
+  const products: ProductRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<ProductRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -43,7 +43,7 @@ export default function Page() {
         (status === "active" && active) ||
         (status === "inactive" && !active);
 
-      const searchable = [item.ProductName, item.ProductCode]
+      const searchable = [item.Name, item.Code]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -83,32 +83,11 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: ProductFormValues) => {
-    try {
-      if (editing) {
-        await update.mutateAsync({ ...form, Id: editing.Id } as ProductRecord);
-        toast.success("Product updated.");
-      } else {
-        await create.mutateAsync(form as ProductRecord);
-        toast.success("Product created.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save product.");
-    }
-  };
-
   const handleToggle = async (item: ProductRecord) => {
     try {
       await update.mutateAsync({
         ...item,
+        ProductId: item.ProductId || item.Id,
         Active: isMasterActive(item.Active) ? "0" : "1",
       });
     } catch (error) {
@@ -145,17 +124,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
+            <Link
+              href="/Productmaster/add"
               className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add Product</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -217,28 +193,18 @@ export default function Page() {
           data={filtered}
           loading={isLoading}
           onEdit={(item) => {
-            setEditing(item);
-            setOpen(true);
+            router.push(`/Productmaster/edit/${item.ProductId || item.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
 
-      <ProductModal
-        key={`${open ? "open" : "closed"}-${editing?.Id ?? "new"}`}
-        open={open}
-        data={editing}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );

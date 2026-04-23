@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Building2,
   CheckCircle2,
@@ -14,18 +16,16 @@ import {
 import { clsx } from "clsx";
 import { useSimpleMaster } from "@/app/hooks/useMasters";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { SimpleMasterRecord, SimpleMasterFormValues } from "@/app/types/master";
+import type { DepartmentRecord } from "@/app/types/master";
 
 import DepartmentTable from "./components/DepartmentTable";
-import DepartmentModal from "./components/DepartmentModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 export default function Page() {
-  const { data, isLoading, create, update, remove } = useSimpleMaster("department");
-  const departments: SimpleMasterRecord[] = data;
+  const router = useRouter();
+  const { data, isLoading, update, remove } = useSimpleMaster<DepartmentRecord>("department");
+  const departments: DepartmentRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<SimpleMasterRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -43,7 +43,7 @@ export default function Page() {
         (status === "active" && active) ||
         (status === "inactive" && !active);
 
-      const searchable = [dept.Name, dept.Code]
+      const searchable = [dept.DepartmentName, dept.Name, dept.DepartmentCode]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -83,29 +83,7 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: SimpleMasterFormValues) => {
-    try {
-      if (editing) {
-        await update.mutateAsync({ ...form, Id: editing.Id } as SimpleMasterRecord);
-        toast.success("Department updated.");
-      } else {
-        await create.mutateAsync(form as SimpleMasterRecord);
-        toast.success("Department created.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save department.");
-    }
-  };
-
-  const handleToggle = async (dept: SimpleMasterRecord) => {
+  const handleToggle = async (dept: DepartmentRecord) => {
     try {
       await update.mutateAsync({
         ...dept,
@@ -120,10 +98,10 @@ export default function Page() {
     if (!deleteId) return;
     try {
       await remove.mutateAsync(deleteId);
-      toast.success("Department deleted.");
+      toast.success("Department record removed.");
       setDeleteId(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete department.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -145,17 +123,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
+            <Link
+              href="/DepartmentMaster/add"
               className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add Department</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -217,28 +192,18 @@ export default function Page() {
           data={filtered}
           loading={isLoading}
           onEdit={(dept) => {
-            setEditing(dept);
-            setOpen(true);
+            router.push(`/DepartmentMaster/edit/${dept.DepartmentId || dept.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
 
-      <DepartmentModal
-        key={`${open ? "open" : "closed"}-${editing?.Id ?? "new"}`}
-        open={open}
-        data={editing}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );

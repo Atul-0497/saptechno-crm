@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Users,
   CheckCircle2,
@@ -14,18 +16,16 @@ import {
 import { clsx } from "clsx";
 import { useDealerMaster } from "@/app/hooks/useMasters";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { DealerRecord, DealerFormValues } from "@/app/types/master";
+import type { DealerRecord } from "@/app/types/master";
 
 import DealerTable from "./components/DealerTable";
-import DealerModal from "./components/DealerModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 export default function Page() {
-  const { data, cities, isLoading, isLookupLoading, create, update, remove } = useDealerMaster();
-  const dealers: DealerRecord[] = data;
+  const router = useRouter();
+  const { data, cities, isLoading, isLookupLoading, update, remove } = useDealerMaster();
+  const dealers: DealerRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<DealerRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -88,32 +88,11 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: DealerFormValues) => {
-    try {
-      if (editing) {
-        await update.mutateAsync({ ...form, Id: editing.Id } as DealerRecord);
-        toast.success("Dealer updated.");
-      } else {
-        await create.mutateAsync(form as DealerRecord);
-        toast.success("Dealer created.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save dealer.");
-    }
-  };
-
   const handleToggle = async (item: DealerRecord) => {
     try {
       await update.mutateAsync({
         ...item,
+        DealerId: item.DealerId || item.Id,
         Active: isMasterActive(item.Active) ? "0" : "1",
       });
     } catch (error) {
@@ -125,10 +104,10 @@ export default function Page() {
     if (!deleteId) return;
     try {
       await remove.mutateAsync(deleteId);
-      toast.success("Dealer deleted.");
+      toast.success("Dealer record removed.");
       setDeleteId(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete dealer.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -150,17 +129,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
+            <Link
+              href="/DealerMaster/add"
               className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add Dealer</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -223,29 +199,18 @@ export default function Page() {
           cities={cities}
           loading={isLoading || isLookupLoading}
           onEdit={(dealer) => {
-            setEditing(dealer);
-            setOpen(true);
+            router.push(`/DealerMaster/edit/${dealer.DealerId || dealer.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
 
-      <DealerModal
-        key={`${open ? "open" : "closed"}-${editing?.Id ?? "new"}`}
-        open={open}
-        data={editing}
-        cities={cities}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );

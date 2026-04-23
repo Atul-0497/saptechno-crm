@@ -17,7 +17,6 @@ export const isMasterActive = (active: ActiveValue | unknown) => !isMasterInacti
 export const normalizeActiveFlag = (active: ActiveValue | unknown) =>
   isMasterInactive(active) ? "0" : "1";
 
-// Aliases for transition from companyStatus.ts
 export const isCompanyInactive = isMasterInactive;
 export const isCompanyActive = isMasterActive;
 

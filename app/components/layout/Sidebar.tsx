@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  ChevronDown, 
-  ChevronLeft, 
-  ChevronRight, 
-  ChevronUp, 
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
   Zap,
   MoreHorizontal,
   LogOut,
@@ -15,8 +15,8 @@ import {
 import clsx from "clsx";
 import { useMobileMenu } from "../../contexts/MobileMenuContext";
 import { useCustomization } from "../../contexts/CustomizationContext";
-import { 
-  TOP_NAV_ITEMS as topItems, 
+import {
+  TOP_NAV_ITEMS as topItems,
   NAV_SECTIONS as sections,
   type NavItem as SidebarItem,
   type NavSection as SidebarSection
@@ -71,12 +71,13 @@ export const Sidebar = () => {
 
       <aside
         className={clsx(
-          "fixed z-50 flex h-full shrink-0 flex-col overflow-visible bg-slate-950 text-slate-400 shadow-2xl transition-all duration-300 ease-in-out dark:bg-slate-950",
+          "fixed z-50 flex h-full shrink-0 flex-col overflow-visible bg-slate-950 text-slate-400 transition-all duration-300 ease-in-out",
           layout === "sidebar" ? "md:relative md:translate-x-0" : "md:hidden",
-          effectivelyCollapsed ? "md:w-[80px]" : "w-[260px] md:w-[260px]",
+          effectivelyCollapsed ? "md:w-[80px]" : "w-[230px] md:w-[230px]",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
+
         <button
           onClick={() => setIsCollapsed((current) => !current)}
           className="absolute -right-3 top-6 z-20 hidden rounded-full border border-slate-800 bg-slate-950 p-1.5 text-white transition-all hover:scale-110 hover:bg-slate-900 md:block"
@@ -89,7 +90,7 @@ export const Sidebar = () => {
           href="/"
           onClick={isMobile ? close : undefined}
           className={clsx(
-            "flex h-[76px] shrink-0 items-center gap-3 overflow-hidden border-b border-slate-900 px-6",
+            "flex h-[76px] shrink-0 items-center gap-3 overflow-hidden px-6",
             effectivelyCollapsed && "justify-center px-0"
           )}
         >
@@ -130,8 +131,8 @@ export const Sidebar = () => {
                       }}
                       className={clsx(
                         "mx-auto flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200",
-                        active 
-                          ? "bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20" 
+                        active
+                          ? "bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20"
                           : "text-slate-500 hover:bg-slate-900 hover:text-white hover:shadow-lg"
                       )}
                     >
@@ -143,7 +144,7 @@ export const Sidebar = () => {
             </ul>
           ) : (
             <>
-              <div className="mb-4 px-4 text-[11px] font-extrabold tracking-widest text-slate-500 uppercase dark:text-slate-400">OVERVIEW</div>
+              <div className="mb-4 px-4 text-[11px] font-extrabold tracking-widest text-slate-400 uppercase dark:text-slate-400">OVERVIEW</div>
 
               <ul className="space-y-1.5">
                 {topItems.map((item, index) => {
@@ -157,8 +158,8 @@ export const Sidebar = () => {
                         onClick={handleLinkClick}
                         className={clsx(
                           "group flex h-11 items-center gap-3 rounded-lg px-4 py-2 text-[15px] font-semibold transition-all duration-200",
-                          active 
-                            ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                          active
+                            ? "bg-primary text-white shadow-lg shadow-primary/20"
                             : "text-slate-400 hover:bg-slate-900 hover:text-white dark:text-slate-200"
                         )}
                       >
@@ -224,8 +225,8 @@ export const Sidebar = () => {
                             onClick={() => toggleSection(section.name)}
                             className={clsx(
                               "flex w-full items-center justify-between rounded-lg px-2 text-left text-[15px] font-semibold transition-all duration-200",
-                              active 
-                                ? "text-white" 
+                              active
+                                ? "text-white"
                                 : "text-slate-400 hover:bg-slate-900/50 hover:text-white dark:text-slate-200"
                             )}
                           >
@@ -261,8 +262,8 @@ export const Sidebar = () => {
                                   onClick={handleLinkClick}
                                   className={clsx(
                                     "flex items-center gap-3 rounded-md px-3 py-2 text-[14px] font-medium transition-all duration-200",
-                                    childActive 
-                                      ? "bg-slate-900 text-primary font-bold" 
+                                    childActive
+                                      ? "bg-slate-900 text-primary font-bold"
                                       : "text-slate-500 hover:text-slate-100 dark:text-slate-300"
                                   )}
                                 >
@@ -287,7 +288,7 @@ export const Sidebar = () => {
 
         <div
           className={clsx(
-            "mt-auto flex shrink-0 border-t border-slate-900 p-4",
+            "mt-auto flex shrink-0 p-4",
             effectivelyCollapsed ? "flex-col items-center gap-6" : "items-center justify-between"
           )}
         >
@@ -302,8 +303,8 @@ export const Sidebar = () => {
               </div>
             )}
           </div>
-          <button 
-            className="group flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-red-500/10 hover:text-red-500" 
+          <button
+            className="group flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-red-500/10 hover:text-red-500"
             title="Logout"
           >
             <LogOut size={18} className="transition-transform group-hover:-translate-x-0.5" />

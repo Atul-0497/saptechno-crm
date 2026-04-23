@@ -8,14 +8,14 @@ import {
   Trash2,
 } from "lucide-react";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { SimpleMasterRecord } from "@/app/types/master";
+import type { DepartmentRecord } from "@/app/types/master";
 
 type DepartmentTableProps = {
-  data: SimpleMasterRecord[];
+  data: DepartmentRecord[];
   loading: boolean;
-  onEdit: (dept: SimpleMasterRecord) => void;
+  onEdit: (dept: DepartmentRecord) => void;
   onDelete: (id: string) => void;
-  onToggleActive: (dept: SimpleMasterRecord) => void | Promise<void>;
+  onToggleActive: (dept: DepartmentRecord) => void | Promise<void>;
 };
 
 export default function DepartmentTable({
@@ -62,18 +62,18 @@ export default function DepartmentTable({
                 const isActive = isMasterActive(dept.Active);
 
                 return (
-                  <tr key={dept.Id} className="transition hover:bg-cyan-50/30 dark:hover:bg-slate-800/40">
+                  <tr key={dept.DepartmentId ?? dept.Id} className="transition hover:bg-cyan-50/30 dark:hover:bg-slate-800/40">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white uppercase dark:bg-slate-800 dark:text-slate-200">
-                          {(dept.Name || "D")[0]}
+                          {(dept.DepartmentName || dept.Name || "D")[0]}
                         </div>
-                        <div className="font-semibold text-gray-950 dark:text-white">{dept.Name || "Untitled department"}</div>
+                        <div className="font-semibold text-gray-950 dark:text-white">{dept.DepartmentName || dept.Name || "Untitled department"}</div>
                       </div>
                     </td>
                     <td className="px-5 py-4">
                       <span className="font-mono text-xs font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded dark:bg-slate-800 dark:text-slate-300">
-                        {dept.Code || "—"}
+                        {dept.DepartmentCode || "—"}
                       </span>
                     </td>
                     <td className="px-5 py-4">
@@ -99,7 +99,7 @@ export default function DepartmentTable({
                           Edit
                         </button>
                         <button
-                          onClick={() => onDelete(dept.Id)}
+                          onClick={() => onDelete(String(dept.DepartmentId ?? dept.Id))}
                           className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-rose-900/20 dark:hover:text-rose-400"
                         >
                           <Trash2 size={16} />
@@ -126,15 +126,15 @@ export default function DepartmentTable({
             const isActive = isMasterActive(dept.Active);
 
             return (
-              <article key={dept.Id} className="p-4">
+              <article key={dept.DepartmentId ?? dept.Id} className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white uppercase dark:bg-slate-800 dark:text-slate-200">
-                      {(dept.Name || "D")[0]}
+                      {(dept.DepartmentName || dept.Name || "D")[0]}
                     </div>
                     <div className="min-w-0">
-                      <h3 className="truncate font-semibold text-gray-950 dark:text-white">{dept.Name || "Untitled department"}</h3>
-                      <p className="font-mono text-xs text-gray-500 dark:text-slate-400">{dept.Code || "No code"}</p>
+                      <h3 className="truncate font-semibold text-gray-950 dark:text-white">{dept.DepartmentName || dept.Name || "Untitled department"}</h3>
+                      <p className="font-mono text-xs text-gray-500 dark:text-slate-400">{dept.DepartmentCode || "No code"}</p>
                     </div>
                   </div>
                   <button
@@ -158,7 +158,7 @@ export default function DepartmentTable({
                     Edit
                   </button>
                   <button
-                    onClick={() => onDelete(dept.Id)}
+                    onClick={() => onDelete(String(dept.DepartmentId ?? dept.Id))}
                     className="flex-1 rounded-lg border border-rose-200 px-3 py-2 text-sm font-medium text-rose-700 dark:border-rose-900/20 dark:text-rose-400"
                   >
                     Delete

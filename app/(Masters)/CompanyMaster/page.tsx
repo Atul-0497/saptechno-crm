@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Building2,
   CheckCircle2,
@@ -14,24 +16,23 @@ import {
 import { clsx } from "clsx";
 import { useCompanyMaster } from "@/app/hooks/useMasters";
 import CompanyTable from "./components/CompanyTable";
-import CompanyModal from "./components/CompanyModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import { buildCompanyPayload } from "@/app/lib/utils/companyPayload";
 import { isCompanyActive } from "@/app/lib/utils/masterStatus";
 import type { CompanyRecord, CompanyFormValues } from "@/app/types/master";
 
 export default function Page() {
-  const { data, isLoading, create, update, remove } = useCompanyMaster();
-  const companies: CompanyRecord[] = data;
+  const router = useRouter();
+  const { data, isLoading, update, remove } = useCompanyMaster();
+  const companies: CompanyRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<CompanyRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
 
   const activeCompanies = companies.filter((company) => isCompanyActive(company.Active));
   const inactiveCompanies = companies.length - activeCompanies.length;
+
   const filteredCompanies = useMemo(() => {
     const search = query.trim().toLowerCase();
 
@@ -86,43 +87,9 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: CompanyFormValues) => {
-    try {
-      if (editing) {
-        const original = companies.find(
-          (c) => c.CompanyId === editing.CompanyId
-        );
-
-        const payload = buildCompanyPayload(
-          { ...form, CompanyId: editing.CompanyId },
-          original,
-          "update"
-        );
-
-        await update.mutateAsync(payload);
-        toast.success("Company updated.");
-      } else {
-        const payload = buildCompanyPayload(form, {}, "create");
-        await create.mutateAsync(payload);
-        toast.success("Company created.");
-      }
-
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save company.");
-    }
-  };
-
   const handleInlineUpdate = async (updated: CompanyFormValues) => {
     const original = companies.find(
-      (c) => c.CompanyId === updated.CompanyId
+      (c) => String(c.CompanyId || c.Id) === String(updated.CompanyId || updated.Id)
     );
 
     const payload = buildCompanyPayload(updated, original, "update");
@@ -142,22 +109,19 @@ export default function Page() {
   };
 
   const handleDelete = async () => {
-    const original = companies.find((c) => c.CompanyId === deleteId);
+    const idToUse = deleteId;
+    const original = companies.find((c) => String(c.CompanyId || c.Id) === idToUse);
 
     if (!original) return;
 
-    const payload = buildCompanyPayload(
-      original,
-      original,
-      "delete"
-    );
+    const payload = buildCompanyPayload(original, original, "delete");
 
     try {
       await remove.mutateAsync(payload);
       toast.success("Company deleted.");
       setDeleteId(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete company.");
+       toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -179,17 +143,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
+            <Link
+              href="/CompanyMaster/add"
               className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add Company</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -252,8 +213,7 @@ export default function Page() {
         data={filteredCompanies}
         loading={isLoading}
         onEdit={(c) => {
-          setEditing(c);
-          setOpen(true);
+          router.push(`/CompanyMaster/edit/${c.CompanyId || c.Id}`);
         }}
         onDelete={(id) => setDeleteId(id)}
         onInlineUpdate={handleInlineUpdate}
@@ -261,20 +221,11 @@ export default function Page() {
       />
       </section>
 
-      <CompanyModal
-        key={`${open ? "open" : "closed"}-${editing?.CompanyId ?? "new"}`}
-        open={open}
-        data={editing}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );

@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   MapPin,
   CheckCircle2,
@@ -14,18 +16,16 @@ import {
 import { clsx } from "clsx";
 import { useCityMaster } from "@/app/hooks/useMasters";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { CityRecord, CityFormValues } from "@/app/types/master";
+import type { CityRecord } from "@/app/types/master";
 
 import CityTable from "./components/CityTable";
-import CityModal from "./components/CityModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 export default function Page() {
-  const { states, data, isLoading, create, update, remove } = useCityMaster();
-  const cities: CityRecord[] = data;
+  const router = useRouter();
+  const { states, data, isLoading, update, remove } = useCityMaster();
+  const cities: CityRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<CityRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -46,6 +46,7 @@ export default function Page() {
       const stateName = states.find(s => String(s.StateId ?? s.Id) === String(item.StateId))?.StateName || "";
       const searchable = [
         item.CityName,
+        item.Name,
         stateName,
       ]
         .filter(Boolean)
@@ -87,36 +88,6 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: CityFormValues) => {
-    try {
-      const idValue = editing ? String(editing.CityId ?? editing.Id) : "0";
-      const payload: any = {
-        CityId:   idValue,
-        CityName: String(form.CityName ?? "").trim(),
-        StateId:  String(form.StateId ?? ""),
-        Active:   form.Active,
-      };
-
-      if (editing) {
-        await update.mutateAsync(payload);
-        toast.success("City updated.");
-      } else {
-        await create.mutateAsync(payload);
-        toast.success("City created.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save city.");
-    }
-  };
-
   const handleToggle = async (city: CityRecord) => {
     try {
       await update.mutateAsync({
@@ -133,10 +104,10 @@ export default function Page() {
     if (!deleteId) return;
     try {
       await remove.mutateAsync(deleteId);
-      toast.success("City deleted.");
+      toast.success("City record removed.");
       setDeleteId(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete city.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -158,18 +129,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
-              disabled={states.length === 0}
-              className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            <Link
+              href="/Location/City/add"
+              className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add City</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -199,7 +166,7 @@ export default function Page() {
         <div className="flex flex-col gap-4 border-b border-gray-100 p-6 dark:border-slate-800 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-950 dark:text-white">City Registry</h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">
+            <p className="mt-1 text-sm text-gray-500 dark:text-gary-400">
               Showing {filtered.length} of {cities.length} cities shown
             </p>
           </div>
@@ -232,29 +199,18 @@ export default function Page() {
           states={states}
           loading={isLoading}
           onEdit={(c) => {
-            setEditing(c);
-            setOpen(true);
+             router.push(`/Location/City/edit/${c.CityId || c.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
 
-      <CityModal
-        key={`${open ? "open" : "closed"}-${String(editing?.CityId ?? editing?.Id ?? "new")}`}
-        open={open}
-        data={editing}
-        states={states}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );

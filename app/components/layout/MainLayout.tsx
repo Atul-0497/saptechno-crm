@@ -14,14 +14,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { layout } = useCustomization();
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-slate-950 overflow-hidden w-full transition-colors duration-300">
+    <div className="flex h-screen dark:bg-slate-950 overflow-hidden w-full transition-colors duration-300">
       <Sidebar />
-      
+
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar />
         <Toaster position="top-right" />
-        <main className="p-4 sm:p-6 overflow-y-auto flex-1 h-full">
-          <div className="max-w-7xl mx-auto h-full">
+        <main className="overflow-y-auto flex-1 dark:bg-slate-950">
+          <div className="w-full h-full">
             {children}
           </div>
         </main>

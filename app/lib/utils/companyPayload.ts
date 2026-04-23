@@ -1,9 +1,10 @@
 import { normalizeActiveFlag } from "./masterStatus";
 import type { CompanyRecord, CompanyFormValues, CompanyPayload } from "@/app/types/master";
+import { type CompanyFormData } from "@/app/lib/validations/masterSchemas";
 
 export const buildCompanyPayload = (
-  form: CompanyFormValues = {},
-  original: CompanyFormValues = {},
+  form: CompanyFormData | CompanyFormValues | Partial<CompanyRecord> = {},
+  original: CompanyFormValues | Partial<CompanyRecord> = {},
   mode: "create" | "update" | "delete"
 ): CompanyPayload => {
   const normalizeDate = (value: CompanyRecord["PlanStart"]) => {
@@ -11,7 +12,7 @@ export const buildCompanyPayload = (
     return date ? `${date}T00:00:00` : "";
   };
 
-  const companyId = String(form.CompanyId || original.CompanyId || "");
+  const companyId = String((form as any).CompanyId || (original as any).CompanyId || "");
 
   return {
     CompanyId: mode === "create" && !companyId ? "0" : companyId,

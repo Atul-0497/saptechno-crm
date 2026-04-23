@@ -62,9 +62,9 @@ export default function IndustryTable({
                     <td className="px-5 py-4 text-left">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white uppercase dark:bg-slate-800 dark:text-slate-200">
-                          {(item.Name || "I")[0]}
+                          {(item.IndustryName || item.Name || "I")[0]}
                         </div>
-                        <div className="font-semibold text-gray-950 dark:text-white text-left">{item.Name || "Untitled industry"}</div>
+                        <div className="font-semibold text-gray-950 dark:text-white text-left">{item.IndustryName || item.Name || "Untitled industry"}</div>
                       </div>
                     </td>
                     <td className="px-5 py-4 text-left">
@@ -122,10 +122,10 @@ export default function IndustryTable({
                 <div className="flex items-start justify-between gap-3 text-left">
                   <div className="flex min-w-0 items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white uppercase dark:bg-slate-800 dark:text-slate-200">
-                      {(item.Name || "I")[0]}
+                      {(item.IndustryName || item.Name || "I")[0]}
                     </div>
                     <div className="min-w-0">
-                      <h3 className="truncate font-semibold text-gray-950 dark:text-white">{item.Name || "Untitled industry"}</h3>
+                      <h3 className="truncate font-semibold text-gray-950 dark:text-white">{item.IndustryName || item.Name || "Untitled industry"}</h3>
                     </div>
                   </div>
                   <button

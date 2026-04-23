@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import {
   Briefcase,
@@ -14,18 +16,15 @@ import {
 import { clsx } from "clsx";
 import { useSimpleMaster } from "@/app/hooks/useMasters";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { SimpleMasterRecord, SimpleMasterFormValues } from "@/app/types/master";
-
+import type { DesignationRecord } from "@/app/types/master";
 import DesignationTable from "./components/DesignationTable";
-import DesignationModal from "./components/DesignationModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 export default function Page() {
-  const { data, isLoading, create, update, remove } = useSimpleMaster("designation");
-  const designations: SimpleMasterRecord[] = data;
+  const router = useRouter();
+  const { data, isLoading, update, remove } = useSimpleMaster<DesignationRecord>("designation");
+  const designations: DesignationRecord[] = data;
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<SimpleMasterRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -36,14 +35,14 @@ export default function Page() {
   const filtered = useMemo(() => {
     const search = query.trim().toLowerCase();
 
-    return designations.filter((item) => {
-      const active = isMasterActive(item.Active);
+    return designations.filter((desig) => {
+      const active = isMasterActive(desig.Active);
       const matchesStatus =
         status === "all" ||
         (status === "active" && active) ||
         (status === "inactive" && !active);
 
-      const searchable = [item.Name, item.Level]
+      const searchable = [desig.DesignationName, desig.Name, desig.DesignationLevel]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -83,29 +82,7 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: SimpleMasterFormValues) => {
-    try {
-      if (editing) {
-        await update.mutateAsync({ ...form, Id: editing.Id } as SimpleMasterRecord);
-        toast.success("Designation updated.");
-      } else {
-        await create.mutateAsync(form as SimpleMasterRecord);
-        toast.success("Designation created.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save designation.");
-    }
-  };
-
-  const handleToggle = async (item: SimpleMasterRecord) => {
+  const handleToggle = async (item: DesignationRecord) => {
     try {
       await update.mutateAsync({
         ...item,
@@ -145,17 +122,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
+            <Link
+              href="/DesignationMaster/add"
               className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add Designation</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -217,22 +191,12 @@ export default function Page() {
           data={filtered}
           loading={isLoading}
           onEdit={(item) => {
-            setEditing(item);
-            setOpen(true);
+            router.push(`/DesignationMaster/edit/${item.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
-
-      <DesignationModal
-        key={`${open ? "open" : "closed"}-${editing?.Id ?? "new"}`}
-        open={open}
-        data={editing}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
 
       <DeleteConfirmModal
         open={!!deleteId}

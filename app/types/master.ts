@@ -96,10 +96,9 @@ export interface VendorRecord extends BaseMasterRecord {
 export interface ProductRecord extends BaseMasterRecord {
   Id?: string;
   ProductId?: string;
-  ProductName?: string;
   Name?: string;
-  ProductCode?: string;
-  Price?: number | string;
+  Code?: string;
+  OtherInfoJson?: string;
 }
 
 // 7. Dealer Master
@@ -160,6 +159,20 @@ export interface CityRecord {
   Active?: ActiveValue;
 }
 
+// 13. Pincode Master
+export interface PincodeRecord extends BaseMasterRecord {
+  Id?: string;
+  PincodeId?: string;
+  Pincode?: string;
+  CityId?: string;
+  StateId?: string;
+  CountryId?: string;
+  // Optional for UI display
+  CityName?: string;
+  StateName?: string;
+  CountryName?: string;
+}
+
 // For generic tables like SimpleMasterPage
 export interface SimpleMasterRecord extends BaseMasterRecord {
   Id: string;
@@ -168,16 +181,19 @@ export interface SimpleMasterRecord extends BaseMasterRecord {
   Level?: string;
 }
 
-export type SimpleMasterFormValues = Partial<SimpleMasterRecord>;
-export type EmployeeFormValues     = Partial<EmployeeRecord>;
-export type VendorFormValues       = Partial<VendorRecord>;
-export type ProductFormValues      = Partial<ProductRecord>;
-export type DealerFormValues       = Partial<DealerRecord>;
-export type LeadSourceFormValues   = Partial<LeadSourceRecord>;
-export type IndustryFormValues     = Partial<IndustryRecord>;
-export type CountryFormValues      = Partial<CountryRecord>;
-export type StateFormValues        = Partial<StateRecord>;
-export type CityFormValues         = Partial<CityRecord>;
+export type SimpleMasterFormValues = Omit<Partial<SimpleMasterRecord>, "Active"> & { Active?: string | boolean };
+export type EmployeeFormValues     = Omit<Partial<EmployeeRecord>, "Active"> & { Active?: string | boolean };
+export type VendorFormValues       = Omit<Partial<VendorRecord>, "Active"> & { Active?: string | boolean };
+export type ProductFormValues = Omit<Partial<ProductRecord>, "Active"> & {
+  Active?: string | boolean;
+};
+export type DealerFormValues       = Omit<Partial<DealerRecord>, "Active"> & { Active?: string | boolean };
+export type LeadSourceFormValues   = Omit<Partial<LeadSourceRecord>, "Active"> & { Active?: string | boolean };
+export type IndustryFormValues     = Omit<Partial<IndustryRecord>, "Active"> & { Active?: string | boolean };
+export type CountryFormValues      = Omit<Partial<CountryRecord>, "Active"> & { Active?: string | boolean };
+export type StateFormValues        = Omit<Partial<StateRecord>, "Active"> & { Active?: string | boolean };
+export type CityFormValues         = Omit<Partial<CityRecord>, "Active"> & { Active?: string | boolean };
+export type PincodeFormValues      = Omit<Partial<PincodeRecord>, "Active"> & { Active?: string | boolean };
 
 // Union type covering all master table kinds
 export type MasterKind =
@@ -192,4 +208,5 @@ export type MasterKind =
   | "country"
   | "state"
   | "city"
+  | "pincode"
   | "company";

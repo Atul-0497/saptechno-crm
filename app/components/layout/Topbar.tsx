@@ -30,7 +30,7 @@ export const Topbar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-20 flex h-[76px] items-center justify-between border-b border-gray-200 bg-white/95 px-4 backdrop-blur transition-all dark:border-slate-800 dark:bg-slate-950/95 sm:px-6">
+      <header className="sticky top-0 z-20 flex h-[76px] items-center justify-between bg-white/90 px-4 backdrop-blur-xl transition-all border-b border-indigo-100/80 shadow-sm shadow-indigo-100/40 dark:bg-slate-950/95 dark:border-slate-800 dark:shadow-none sm:px-6">
         <div className="flex items-center gap-4 lg:gap-8">
           {/* Always show Mobile Menu Trigger on small screens */}
           <button
@@ -126,10 +126,10 @@ export const Topbar = () => {
 
           {layout === "sidebar" && (
             <div className="hidden max-w-sm flex-1 sm:flex lg:w-72">
-              <div className="group flex w-full items-center rounded-xl border border-gray-200 bg-gray-50/70 px-4 py-2 transition-all hover:border-primary/50 hover:bg-white dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-primary/50 dark:hover:bg-slate-900">
-                <Search size={17} className="text-gray-400 transition-colors group-hover:text-primary dark:text-gray-500" />
+              <div className="group flex w-full items-center rounded-xl border border-indigo-200/60 bg-white/80 px-4 py-2 shadow-sm transition-all hover:border-indigo-400/60 hover:bg-white hover:shadow-md dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-primary/50 dark:hover:bg-slate-900">
+                <Search size={17} className="text-indigo-400 transition-colors group-hover:text-indigo-500 dark:text-gray-500" />
                 <input
-                  className="ml-2.5 w-full bg-transparent text-sm font-medium text-gray-700 outline-none placeholder:text-gray-400 dark:text-white dark:placeholder:text-slate-400"
+                  className="ml-2.5 w-full bg-transparent text-sm font-medium text-slate-700 outline-none placeholder:text-slate-400 dark:text-white dark:placeholder:text-slate-400"
                   placeholder="Search anything..."
                 />
               </div>

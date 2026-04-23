@@ -6,14 +6,14 @@ import {
   Trash2,
 } from "lucide-react";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { SimpleMasterRecord } from "@/app/types/master";
+import type { DesignationRecord } from "@/app/types/master";
 
 type DesignationTableProps = {
-  data: SimpleMasterRecord[];
+  data: DesignationRecord[];
   loading: boolean;
-  onEdit: (item: SimpleMasterRecord) => void;
+  onEdit: (item: DesignationRecord) => void;
   onDelete: (id: string) => void;
-  onToggleActive: (item: SimpleMasterRecord) => void | Promise<void>;
+  onToggleActive: (item: DesignationRecord) => void | Promise<void>;
 };
 
 export default function DesignationTable({
@@ -60,18 +60,18 @@ export default function DesignationTable({
                 const isActive = isMasterActive(item.Active);
 
                 return (
-                  <tr key={item.Id} className="transition hover:bg-cyan-50/30 dark:hover:bg-slate-800/40">
+                  <tr key={item.DesignationId ?? item.Id} className="transition hover:bg-cyan-50/30 dark:hover:bg-slate-800/40">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white uppercase dark:bg-slate-800 dark:text-slate-200">
-                          {(item.Name || "D")[0]}
+                          {(item.DesignationName || item.Name || "D")[0]}
                         </div>
-                        <div className="font-semibold text-gray-950 dark:text-white">{item.Name || "Untitled designation"}</div>
+                        <div className="font-semibold text-gray-950 dark:text-white">{item.DesignationName || item.Name || "Untitled designation"}</div>
                       </div>
                     </td>
                     <td className="px-5 py-4">
                       <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
-                        {item.Level || "—"}
+                        {item.DesignationLevel || "—"}
                       </span>
                     </td>
                     <td className="px-5 py-4">
@@ -97,7 +97,7 @@ export default function DesignationTable({
                           Edit
                         </button>
                         <button
-                          onClick={() => onDelete(item.Id)}
+                          onClick={() => onDelete(String(item.DesignationId ?? item.Id))}
                           className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-rose-900/20 dark:hover:text-rose-400"
                         >
                           <Trash2 size={16} />
@@ -124,15 +124,15 @@ export default function DesignationTable({
             const isActive = isMasterActive(item.Active);
 
             return (
-              <article key={item.Id} className="p-4">
+              <article key={item.DesignationId ?? item.Id} className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-950 text-sm font-semibold text-white uppercase dark:bg-slate-800 dark:text-slate-200">
-                      {(item.Name || "D")[0]}
+                      {(item.DesignationName || item.Name || "D")[0]}
                     </div>
                     <div className="min-w-0">
-                      <h3 className="truncate font-semibold text-gray-950 dark:text-white">{item.Name || "Untitled designation"}</h3>
-                      <p className="text-xs text-gray-500 dark:text-slate-400">Level: {item.Level || "—"}</p>
+                      <h3 className="truncate font-semibold text-gray-950 dark:text-white">{item.DesignationName || item.Name || "Untitled designation"}</h3>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">Level: {item.DesignationLevel || "—"}</p>
                     </div>
                   </div>
                   <button
@@ -156,7 +156,7 @@ export default function DesignationTable({
                     Edit
                   </button>
                   <button
-                    onClick={() => onDelete(item.Id)}
+                    onClick={() => onDelete(String(item.DesignationId ?? item.Id))}
                     className="flex-1 rounded-lg border border-rose-200 px-3 py-2 text-sm font-medium text-rose-700 dark:border-rose-900/20 dark:text-rose-400"
                   >
                     Delete

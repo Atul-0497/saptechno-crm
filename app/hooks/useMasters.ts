@@ -8,6 +8,8 @@ import type {
   CompanyRecord,
   CountryRecord,
   DealerRecord,
+  DepartmentRecord,
+  DesignationRecord,
   EmployeeRecord,
   IndustryRecord,
   LeadSourceRecord,
@@ -42,36 +44,42 @@ export const masterKeys = {
   states: (countryId?: string) => ["states", countryId ?? "all"] as const,
   cities: (stateId?: string) => ["cities", stateId ?? "all"] as const,
   companies: () => ["companies"] as const,
+  pincodes: (cityId?: string) => ["pincodes", cityId ?? "all"] as const,
 };
 
 
-// ─── Department ───────────────────────────────────────────────────────────
+// ─── Department / Designation (Generic Simple Master) ───────────────────────
 
-export const useSimpleMaster = (kind: "department" | "designation") => {
+export const useDepartmentMaster = () => useSimpleMaster<DepartmentRecord>("department");
+export const useDesignationMaster = () => useSimpleMaster<DesignationRecord>("designation");
+
+export const useSimpleMaster = <T extends { Id?: string; Active?: any }>(
+  kind: "department" | "designation"
+) => {
   const qc = useQueryClient();
   const mounted = useIsMounted();
   const queryKey =
     kind === "department" ? masterKeys.departments() : masterKeys.designations();
 
-  const { data = [], isLoading } = useQuery({
+  const { data = [], isLoading } = useQuery<T[]>({
     queryKey,
     queryFn: () =>
-      kind === "department"
+      (kind === "department"
         ? mastersAPI.getDepartments()
-        : mastersAPI.getDesignations(),
+        : mastersAPI.getDesignations()) as unknown as Promise<T[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const create = useMutation({
-    mutationFn: (data: SimpleMasterRecord) =>
-      mastersAPI.createSimple(kind, data),
+    mutationFn: (data: T) =>
+      mastersAPI.createSimple(kind, data as any),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: SimpleMasterRecord) =>
-      mastersAPI.updateSimple(kind, data),
+    mutationFn: (data: T) =>
+      mastersAPI.updateSimple(kind, data as any),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -612,6 +620,38 @@ export const useCompanyMaster = () => {
     onSettled: () => {
       qc.invalidateQueries({ queryKey });
     },
+  });
+
+  return { data, isLoading: mounted && isLoading, create, update, remove };
+};
+
+// ─── Pincode ─────────────────────────────────────────────────────────────
+
+export const usePincodeMaster = (cityId?: string) => {
+  const qc = useQueryClient();
+  const mounted = useIsMounted();
+  const queryKey = masterKeys.pincodes(cityId);
+
+  const { data = [], isLoading } = useQuery({
+    queryKey,
+    queryFn: () => mastersAPI.getPincodes(cityId),
+    enabled: mounted,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const create = useMutation({
+    mutationFn: mastersAPI.createPincode,
+    onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.pincodes() }),
+  });
+
+  const update = useMutation({
+    mutationFn: mastersAPI.updatePincode,
+    onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.pincodes() }),
+  });
+
+  const remove = useMutation({
+    mutationFn: (id: string) => mastersAPI.deletePincode(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.pincodes() }),
   });
 
   return { data, isLoading: mounted && isLoading, create, update, remove };

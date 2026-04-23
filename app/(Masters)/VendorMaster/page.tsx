@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Truck,
   CheckCircle2,
@@ -14,18 +16,16 @@ import {
 import { clsx } from "clsx";
 import { useVendorMaster } from "@/app/hooks/useMasters";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { VendorRecord, VendorFormValues } from "@/app/types/master";
+import type { VendorRecord } from "@/app/types/master";
 
 import VendorTable from "./components/VendorTable";
-import VendorModal from "./components/VendorModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 export default function Page() {
-  const { data, cities, isLoading, isLookupLoading, create, update, remove } = useVendorMaster();
-  const vendors: VendorRecord[] = data;
+  const router = useRouter();
+  const { data, cities, isLoading, isLookupLoading, update, remove } = useVendorMaster();
+  const vendors: VendorRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<VendorRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -88,32 +88,11 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: VendorFormValues) => {
-    try {
-      if (editing) {
-        await update.mutateAsync({ ...form, Id: editing.Id } as VendorRecord);
-        toast.success("Vendor updated.");
-      } else {
-        await create.mutateAsync(form as VendorRecord);
-        toast.success("Vendor created.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save vendor.");
-    }
-  };
-
   const handleToggle = async (item: VendorRecord) => {
     try {
       await update.mutateAsync({
         ...item,
+        VendorId: item.VendorId || item.Id,
         Active: isMasterActive(item.Active) ? "0" : "1",
       });
     } catch (error) {
@@ -125,10 +104,10 @@ export default function Page() {
     if (!deleteId) return;
     try {
       await remove.mutateAsync(deleteId);
-      toast.success("Vendor deleted.");
+      toast.success("Vendor record removed.");
       setDeleteId(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete vendor.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -150,17 +129,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
+            <Link
+              href="/VendorMaster/add"
               className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add Vendor</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -223,29 +199,18 @@ export default function Page() {
           cities={cities}
           loading={isLoading || isLookupLoading}
           onEdit={(vendor) => {
-            setEditing(vendor);
-            setOpen(true);
+            router.push(`/VendorMaster/edit/${vendor.VendorId || vendor.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
 
-      <VendorModal
-        key={`${open ? "open" : "closed"}-${editing?.Id ?? "new"}`}
-        open={open}
-        data={editing}
-        cities={cities}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );

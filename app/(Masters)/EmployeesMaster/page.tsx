@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -15,17 +17,18 @@ import { clsx } from "clsx";
 import { useEmployeeMaster } from "@/app/hooks/useMasters";
 import { isMasterActive, normalizeActiveFlag } from "@/app/lib/utils/masterStatus";
 import type { EmployeeRecord, EmployeeFormValues } from "@/app/types/master";
+import { type EmployeeFormData } from "@/app/lib/validations/masterSchemas";
 
 import EmployeeTable from "./components/EmployeeTable";
-import EmployeeModal from "./components/EmployeeModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 const makePayload = (
-  form: EmployeeFormValues,
-  mode: "create" | "update"
+  form: EmployeeFormData,
+  mode: "create" | "update",
+  id?: string
 ): EmployeeRecord => {
   const payload: any = {
-    EmployeeId: mode === "create" ? "0" : String(form.Id || ""),
+    EmployeeId: mode === "create" ? "0" : String(id || ""),
     FirstName: String(form.FirstName || "").trim(),
     LastName: String(form.LastName || "").trim(),
     EmailId: String(form.EmailId || "").trim(),
@@ -47,20 +50,10 @@ const makePayload = (
 };
 
 export default function Page() {
-  const {
-    data,
-    departments,
-    designations,
-    isLoading,
-    isLookupLoading,
-    create,
-    update,
-    remove,
-  } = useEmployeeMaster();
-  const employees: EmployeeRecord[] = data;
+  const router = useRouter();
+  const { data, departments, designations, isLoading, update, remove } = useEmployeeMaster();
+  const employees: EmployeeRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<EmployeeRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -71,24 +64,19 @@ export default function Page() {
   const filtered = useMemo(() => {
     const search = query.trim().toLowerCase();
 
-    return employees.filter((emp) => {
-      const active = isMasterActive(emp.Active);
+    return employees.filter((item) => {
+      const active = isMasterActive(item.Active);
       const matchesStatus =
         status === "all" ||
         (status === "active" && active) ||
         (status === "inactive" && !active);
 
-      const deptName = departments.find(d => String(d.Id) === String(emp.DepartmentId))?.Name || "";
-      const desigName = designations.find(d => String(d.Id) === String(emp.DesignationId))?.Name || "";
-
       const searchable = [
-        emp.FirstName,
-        emp.LastName,
-        emp.EmployeeCode,
-        emp.EmailId,
-        emp.MobileNo,
-        deptName,
-        desigName,
+        item.FirstName,
+        item.LastName,
+        item.EmployeeCode,
+        item.EmailId,
+        item.MobileNo,
       ]
         .filter(Boolean)
         .join(" ")
@@ -96,69 +84,46 @@ export default function Page() {
 
       return matchesStatus && (!search || searchable.includes(search));
     });
-  }, [employees, departments, designations, query, status]);
+  }, [employees, query, status]);
 
   const statCards = [
     {
-      label: "Total staff",
+      label: "Total personnel",
       value: employees.length,
-      icon: UserRound,
+      icon: UsersRound,
       tone: "bg-indigo-50 text-indigo-600",
-      detail: "Headcount recorded",
+      detail: "All registered staff members",
     },
     {
-      label: "Active members",
+      label: "Active staff",
       value: activeCount,
       icon: CheckCircle2,
       tone: "bg-emerald-50 text-emerald-600",
-      detail: "Ready for operations",
+      detail: "Currently on payroll",
     },
     {
-      label: "Off-duty",
+      label: "Inactive / Exited",
       value: inactiveCount,
       icon: TrendingUp,
       tone: "bg-rose-50 text-rose-600",
-      detail: "Inactive profiles",
+      detail: "Retired or resigned staff",
     },
     {
-      label: "Visible focus",
+      label: "Matches",
       value: filtered.length,
-      icon: UsersRound,
+      icon: Search,
       tone: "bg-cyan-50 text-cyan-600",
-      detail: "Matching your criteria",
+      detail: "Staff in your search view",
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: EmployeeFormValues) => {
+  const handleToggle = async (item: EmployeeRecord) => {
     try {
-      if (editing) {
-        await update.mutateAsync(makePayload({ ...form, Id: editing.Id }, "update"));
-        toast.success("Employee profile updated.");
-      } else {
-        await create.mutateAsync(makePayload(form, "create"));
-        toast.success("New employee onboarded.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save employee.");
-    }
-  };
-
-  const handleToggle = async (emp: EmployeeRecord) => {
-    try {
-      await update.mutateAsync(
-        makePayload(
-          { ...emp, Active: isMasterActive(emp.Active) ? "0" : "1" },
-          "update"
-        )
-      );
+      await update.mutateAsync({
+        ...item,
+        EmployeeId: item.EmployeeId || item.Id,
+        Active: isMasterActive(item.Active) ? "0" : "1",
+      });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to toggle status.");
     }
@@ -171,7 +136,7 @@ export default function Page() {
       toast.success("Employee record removed.");
       setDeleteId(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete employee.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -183,28 +148,24 @@ export default function Page() {
             <div className="max-w-2xl">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/50 px-4 py-1.5 text-xs font-bold text-blue-700 dark:border-blue-900/30 dark:bg-blue-900/20 dark:text-blue-400">
                 <Sparkles size={14} className="animate-pulse" />
-                Workforce Control
+                Staff Dashboard
               </div>
               <h1 className="text-3xl font-extrabold tracking-tight text-gray-950 dark:text-white sm:text-4xl">
-                Employee Management
+                Workforce Directory
               </h1>
               <p className="mt-3 text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                Manage your staff directory, organizational roles, and reporting hierarchies from one central workspace.
+                Maintain official records, organizational placement, and system access for all personnel.
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
-              disabled={isLookupLoading || departments.length === 0 || designations.length === 0}
-              className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            <Link
+              href="/EmployeesMaster/add"
+              className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
-              <span>Add Employee</span>
-            </button>
+              <span>Register Staff</span>
+            </Link>
           </div>
         </div>
 
@@ -233,9 +194,9 @@ export default function Page() {
       <section className="rounded-2xl border border-gray-200 bg-white shadow-sm transition-all dark:border-slate-800 dark:bg-slate-900/50 dark:backdrop-blur-xl">
         <div className="flex flex-col gap-4 border-b border-gray-100 p-6 dark:border-slate-800 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-950 dark:text-white">Staff Directory</h2>
+            <h2 className="text-xl font-bold text-gray-950 dark:text-white">Staff Listings</h2>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">
-              {filtered.length} of {employees.length} employees listed
+              Showing {filtered.length} of {employees.length} records shown
             </p>
           </div>
 
@@ -245,7 +206,7 @@ export default function Page() {
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search name, code, role..."
+                placeholder="Search name, code or email..."
                 className="h-11 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-4 text-sm text-gray-800 outline-none transition-all placeholder:text-gray-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:focus:border-blue-500"
               />
             </label>
@@ -255,9 +216,9 @@ export default function Page() {
               onChange={(event) => setStatus(event.target.value as any)}
               className="h-11 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 outline-none transition-all hover:border-gray-300 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 dark:border-slate-800 dark:bg-slate-950 dark:text-gray-300 dark:hover:border-slate-700 dark:focus:border-blue-500"
             >
-              <option value="all">Full Directory</option>
-              <option value="active">Active Members</option>
-              <option value="inactive">Off-duty Only</option>
+              <option value="all">Full Workforce</option>
+              <option value="active">Active Staff</option>
+              <option value="inactive">Exited Staff</option>
             </select>
           </div>
         </div>
@@ -267,32 +228,19 @@ export default function Page() {
           departments={departments}
           designations={designations}
           loading={isLoading}
-          onEdit={(emp) => {
-            setEditing(emp);
-            setOpen(true);
+          onEdit={(item) => {
+            router.push(`/EmployeesMaster/edit/${item.EmployeeId || item.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
 
-      <EmployeeModal
-        key={`${open ? "open" : "closed"}-${editing?.Id ?? "new"}`}
-        open={open}
-        data={editing}
-        departments={departments}
-        designations={designations}
-        employees={employees}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );

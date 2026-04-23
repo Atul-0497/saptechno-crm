@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Globe,
   CheckCircle2,
@@ -14,18 +16,16 @@ import {
 import { clsx } from "clsx";
 import { useCountryMaster } from "@/app/hooks/useMasters";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { CountryRecord, CountryFormValues } from "@/app/types/master";
+import type { CountryRecord } from "@/app/types/master";
 
 import CountryTable from "./components/CountryTable";
-import CountryModal from "./components/CountryModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 export default function Page() {
-  const { data, isLoading, create, update, remove } = useCountryMaster();
-  const countries: CountryRecord[] = data;
+  const router = useRouter();
+  const { data, isLoading, update, remove } = useCountryMaster();
+  const countries: CountryRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<CountryRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -46,6 +46,7 @@ export default function Page() {
       const searchable = [
         item.CountryName,
         item.CountryCode,
+        item.Name
       ]
         .filter(Boolean)
         .join(" ")
@@ -86,36 +87,6 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: CountryFormValues) => {
-    try {
-      const idValue = editing ? String(editing.CountryId ?? editing.Id) : "0";
-      const payload: any = {
-        CountryId:   idValue,
-        CountryName: String(form.CountryName ?? "").trim(),
-        CountryCode: String(form.CountryCode ?? "").trim(),
-        Active:      form.Active,
-      };
-
-      if (editing) {
-        await update.mutateAsync(payload);
-        toast.success("Country updated.");
-      } else {
-        await create.mutateAsync(payload);
-        toast.success("Country created.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save country.");
-    }
-  };
-
   const handleToggle = async (country: CountryRecord) => {
     try {
       await update.mutateAsync({
@@ -132,10 +103,10 @@ export default function Page() {
     if (!deleteId) return;
     try {
       await remove.mutateAsync(deleteId);
-      toast.success("Country deleted.");
+      toast.success("Country record removed.");
       setDeleteId(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete country.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -157,17 +128,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
+            <Link
+              href="/Location/Country/add"
               className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add Country</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -197,7 +165,7 @@ export default function Page() {
         <div className="flex flex-col gap-4 border-b border-gray-100 p-6 dark:border-slate-800 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-950 dark:text-white">Regional Registry</h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               Showing {filtered.length} of {countries.length} records shown
             </p>
           </div>
@@ -229,28 +197,18 @@ export default function Page() {
           data={filtered}
           loading={isLoading}
           onEdit={(c) => {
-            setEditing(c);
-            setOpen(true);
+            router.push(`/Location/Country/edit/${c.CountryId || c.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
 
-      <CountryModal
-        key={`${open ? "open" : "closed"}-${String(editing?.CountryId ?? editing?.Id ?? "new")}`}
-        open={open}
-        data={editing}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );

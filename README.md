@@ -1,37 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📘 Saptechno CRM — Development Summary & Architecture Overview
+📌 Overview
 
-## Getting Started
+Saptechno CRM is a modular, scalable CRM system built using modern frontend architecture with a strong focus on reusability, consistency, and rapid module development.
 
-First, run the development server:
+The system is designed such that:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Core UI and logic are highly reusable
+New modules can be added with minimal duplication
+Data handling is structured via hooks + API abstraction
+🎯 Objective
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The primary goal of this implementation is:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Reduce code duplication across modules
+Enable rapid development of CRUD features
+Standardize UI/UX across the application
+Create a scalable foundation for future CRM features
+🧱 Tech Stack
+Next.js 16 (App Router)
+React 19
+TypeScript
+Tailwind CSS
+React Query (server state management)
+React Hook Form + Zod (form + validation)
+🏗️ High-Level Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The system is built around three core layers:
 
-## Learn More
+1. UI Layer
+Pages (page.tsx)
+Reusable components (forms, tables, layout)
+2. Logic Layer (Hooks)
+Centralized data handling via custom hooks
+Example:
+useMasters.ts
+useQuotes.ts
+3. Data Layer
+API abstraction (masters.ts)
+Proxy layer (/api)
+External backend integration
+🔄 Data Flow
+Backend-driven modules
+UI → Hook → React Query → API → /api → External Backend
+Local modules (prototype phase)
+UI → Hook → localStorage
+♻️ Reusability Strategy (Core Strength)
+1. Universal Form Engine
 
-To learn more about Next.js, take a look at the following resources:
+A centralized form system:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+app/components/forms/UniversalForm.tsx
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Supports:
 
-## Deploy on Vercel
+Dynamic field rendering
+Schema-based validation (Zod)
+Reusable across all modules
+2. Reusable Form Blocks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Prebuilt sections:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-"# saptechno-crm" 
+Address block
+Line item table (Quotes / PO)
+
+This allows complex forms to be reused across modules.
+
+3. Centralized Navigation
+app/constants/navigation.ts
+Controls Sidebar + Topbar
+Avoids hardcoded routing
+📁 Module Architecture
+
+Each module follows a standard CRUD structure:
+
+Module/
+ ├── page.tsx          → List view
+ ├── add/page.tsx      → Create
+ ├── edit/[id]/page.tsx → Update
+ ├── components/       → Module-specific UI
+📦 Implemented Modules
+✅ Backend-Connected Master Modules
+Company
+Department
+Designation
+Employee
+Vendor
+Dealer
+Product
+Lead Source
+Industry
+Location hierarchy:
+Country
+State
+City
+Pincode
+⚡ Prototype Modules (Local Storage)
+Quotes
+Full create/edit flow
+Vendor selection
+Address sections
+Line items + totals
+Stored in localStorage
+Purchase Orders
+Similar structure to Quotes
+Includes PO metadata
+Stored in localStorage
+🔌 API Architecture
+Single proxy endpoint:
+/api → External CRM backend
+Frontend communicates only with /api
+Backend operation logic is passed via payload
+📊 Key Design Decisions
+1. Hook-Based Data Layer
+UI is decoupled from API logic
+Improves maintainability and testing
+2. Form Abstraction
+Eliminates repeated form code
+Ensures consistency across modules
+3. LocalStorage for Early Modules
+Faster development for Quotes & PO
+Backend integration planned later
+4. Route Grouping
+app/(Masters)
+Improves code organization
+Does not affect URL structure
+⚠️ Current Limitations
+Quotes & Purchase Orders are not backend-integrated
+API layer is centralized (single file)
+Naming conventions are inconsistent in some modules
+Authentication is not fully enforced

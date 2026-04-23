@@ -12,6 +12,7 @@ import type {
   SimpleMasterRecord,
   StateRecord,
   VendorRecord,
+  PincodeRecord,
 } from "@/app/types/master";
 
 const baseURL = "/api";
@@ -45,10 +46,10 @@ const operationTypes = {
     delete: "DELETEVENDOR",
   },
   product: {
-    select: "SELECTPRODUCT",
-    insert: "INSERTPRODUCT",
-    update: "UPDATEPRODUCT",
-    delete: "DELETEPRODUCT",
+    select: "SELECTPRODUCTMASTER",
+    insert: "INSERTPRODUCTMASTER",
+    update: "UPDATEPRODUCTMASTER",
+    delete: "DELETEPRODUCTMASTER",
   },
   dealer: {
     select: "SELECTDEALER",
@@ -91,6 +92,12 @@ const operationTypes = {
     insert: "INSERTCOMPANY",
     update: "UPDATECOMPANY",
     delete: "DELETECOMPANY",
+  },
+  pincode: {
+    select: "SELECTPINCODE",
+    insert: "INSERTPINCODE",
+    update: "UPDATEPINCODE",
+    delete: "DELETEPINCODE",
   },
 } as const;
 
@@ -323,4 +330,17 @@ export const mastersAPI = {
 
   deleteCompany: (data: Partial<CompanyRecord>) =>
     request<unknown>(operationTypes.company.delete, { ...data }),
+
+  // ── Pincode ─────────────────────────────────────────────────────────────
+  getPincodes: (cityId?: string) =>
+    request<PincodeRecord[]>(operationTypes.pincode.select, cityId ? { CityId: cityId } : {}),
+
+  createPincode: (data: PincodeRecord) =>
+    request<unknown>(operationTypes.pincode.insert, { ...data }),
+
+  updatePincode: (data: PincodeRecord) =>
+    request<unknown>(operationTypes.pincode.update, { ...data }),
+
+  deletePincode: (id: string) =>
+    request<unknown>(operationTypes.pincode.delete, { PincodeId: id }),
 };

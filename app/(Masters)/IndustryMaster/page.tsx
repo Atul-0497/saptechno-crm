@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Factory,
   CheckCircle2,
@@ -14,18 +16,16 @@ import {
 import { clsx } from "clsx";
 import { useIndustryMaster } from "@/app/hooks/useMasters";
 import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { IndustryRecord, IndustryFormValues } from "@/app/types/master";
+import type { IndustryRecord } from "@/app/types/master";
 
 import IndustryTable from "./components/IndustryTable";
-import IndustryModal from "./components/IndustryModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
 export default function Page() {
-  const { data, isLoading, create, update, remove } = useIndustryMaster();
-  const industries: IndustryRecord[] = data;
+  const router = useRouter();
+  const { data, isLoading, update, remove } = useIndustryMaster();
+  const industries: IndustryRecord[] = data || [];
 
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<IndustryRecord | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
@@ -43,7 +43,10 @@ export default function Page() {
         (status === "active" && active) ||
         (status === "inactive" && !active);
 
-      const searchable = (item.Name || "").toLowerCase();
+      const searchable = [item.IndustryName, item.Name]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
       return matchesStatus && (!search || searchable.includes(search));
     });
@@ -80,32 +83,11 @@ export default function Page() {
     },
   ];
 
-  const closeModal = () => {
-    create.reset();
-    update.reset();
-    setOpen(false);
-    setEditing(null);
-  };
-
-  const handleSubmit = async (form: IndustryFormValues) => {
-    try {
-      if (editing) {
-        await update.mutateAsync({ ...form, IndustryId: editing.IndustryId ?? editing.Id } as IndustryRecord);
-        toast.success("Industry sector updated.");
-      } else {
-        await create.mutateAsync(form as IndustryRecord);
-        toast.success("Industry sector created.");
-      }
-      closeModal();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to save industry.");
-    }
-  };
-
   const handleToggle = async (item: IndustryRecord) => {
     try {
       await update.mutateAsync({
         ...item,
+        Id: item.IndustryId || item.Id,
         Active: isMasterActive(item.Active) ? "0" : "1",
       });
     } catch (error) {
@@ -117,10 +99,10 @@ export default function Page() {
     if (!deleteId) return;
     try {
       await remove.mutateAsync(deleteId);
-      toast.success("Industry sector deleted.");
+      toast.success("Industry sector removed.");
       setDeleteId(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete industry.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -142,17 +124,14 @@ export default function Page() {
               </p>
             </div>
 
-            <button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
+            <Link
+              href="/IndustryMaster/add"
               className="bg-premium-gradient group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.02] hover:shadow-blue-500/30 active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-white/10 opacity-0 transition-opacity group-hover:opacity-100" />
               <Plus size={20} className="transition-transform group-hover:rotate-90" />
               <span>Add Industry</span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -214,28 +193,18 @@ export default function Page() {
           data={filtered}
           loading={isLoading}
           onEdit={(item) => {
-            setEditing(item);
-            setOpen(true);
+             router.push(`/IndustryMaster/edit/${item.IndustryId || item.Id}`);
           }}
           onDelete={(id) => setDeleteId(id)}
           onToggleActive={handleToggle}
         />
       </section>
 
-      <IndustryModal
-        key={`${open ? "open" : "closed"}-${editing?.Id ?? "new"}`}
-        open={open}
-        data={editing}
-        onClose={closeModal}
-        onSubmit={handleSubmit}
-        submitting={create.isPending || update.isPending}
-      />
-
       <DeleteConfirmModal
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        loading={remove.isPending}
+        loading={isLoading}
       />
     </div>
   );
