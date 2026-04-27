@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useVendorMaster, useLocationMaster } from "@/app/hooks/useMasters";
+import { masterKeys, useLocationMaster } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { type VendorFormData } from "@/app/lib/validations/masterSchemas";
 import VendorForm from "../components/VendorForm";
 
 export default function AddVendorPage() {
   const router = useRouter();
-  const { create } = useVendorMaster();
+  const { create } = useGenericSubmit("vendor", [masterKeys.vendors()]);
   const { cities } = useLocationMaster();
 
   const handleSubmit = async (form: VendorFormData) => {

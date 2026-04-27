@@ -3,14 +3,17 @@
 import React, { useMemo } from "react";
 import { Factory, Hash } from "lucide-react";
 import { IndustrySchema, type IndustryFormData } from "@/app/lib/validations/masterSchemas";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import type { IndustryRecord } from "@/app/types/master";
 import UniversalForm, { FormSectionConfig } from "@/app/components/forms/UniversalForm";
 
 type IndustryFormProps = {
   data: IndustryRecord | null;
-  onSubmit: (form: IndustryFormData) => void | Promise<void>;
+  onSubmit?: (form: IndustryFormData) => void | Promise<void>;
   onCancel: () => void;
-  submitting: boolean;
+  submitting?: boolean;
+  entity?: string;
+  idField?: string;
 };
 
 export default function IndustryForm({
@@ -18,7 +21,11 @@ export default function IndustryForm({
   onSubmit,
   onCancel,
   submitting,
+  entity,
+  idField = "Id",
 }: IndustryFormProps) {
+
+  const generic = entity ? useGenericSubmit(entity, []) : null;
   
   const sections: FormSectionConfig[] = useMemo(() => [
     {
@@ -70,9 +77,17 @@ export default function IndustryForm({
       sections={sections}
       schema={IndustrySchema}
       defaultValues={defaultValues as any}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit ?? (async (formValues: IndustryFormData) => {
+        if (!entity || !generic) throw new Error("No submit handler and no entity configured.");
+        if (data) {
+          const id = String((data as any)[idField] || (data as any).Id || "");
+          await generic.update.mutateAsync({ id, data: formValues } as any);
+        } else {
+          await generic.create.mutateAsync(formValues as any);
+        }
+      })}
       onCancel={onCancel}
-      submitting={submitting}
+      submitting={submitting ?? (entity ? ((data ? generic?.update.isPending : generic?.create.isPending) ?? false) : false)}
       submitLabel={data ? "Update Sector" : "Save Industry"}
     />
   );

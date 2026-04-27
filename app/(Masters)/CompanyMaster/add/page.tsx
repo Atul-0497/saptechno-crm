@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useCompanyMaster } from "@/app/hooks/useMasters";
+import { masterKeys } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { type CompanyFormData } from "@/app/lib/validations/masterSchemas";
 import CompanyForm from "../components/CompanyForm";
 
 export default function AddCompanyPage() {
   const router = useRouter();
-  const { create } = useCompanyMaster();
+  const { create } = useGenericSubmit("company", [masterKeys.companies()]);
 
   const handleSubmit = async (form: CompanyFormData) => {
     try {

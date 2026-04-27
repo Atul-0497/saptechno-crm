@@ -2,7 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useProductMaster } from "@/app/hooks/useMasters";
+import { useProductMaster, masterKeys } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import type { ProductRecord } from "@/app/types/master";
 import { type ProductFormData } from "@/app/lib/validations/masterSchemas";
 import ProductForm from "../../components/ProductForm";
@@ -12,7 +13,8 @@ export default function EditProductPage() {
   const router = useRouter();
   const id = params.id as string;
   
-  const { data, isLoading, update } = useProductMaster();
+  const { data, isLoading } = useProductMaster();
+  const { update } = useGenericSubmit("product", [masterKeys.products()]);
   const editing =
     (data as ProductRecord[] | undefined)?.find((product) => product.ProductId === id || product.Id === id) ||
     null;
@@ -38,7 +40,7 @@ export default function EditProductPage() {
         Active: form.Active === true ? "1" : "0",
       };
 
-      await update.mutateAsync(payload);
+      await update.mutateAsync({ id, data: payload });
       toast.success("Product updated successfully.");
       router.push("/Productmaster");
     } catch (error) {

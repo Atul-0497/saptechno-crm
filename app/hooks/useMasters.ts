@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSyncExternalStore } from "react";
-import { mastersAPI } from "@/app/lib/api/masters/masters";
+import { entityCall } from "@/app/lib/api/genericClient";
 import type {
   CityRecord,
   CompanyRecord,
@@ -63,28 +63,25 @@ export const useSimpleMaster = <T extends { Id?: string; Active?: any }>(
 
   const { data = [], isLoading } = useQuery<T[]>({
     queryKey,
-    queryFn: () =>
-      (kind === "department"
-        ? mastersAPI.getDepartments()
-        : mastersAPI.getDesignations()) as unknown as Promise<T[]>,
+    queryFn: () => (kind === "department"
+      ? entityCall("department", "select") as unknown as Promise<T[]>
+      : entityCall("designation", "select") as unknown as Promise<T[]>),
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const create = useMutation({
-    mutationFn: (data: T) =>
-      mastersAPI.createSimple(kind, data as any),
+    mutationFn: (data: T) => entityCall(kind, "insert", data as any),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: T) =>
-      mastersAPI.updateSimple(kind, data as any),
+    mutationFn: (data: T) => entityCall(kind, "update", data as any),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteSimple(kind, id),
+    mutationFn: (id: string) => entityCall(kind, "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -100,44 +97,44 @@ export const useEmployeeMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: mastersAPI.getEmployees,
+    queryFn: () => entityCall("employee", "select") as unknown as Promise<EmployeeRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const departments = useQuery({
     queryKey: masterKeys.departments(),
-    queryFn: mastersAPI.getDepartments,
+    queryFn: () => entityCall("department", "select") as unknown as Promise<DepartmentRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const designations = useQuery({
     queryKey: masterKeys.designations(),
-    queryFn: mastersAPI.getDesignations,
+    queryFn: () => entityCall("designation", "select") as unknown as Promise<DesignationRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const create = useMutation({
-    mutationFn: (data: EmployeeRecord) => mastersAPI.createEmployee(data),
+    mutationFn: (data: EmployeeRecord) => entityCall("employee", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: EmployeeRecord) => mastersAPI.updateEmployee(data),
+    mutationFn: (data: EmployeeRecord) => entityCall("employee", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteEmployee(id),
+    mutationFn: (id: string) => entityCall("employee", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   return {
     data,
-    departments: departments.data ?? [],
-    designations: designations.data ?? [],
+    departments: (departments.data ?? []) as unknown as SimpleMasterRecord[],
+    designations: (designations.data ?? []) as unknown as SimpleMasterRecord[],
     isLoading: mounted && isLoading,
     isLookupLoading: departments.isLoading || designations.isLoading,
     create,
@@ -155,30 +152,30 @@ export const useVendorMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: mastersAPI.getVendors,
+    queryFn: () => entityCall("vendor", "select") as unknown as Promise<VendorRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const cities = useQuery({
     queryKey: masterKeys.cities(),
-    queryFn: () => mastersAPI.getCities(),
+    queryFn: () => entityCall("city", "select") as unknown as Promise<CityRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 10,
   });
 
   const create = useMutation({
-    mutationFn: (data: VendorRecord) => mastersAPI.createVendor(data),
+    mutationFn: (data: VendorRecord) => entityCall("vendor", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: VendorRecord) => mastersAPI.updateVendor(data),
+    mutationFn: (data: VendorRecord) => entityCall("vendor", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteVendor(id),
+    mutationFn: (id: string) => entityCall("vendor", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -202,23 +199,23 @@ export const useProductMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: mastersAPI.getProducts,
+    queryFn: () => entityCall("product", "select") as unknown as Promise<ProductRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const create = useMutation({
-    mutationFn: (data: ProductRecord) => mastersAPI.createProduct(data),
+    mutationFn: (data: ProductRecord) => entityCall("product", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: ProductRecord) => mastersAPI.updateProduct(data),
+    mutationFn: (data: ProductRecord) => entityCall("product", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteProduct(id),
+    mutationFn: (id: string) => entityCall("product", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -234,30 +231,30 @@ export const useDealerMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: mastersAPI.getDealers,
+    queryFn: () => entityCall("dealer", "select") as unknown as Promise<DealerRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const cities = useQuery({
     queryKey: masterKeys.cities(),
-    queryFn: () => mastersAPI.getCities(),
+    queryFn: () => entityCall("city", "select") as unknown as Promise<CityRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 10,
   });
 
   const create = useMutation({
-    mutationFn: (data: DealerRecord) => mastersAPI.createDealer(data),
+    mutationFn: (data: DealerRecord) => entityCall("dealer", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: DealerRecord) => mastersAPI.updateDealer(data),
+    mutationFn: (data: DealerRecord) => entityCall("dealer", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteDealer(id),
+    mutationFn: (id: string) => entityCall("dealer", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -281,23 +278,23 @@ export const useLeadSourceMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: mastersAPI.getLeadSources,
+    queryFn: () => entityCall("leadsourcemaster", "select") as unknown as Promise<LeadSourceRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const create = useMutation({
-    mutationFn: (data: LeadSourceRecord) => mastersAPI.createLeadSource(data),
+    mutationFn: (data: LeadSourceRecord) => entityCall("leadsourcemaster", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: LeadSourceRecord) => mastersAPI.updateLeadSource(data),
+    mutationFn: (data: LeadSourceRecord) => entityCall("leadsourcemaster", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteLeadSource(id),
+    mutationFn: (id: string) => entityCall("leadsourcemaster", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -313,23 +310,23 @@ export const useIndustryMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: mastersAPI.getIndustries,
+    queryFn: () => entityCall("industry", "select") as unknown as Promise<IndustryRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const create = useMutation({
-    mutationFn: (data: IndustryRecord) => mastersAPI.createIndustry(data),
+    mutationFn: (data: IndustryRecord) => entityCall("industry", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: IndustryRecord) => mastersAPI.updateIndustry(data),
+    mutationFn: (data: IndustryRecord) => entityCall("industry", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteIndustry(id),
+    mutationFn: (id: string) => entityCall("industry", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -345,7 +342,7 @@ export const useLocationMaster = () => {
   // Countries
   const countriesQuery = useQuery({
     queryKey: masterKeys.countries(),
-    queryFn: mastersAPI.getCountries,
+    queryFn: () => entityCall("country", "select") as unknown as Promise<CountryRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 30,
   });
@@ -353,7 +350,7 @@ export const useLocationMaster = () => {
   // States (all — filtered client-side per selected country)
   const statesQuery = useQuery({
     queryKey: masterKeys.states(),
-    queryFn: () => mastersAPI.getStates(),
+    queryFn: () => entityCall("state", "select") as unknown as Promise<StateRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 30,
   });
@@ -361,50 +358,50 @@ export const useLocationMaster = () => {
   // Cities (all — filtered client-side per selected state)
   const citiesQuery = useQuery({
     queryKey: masterKeys.cities(),
-    queryFn: () => mastersAPI.getCities(),
+    queryFn: () => entityCall("city", "select") as unknown as Promise<CityRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 30,
   });
 
   // Country mutations
   const createCountry = useMutation({
-    mutationFn: (data: CountryRecord) => mastersAPI.createCountry(data),
+    mutationFn: (data: CountryRecord) => entityCall("country", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.countries() }),
   });
   const updateCountry = useMutation({
-    mutationFn: (data: CountryRecord) => mastersAPI.updateCountry(data),
+    mutationFn: (data: CountryRecord) => entityCall("country", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.countries() }),
   });
   const removeCountry = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteCountry(id),
+    mutationFn: (id: string) => entityCall("country", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.countries() }),
   });
 
   // State mutations
   const createState = useMutation({
-    mutationFn: (data: StateRecord) => mastersAPI.createState(data),
+    mutationFn: (data: StateRecord) => entityCall("state", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.states() }),
   });
   const updateState = useMutation({
-    mutationFn: (data: StateRecord) => mastersAPI.updateState(data),
+    mutationFn: (data: StateRecord) => entityCall("state", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.states() }),
   });
   const removeState = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteState(id),
+    mutationFn: (id: string) => entityCall("state", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.states() }),
   });
 
   // City mutations
   const createCity = useMutation({
-    mutationFn: (data: CityRecord) => mastersAPI.createCity(data),
+    mutationFn: (data: CityRecord) => entityCall("city", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.cities() }),
   });
   const updateCity = useMutation({
-    mutationFn: (data: CityRecord) => mastersAPI.updateCity(data),
+    mutationFn: (data: CityRecord) => entityCall("city", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.cities() }),
   });
   const removeCity = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteCity(id),
+    mutationFn: (id: string) => entityCall("city", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.cities() }),
   });
 
@@ -430,23 +427,23 @@ export const useCountryMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: mastersAPI.getCountries,
+    queryFn: () => entityCall("country", "select") as unknown as Promise<CountryRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 30,
   });
 
   const create = useMutation({
-    mutationFn: (data: CountryRecord) => mastersAPI.createCountry(data),
+    mutationFn: (data: CountryRecord) => entityCall("country", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: CountryRecord) => mastersAPI.updateCountry(data),
+    mutationFn: (data: CountryRecord) => entityCall("country", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteCountry(id),
+    mutationFn: (id: string) => entityCall("country", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -460,30 +457,30 @@ export const useStateMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: () => mastersAPI.getStates(),
+    queryFn: () => entityCall("state", "select") as unknown as Promise<StateRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 30,
   });
 
   const countries = useQuery({
     queryKey: masterKeys.countries(),
-    queryFn: mastersAPI.getCountries,
+    queryFn: () => entityCall("country", "select") as unknown as Promise<CountryRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 60,
   });
 
   const create = useMutation({
-    mutationFn: (data: StateRecord) => mastersAPI.createState(data),
+    mutationFn: (data: StateRecord) => entityCall("state", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: StateRecord) => mastersAPI.updateState(data),
+    mutationFn: (data: StateRecord) => entityCall("state", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteState(id),
+    mutationFn: (id: string) => entityCall("state", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -504,30 +501,30 @@ export const useCityMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: () => mastersAPI.getCities(),
+    queryFn: () => entityCall("city", "select") as unknown as Promise<CityRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 30,
   });
 
   const states = useQuery({
     queryKey: masterKeys.states(),
-    queryFn: () => mastersAPI.getStates(),
+    queryFn: () => entityCall("state", "select") as unknown as Promise<StateRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 60,
   });
 
   const create = useMutation({
-    mutationFn: (data: CityRecord) => mastersAPI.createCity(data),
+    mutationFn: (data: CityRecord) => entityCall("city", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const update = useMutation({
-    mutationFn: (data: CityRecord) => mastersAPI.updateCity(data),
+    mutationFn: (data: CityRecord) => entityCall("city", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deleteCity(id),
+    mutationFn: (id: string) => entityCall("city", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey }),
   });
 
@@ -550,13 +547,13 @@ export const useCompanyMaster = () => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: mastersAPI.getCompanies,
+    queryFn: () => entityCall("company", "select") as unknown as Promise<CompanyRecord[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const create = useMutation({
-    mutationFn: mastersAPI.createCompany,
+    mutationFn: (data: CompanyRecord) => entityCall("company", "insert", data),
     onMutate: async (newData) => {
       await qc.cancelQueries({ queryKey });
       const prev = qc.getQueryData<CompanyRecord[]>(queryKey);
@@ -581,7 +578,7 @@ export const useCompanyMaster = () => {
   });
 
   const update = useMutation({
-    mutationFn: mastersAPI.updateCompany,
+    mutationFn: (data: CompanyRecord) => entityCall("company", "update", data),
     onMutate: async (data) => {
       await qc.cancelQueries({ queryKey });
       const prev = qc.getQueryData<CompanyRecord[]>(queryKey);
@@ -603,7 +600,7 @@ export const useCompanyMaster = () => {
   });
 
   const remove = useMutation({
-    mutationFn: mastersAPI.deleteCompany,
+    mutationFn: (data: CompanyRecord) => entityCall("company", "delete", data),
     onMutate: async (data) => {
       await qc.cancelQueries({ queryKey });
       const prev = qc.getQueryData<CompanyRecord[]>(queryKey);
@@ -634,23 +631,23 @@ export const usePincodeMaster = (cityId?: string) => {
 
   const { data = [], isLoading } = useQuery({
     queryKey,
-    queryFn: () => mastersAPI.getPincodes(cityId),
+    queryFn: () => entityCall("pincode", "select", { CityId: cityId }) as unknown as Promise<any[]>,
     enabled: mounted,
     staleTime: 1000 * 60 * 5,
   });
 
   const create = useMutation({
-    mutationFn: mastersAPI.createPincode,
+    mutationFn: (data: any) => entityCall("pincode", "insert", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.pincodes() }),
   });
 
   const update = useMutation({
-    mutationFn: mastersAPI.updatePincode,
+    mutationFn: (data: any) => entityCall("pincode", "update", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.pincodes() }),
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => mastersAPI.deletePincode(id),
+    mutationFn: (id: string) => entityCall("pincode", "delete", { Id: id }),
     onSuccess: () => qc.invalidateQueries({ queryKey: masterKeys.pincodes() }),
   });
 

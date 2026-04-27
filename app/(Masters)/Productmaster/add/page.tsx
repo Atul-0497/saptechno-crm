@@ -2,14 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useProductMaster } from "@/app/hooks/useMasters";
+import { masterKeys } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import type { ProductRecord } from "@/app/types/master";
 import { type ProductFormData } from "@/app/lib/validations/masterSchemas";
 import ProductForm from "../components/ProductForm";
 
 export default function AddProductPage() {
   const router = useRouter();
-  const { create } = useProductMaster();
+  const { create } = useGenericSubmit("product", [masterKeys.products()]);
 
   const handleSubmit = async (form: ProductFormData) => {
     try {

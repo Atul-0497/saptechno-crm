@@ -3,15 +3,18 @@
 import React, { useMemo } from "react";
 import { Map, Globe } from "lucide-react";
 import { StateSchema, type StateFormData } from "@/app/lib/validations/masterSchemas";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import type { StateRecord, CountryRecord } from "@/app/types/master";
 import UniversalForm, { FormSectionConfig } from "@/app/components/forms/UniversalForm";
 
 type StateFormProps = {
   data: StateRecord | null;
   countries: CountryRecord[];
-  onSubmit: (form: StateFormData) => void | Promise<void>;
+  onSubmit?: (form: StateFormData) => void | Promise<void>;
   onCancel: () => void;
-  submitting: boolean;
+  submitting?: boolean;
+  entity?: string;
+  idField?: string;
 };
 
 export default function StateForm({
@@ -20,7 +23,10 @@ export default function StateForm({
   onSubmit,
   onCancel,
   submitting,
+  entity,
+  idField = "StateId",
 }: StateFormProps) {
+  const generic = entity ? useGenericSubmit(entity, []) : null;
   
   const sections: FormSectionConfig[] = useMemo(() => [
     {
@@ -75,9 +81,17 @@ export default function StateForm({
       sections={sections}
       schema={StateSchema}
       defaultValues={defaultValues as any}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit ?? (async (formValues: StateFormData) => {
+        if (!entity || !generic) throw new Error("No submit handler and no entity configured.");
+        if (data) {
+          const id = String((data as any)[idField] || (data as any).Id || "");
+          await generic.update.mutateAsync({ id, data: formValues } as any);
+        } else {
+          await generic.create.mutateAsync(formValues as any);
+        }
+      })}
       onCancel={onCancel}
-      submitting={submitting}
+      submitting={submitting ?? (entity ? ((data ? generic?.update.isPending : generic?.create.isPending) ?? false) : false)}
       submitLabel={data ? "Update State" : "Save State"}
     />
   );

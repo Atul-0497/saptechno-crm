@@ -5,6 +5,7 @@ import { MapPin, Globe, Map, Landmark } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PincodeSchema, type PincodeFormData } from "@/app/lib/validations/masterSchemas";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import type { 
   PincodeRecord, 
   CityRecord, 
@@ -18,9 +19,11 @@ type PincodeFormProps = {
   countries: CountryRecord[];
   states: StateRecord[];
   cities: CityRecord[];
-  onSubmit: (form: PincodeFormData) => void | Promise<void>;
+  onSubmit?: (form: PincodeFormData) => void | Promise<void>;
   onCancel: () => void;
-  submitting: boolean;
+  submitting?: boolean;
+  entity?: string;
+  idField?: string;
 };
 
 export default function PincodeForm({
@@ -31,7 +34,10 @@ export default function PincodeForm({
   onSubmit,
   onCancel,
   submitting,
+  entity,
+  idField = "PincodeId",
 }: PincodeFormProps) {
+  const generic = entity ? useGenericSubmit(entity, []) : null;
   
   const form = useForm<PincodeFormData>({
     resolver: zodResolver(PincodeSchema),
@@ -134,9 +140,17 @@ export default function PincodeForm({
       sections={sections}
       schema={PincodeSchema}
       externalForm={form}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit ?? (async (formValues: PincodeFormData) => {
+        if (!entity || !generic) throw new Error("No submit handler and no entity configured.");
+        if (data) {
+          const id = String((data as any)[idField] || (data as any).Id || "");
+          await generic.update.mutateAsync({ id, data: formValues } as any);
+        } else {
+          await generic.create.mutateAsync(formValues as any);
+        }
+      })}
       onCancel={onCancel}
-      submitting={submitting}
+      submitting={submitting ?? (entity ? ((data ? generic?.update.isPending : generic?.create.isPending) ?? false) : false)}
       submitLabel={data ? "Update Code" : "Save Pin Code"}
     />
   );

@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { BadgeCheck, Building2, CalendarDays, ClipboardList, FileText, Receipt } from "lucide-react";
 import UniversalForm, { FormSectionConfig } from "@/app/components/forms/UniversalForm";
 import { UniversalAddressSection, UniversalQuotedItemsSection, TermsAndConditionsCheckbox } from "@/app/components/forms/UniversalFormBlocks";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { PurchaseOrderSchema, type PurchaseOrderFormData } from "@/app/lib/validations/masterSchemas";
 import type { CountryRecord, StateRecord, VendorRecord } from "@/app/types/master";
 import type { PurchaseOrderRecord } from "@/app/types/purchaseOrder";
@@ -15,9 +16,11 @@ type PurchaseOrderFormProps = {
   vendors: VendorRecord[];
   countries: CountryRecord[];
   states: StateRecord[];
-  onSubmit: (form: PurchaseOrderFormData) => void | Promise<void>;
+  onSubmit?: (form: PurchaseOrderFormData) => void | Promise<void>;
   onCancel: () => void;
-  submitting: boolean;
+  submitting?: boolean;
+  entity?: string;
+  idField?: string;
 };
 
 const purchaseStatuses = [
@@ -90,7 +93,10 @@ export default function PurchaseOrderForm({
   onSubmit,
   onCancel,
   submitting,
+  entity,
+  idField = "PurchaseOrderId",
 }: PurchaseOrderFormProps) {
+  const generic = entity ? useGenericSubmit(entity, []) : null;
   const defaultValues = useMemo(() => getDefaultValues(data), [data]);
 
   const form = useForm<PurchaseOrderFormData>({
@@ -353,9 +359,17 @@ export default function PurchaseOrderForm({
       sections={sections}
       schema={PurchaseOrderSchema}
       externalForm={form}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit ?? (async (formValues: PurchaseOrderFormData) => {
+        if (!entity || !generic) throw new Error("No submit handler and no entity configured.");
+        if (data) {
+          const id = String((data as any)[idField] || (data as any).Id || "");
+          await generic.update.mutateAsync({ id, data: formValues } as any);
+        } else {
+          await generic.create.mutateAsync(formValues as any);
+        }
+      })}
       onCancel={onCancel}
-      submitting={submitting}
+      submitting={submitting ?? (entity ? ((data ? generic?.update.isPending : generic?.create.isPending) ?? false) : false)}
       submitLabel={data ? "Update Purchase Order" : "Save Purchase Order"}
     />
   );

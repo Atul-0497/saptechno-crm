@@ -2,7 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useCompanyMaster } from "@/app/hooks/useMasters";
+import { masterKeys, useCompanyMaster } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { type CompanyFormData } from "@/app/lib/validations/masterSchemas";
 import CompanyForm from "../../components/CompanyForm";
 import { useMemo } from "react";
@@ -13,7 +14,8 @@ export default function EditCompanyPage() {
   const router = useRouter();
   const id = params.id as string;
   
-  const { data, isLoading, update } = useCompanyMaster();
+  const { data, isLoading } = useCompanyMaster();
+  const { update } = useGenericSubmit("company", [masterKeys.companies()]);
   const records: CompanyRecord[] = data || [];
 
   const editing = useMemo(() => {
@@ -23,7 +25,7 @@ export default function EditCompanyPage() {
   const handleSubmit = async (form: CompanyFormData) => {
     try {
       if (!editing) return;
-      await update.mutateAsync({ ...form, CompanyId: id } as any);
+      await update.mutateAsync({ id, data: form } as any);
       toast.success("Company profile updated.");
       router.push("/CompanyMaster");
     } catch (error) {

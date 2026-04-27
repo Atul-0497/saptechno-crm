@@ -3,14 +3,17 @@
 import React, { useMemo } from "react";
 import { Briefcase, Layers } from "lucide-react";
 import { DesignationSchema, type DesignationFormData } from "@/app/lib/validations/masterSchemas";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import type { DesignationRecord } from "@/app/types/master";
 import UniversalForm, { FormSectionConfig } from "@/app/components/forms/UniversalForm";
 
 type DesignationFormProps = {
   data: DesignationRecord | null;
-  onSubmit: (form: DesignationFormData) => void | Promise<void>;
+  onSubmit?: (form: DesignationFormData) => void | Promise<void>;
   onCancel: () => void;
-  submitting: boolean;
+  submitting?: boolean;
+  entity?: string;
+  idField?: string;
 };
 
 export default function DesignationForm({
@@ -18,7 +21,11 @@ export default function DesignationForm({
   onSubmit,
   onCancel,
   submitting,
+  entity,
+  idField = "Id",
 }: DesignationFormProps) {
+
+  const generic = entity ? useGenericSubmit(entity, []) : null;
   
   const sections: FormSectionConfig[] = useMemo(() => [
     {
@@ -70,9 +77,17 @@ export default function DesignationForm({
       sections={sections}
       schema={DesignationSchema}
       defaultValues={defaultValues as any}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit ?? (async (formValues: DesignationFormData) => {
+        if (!entity || !generic) throw new Error("No submit handler and no entity configured.");
+        if (data) {
+          const id = String((data as any)[idField] || (data as any).Id || "");
+          await generic.update.mutateAsync({ id, data: formValues } as any);
+        } else {
+          await generic.create.mutateAsync(formValues as any);
+        }
+      })}
       onCancel={onCancel}
-      submitting={submitting}
+      submitting={submitting ?? (entity ? ((data ? generic?.update.isPending : generic?.create.isPending) ?? false) : false)}
       submitLabel={data ? "Update Role" : "Create Role"}
     />
   );

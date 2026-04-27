@@ -6,15 +6,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Users, Mail, Phone, MapPin, Hash } from "lucide-react";
 import { DealerSchema, type DealerFormData } from "@/app/lib/validations/masterSchemas";
 import { usePincodeMaster } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import type { DealerRecord, CityRecord } from "@/app/types/master";
 import UniversalForm, { FormSectionConfig } from "@/app/components/forms/UniversalForm";
 
 type DealerFormProps = {
   data: DealerRecord | null;
   cities: CityRecord[];
-  onSubmit: (form: DealerFormData) => void | Promise<void>;
+  onSubmit?: (form: DealerFormData) => void | Promise<void>;
   onCancel: () => void;
-  submitting: boolean;
+  submitting?: boolean;
+  /** Optional: entity name to use useGenericSubmit internally when `onSubmit` is omitted */
+  entity?: string;
+  /** Optional: id field name to use for updates, defaults to 'DealerId' */
+  idField?: string;
 };
 
 export default function DealerForm({
@@ -23,8 +28,13 @@ export default function DealerForm({
   onSubmit,
   onCancel,
   submitting,
+  entity,
+  idField = "DealerId",
 }: DealerFormProps) {
   const { data: allPincodes } = usePincodeMaster();
+
+  // If entity provided and no onSubmit, use generic submit hook
+  const generic = entity ? useGenericSubmit(entity, []) : null;
 
   const defaultValues = useMemo(() => {
     if (!data) return { Active: "1" };
@@ -144,9 +154,17 @@ export default function DealerForm({
       sections={sections}
       schema={DealerSchema}
       externalForm={form}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit ?? (async (formValues: DealerFormData) => {
+        if (!entity || !generic) throw new Error("No submit handler provided and no entity configured.");
+        if (data) {
+          const id = String((data as any)[idField] || (data as any).Id || "");
+          await generic.update.mutateAsync({ id, data: formValues } as any);
+        } else {
+          await generic.create.mutateAsync(formValues as any);
+        }
+      })}
       onCancel={onCancel}
-      submitting={submitting}
+      submitting={submitting ?? (entity ? ((data ? generic?.update.isPending : generic?.create.isPending) ?? false) : false)}
       submitLabel={data ? "Update Partner" : "Save Partnership"}
     />
   );

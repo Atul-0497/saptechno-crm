@@ -2,7 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useDepartmentMaster } from "@/app/hooks/useMasters";
+import { masterKeys, useDepartmentMaster } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { type DepartmentFormData } from "@/app/lib/validations/masterSchemas";
 import DepartmentForm from "../../components/DepartmentForm";
 import { useMemo } from "react";
@@ -13,7 +14,8 @@ export default function EditDepartmentPage() {
   const router = useRouter();
   const id = params.id as string;
   
-  const { data: departments, isLoading, update } = useDepartmentMaster();
+  const { data: departments, isLoading } = useDepartmentMaster();
+  const { update } = useGenericSubmit("department", [masterKeys.departments()]);
 
   const editing = useMemo(() => {
     return (departments || []).find(r => String(r.DepartmentId || r.Id) === id) || null;
@@ -22,7 +24,7 @@ export default function EditDepartmentPage() {
   const handleSubmit = async (form: DepartmentFormData) => {
     try {
       if (!editing) return;
-      await update.mutateAsync({ ...form, Id: id } as any);
+      await update.mutateAsync({ id, data: { ...form, Id: id } } as any);
       toast.success("Department updated.");
       router.push("/DepartmentMaster");
     } catch (error) {

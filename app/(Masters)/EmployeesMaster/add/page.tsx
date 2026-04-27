@@ -3,16 +3,19 @@
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { 
-  useEmployeeMaster, 
+  useEmployeeMaster,
   useDepartmentMaster, 
-  useDesignationMaster 
+  useDesignationMaster,
+  masterKeys,
 } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { type EmployeeFormData } from "@/app/lib/validations/masterSchemas";
 import EmployeeForm from "../components/EmployeeForm";
 
 export default function AddEmployeePage() {
   const router = useRouter();
-  const { create, data: employees } = useEmployeeMaster();
+  const { create } = useGenericSubmit("employee", [masterKeys.employees()]);
+  const { data: employees } = useEmployeeMaster();
   const { data: departments } = useDepartmentMaster();
   const { data: designations } = useDesignationMaster();
 

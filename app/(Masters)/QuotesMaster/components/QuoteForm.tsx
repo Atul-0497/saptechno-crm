@@ -10,6 +10,7 @@ import {
   UniversalQuotedItemsSection,
   TermsAndConditionsCheckbox,
 } from "@/app/components/forms/UniversalFormBlocks";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { QuoteSchema, type QuoteFormData } from "@/app/lib/validations/masterSchemas";
 import type { QuoteRecord } from "@/app/types/quote";
 import type { CountryRecord, StateRecord, VendorRecord } from "@/app/types/master";
@@ -19,9 +20,11 @@ type QuoteFormProps = {
   vendors: VendorRecord[];
   countries: CountryRecord[];
   states: StateRecord[];
-  onSubmit: (form: QuoteFormData) => void | Promise<void>;
+  onSubmit?: (form: QuoteFormData) => void | Promise<void>;
   onCancel: () => void;
-  submitting: boolean;
+  submitting?: boolean;
+  entity?: string;
+  idField?: string;
 };
 
 const quoteStatuses = [
@@ -92,7 +95,10 @@ export default function QuoteForm({
   onSubmit,
   onCancel,
   submitting,
+  entity,
+  idField = "QuoteId",
 }: QuoteFormProps) {
+  const generic = entity ? useGenericSubmit(entity, []) : null;
   const defaultValues = useMemo(() => getDefaultValues(data), [data]);
 
   const form = useForm<QuoteFormData>({
@@ -337,9 +343,17 @@ export default function QuoteForm({
       sections={sections}
       schema={QuoteSchema}
       externalForm={form}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit ?? (async (formValues: QuoteFormData) => {
+        if (!entity || !generic) throw new Error("No submit handler and no entity configured.");
+        if (data) {
+          const id = String((data as any)[idField] || (data as any).Id || "");
+          await generic.update.mutateAsync({ id, data: formValues } as any);
+        } else {
+          await generic.create.mutateAsync(formValues as any);
+        }
+      })}
       onCancel={onCancel}
-      submitting={submitting}
+      submitting={submitting ?? (entity ? ((data ? generic?.update.isPending : generic?.create.isPending) ?? false) : false)}
       submitLabel={data ? "Update Quote" : "Save Quote"}
     />
   );

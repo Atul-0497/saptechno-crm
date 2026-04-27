@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useDepartmentMaster } from "@/app/hooks/useMasters";
+import { masterKeys } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { type DepartmentFormData } from "@/app/lib/validations/masterSchemas";
 import DepartmentForm from "../components/DepartmentForm";
 
 export default function AddDepartmentPage() {
   const router = useRouter();
-  const { create } = useDepartmentMaster();
+  const { create } = useGenericSubmit("department", [masterKeys.departments()]);
 
   const handleSubmit = async (form: DepartmentFormData) => {
     try {

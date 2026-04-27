@@ -2,7 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useVendorMaster, useLocationMaster } from "@/app/hooks/useMasters";
+import { useVendorMaster, masterKeys, useLocationMaster } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { type VendorFormData } from "@/app/lib/validations/masterSchemas";
 import VendorForm from "../../components/VendorForm";
 import { useMemo } from "react";
@@ -13,7 +14,8 @@ export default function EditVendorPage() {
   const router = useRouter();
   const id = params.id as string;
   
-  const { data: vendors, isLoading, update } = useVendorMaster();
+  const { data: vendors, isLoading } = useVendorMaster();
+  const { update } = useGenericSubmit("vendor", [masterKeys.vendors()]);
   const { cities } = useLocationMaster();
 
   const editing = useMemo(() => {
@@ -23,7 +25,7 @@ export default function EditVendorPage() {
   const handleSubmit = async (form: VendorFormData) => {
     try {
       if (!editing) return;
-      await update.mutateAsync({ ...form, VendorId: id } as any);
+      await update.mutateAsync({ id, data: form } as any);
       toast.success("Vendor profile updated.");
       router.push("/VendorMaster");
     } catch (error) {

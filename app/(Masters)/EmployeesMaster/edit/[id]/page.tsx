@@ -3,10 +3,12 @@
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { 
-  useEmployeeMaster, 
+  useEmployeeMaster,
   useDepartmentMaster, 
-  useDesignationMaster 
+  useDesignationMaster,
+  masterKeys,
 } from "@/app/hooks/useMasters";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import { type EmployeeFormData } from "@/app/lib/validations/masterSchemas";
 import EmployeeForm from "../../components/EmployeeForm";
 import { useMemo } from "react";
@@ -17,7 +19,8 @@ export default function EditEmployeePage() {
   const router = useRouter();
   const id = params.id as string;
   
-  const { data: employees, isLoading, update } = useEmployeeMaster();
+  const { data: employees, isLoading } = useEmployeeMaster();
+  const { update } = useGenericSubmit("employee", [masterKeys.employees()]);
   const { data: departments } = useDepartmentMaster();
   const { data: designations } = useDesignationMaster();
 
@@ -28,7 +31,7 @@ export default function EditEmployeePage() {
   const handleSubmit = async (form: EmployeeFormData) => {
     try {
       if (!editing) return;
-      await update.mutateAsync({ ...form, EmployeeId: id } as any);
+      await update.mutateAsync({ id, data: form } as any);
       toast.success("Staff profile updated.");
       router.push("/EmployeesMaster");
     } catch (error) {

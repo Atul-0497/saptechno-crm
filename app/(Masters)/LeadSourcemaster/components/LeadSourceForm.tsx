@@ -3,14 +3,17 @@
 import React, { useMemo } from "react";
 import { Magnet, Hash } from "lucide-react";
 import { LeadSourceSchema, type LeadSourceFormData } from "@/app/lib/validations/masterSchemas";
+import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
 import type { LeadSourceRecord } from "@/app/types/master";
 import UniversalForm, { FormSectionConfig } from "@/app/components/forms/UniversalForm";
 
 type LeadSourceFormProps = {
   data: LeadSourceRecord | null;
-  onSubmit: (form: LeadSourceFormData) => void | Promise<void>;
+  onSubmit?: (form: LeadSourceFormData) => void | Promise<void>;
   onCancel: () => void;
-  submitting: boolean;
+  submitting?: boolean;
+  entity?: string;
+  idField?: string;
 };
 
 export default function LeadSourceForm({
@@ -18,7 +21,11 @@ export default function LeadSourceForm({
   onSubmit,
   onCancel,
   submitting,
+  entity,
+  idField = "Id",
 }: LeadSourceFormProps) {
+
+  const generic = entity ? useGenericSubmit(entity, []) : null;
   
   const sections: FormSectionConfig[] = useMemo(() => [
     {
@@ -69,9 +76,17 @@ export default function LeadSourceForm({
       sections={sections}
       schema={LeadSourceSchema}
       defaultValues={defaultValues as any}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit ?? (async (formValues: LeadSourceFormData) => {
+        if (!entity || !generic) throw new Error("No submit handler and no entity configured.");
+        if (data) {
+          const id = String((data as any)[idField] || (data as any).Id || "");
+          await generic.update.mutateAsync({ id, data: formValues } as any);
+        } else {
+          await generic.create.mutateAsync(formValues as any);
+        }
+      })}
       onCancel={onCancel}
-      submitting={submitting}
+      submitting={submitting ?? (entity ? ((data ? generic?.update.isPending : generic?.create.isPending) ?? false) : false)}
       submitLabel={data ? "Update Source" : "Save Channel"}
     />
   );

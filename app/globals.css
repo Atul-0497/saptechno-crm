@@ -1,10 +1,8 @@
+@import "@fontsource/plus-jakarta-sans";
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Default Theme (Blue) */
   --primary: 221.2 83.2% 53.3%;
   --primary-foreground: 210 40% 98%;
 
@@ -76,7 +74,7 @@
 
 /* Gradient text utility */
 .gradient-heading {
-  background: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #7c3aed 100%);
+  background: linear-gradient(135deg, hsl(var(--primary-500)) 0%, hsl(var(--primary-600)) 50%, hsl(var(--primary-700)) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -85,10 +83,52 @@
 /* Premium card for light mode */
 .premium-card {
   background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(99, 102, 241, 0.12);
+  border: 1px solid hsl(var(--primary-100) / 0.12);
   box-shadow:
-    0 1px 3px rgba(99, 102, 241, 0.06),
-    0 4px 24px rgba(99, 102, 241, 0.05),
+    0 1px 3px hsl(var(--primary-500) / 0.06),
+    0 4px 24px hsl(var(--primary-500) / 0.05),
     0 0 0 1px rgba(255, 255, 255, 0.6) inset;
   backdrop-filter: blur(12px);
+}
+
+/* Accent overrides: map common indigo utilities to the dynamic primary color
+   so selecting an accent updates existing Tailwind class usage across the app. */
+.text-indigo-400,
+.text-indigo-500,
+.text-indigo-600,
+.text-indigo-700 {
+  color: var(--color-primary-500) !important;
+}
+
+.bg-indigo-50 {
+  background-color: var(--color-primary-50) !important;
+}
+
+.bg-indigo-50.text-indigo-600 {
+  color: var(--color-primary-600) !important;
+}
+
+.border-indigo-200,
+.border-indigo-200\/60 {
+  border-color: hsl(var(--primary-100)) !important;
+}
+
+.shadow-blue-500\/20,
+.shadow-indigo-500\/20 {
+  --tw-shadow-color: hsl(var(--primary-500) / 0.2) !important;
+}
+
+.ring-indigo-500,
+.dark\:hover\:border-primary\/50 {
+  --tw-ring-color: hsl(var(--primary-500)) !important;
+}
+
+/* Fallback mapping for small icon/text classes used in the app */
+.text-indigo-600.dark\:text-indigo-300 {
+  color: var(--color-primary-600) !important;
+}
+
+/* Ensure premium-gradient shadows use primary color */
+.bg-premium-gradient {
+  box-shadow: 0 8px 32px hsl(var(--primary-500) / 0.18);
 }
