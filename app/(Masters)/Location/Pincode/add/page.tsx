@@ -1,6 +1,5 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useCountryMaster, useStateMaster, useCityMaster } from "@/hooks/useMasters";
 import type { PincodeFormData } from "@/lib/validations/masterSchemas";
 import PincodeForm from "@/components/masters-forms/PincodeForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -19,7 +19,7 @@ export default function Page() {
   const handleSubmit = async (form: PincodeFormData) => {
     try {
       setSubmitting(true);
-      await createMaster("pincode", { ...form, PincodeId: "0" } as any);
+      await entityCall("pincode", "insert", { ...form, PincodeId: "0" } as any);
       toast.success("Pin Code created.");
       router.push("/Location/Pincode");
     } catch (error) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { updateMaster } from "@/actions/masters";
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useDepartmentMaster } from "@/hooks/useMasters";
 import DepartmentForm from "@/components/masters-forms/DepartmentForm";
 import type { DepartmentFormData } from "@/lib/validations/masterSchemas";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function Page() {
     try {
       if (!editing) return;
       setSubmitting(true);
-      await updateMaster("department", id, { ...form, Id: id } as any);
+      await entityCall("department", "update", { ...form, Id: id } as any);
       toast.success("Department updated.");
       router.push("/DepartmentMaster");
     } catch (error) {

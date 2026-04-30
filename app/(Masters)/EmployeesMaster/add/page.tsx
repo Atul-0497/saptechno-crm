@@ -1,6 +1,5 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,6 +11,7 @@ import {
 } from "@/hooks/useMasters";
 import type { EmployeeFormData } from "@/lib/validations/masterSchemas";
 import EmployeeForm from "@/components/masters-forms/EmployeeForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function Page() {
   const handleSubmit = async (form: EmployeeFormData) => {
     try {
       setSubmitting(true);
-      await createMaster("employee", form as any);
+      await entityCall("employee", "insert", form as any);
       toast.success("Employee onboarding successful.");
       router.push("/EmployeesMaster");
     } catch (error) {

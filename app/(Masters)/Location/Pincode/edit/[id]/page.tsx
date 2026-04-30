@@ -1,6 +1,5 @@
 "use client";
 
-import { updateMaster } from "@/actions/masters";
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { usePincodeMaster, useCountryMaster, useStateMaster, useCityMaster } from "@/hooks/useMasters";
 import PincodeForm from "@/components/masters-forms/PincodeForm";
 import type { PincodeFormData } from "@/lib/validations/masterSchemas";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function Page() {
     try {
       if (!editing) return;
       setSubmitting(true);
-      await updateMaster("pincode", id, form as any);
+      await entityCall("pincode", "update", { ...form, Id: id } as any);
       toast.success("Pin code updated.");
       router.push("/Location/Pincode");
     } catch (error) {

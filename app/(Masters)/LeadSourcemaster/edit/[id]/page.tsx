@@ -1,6 +1,5 @@
 "use client";
 
-import { updateMaster } from "@/actions/masters";
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useLeadSourceMaster } from "@/hooks/useMasters";
 import LeadSourceForm from "@/components/masters-forms/LeadSourceForm";
 import type { LeadSourceFormData } from "@/lib/validations/masterSchemas";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function Page() {
     try {
       if (!editing) return;
       setSubmitting(true);
-      await updateMaster("leadsource", id, form as any);
+      await entityCall("leadsource", "update", { ...form, Id: id } as any);
       toast.success("Lead source updated.");
       router.push("/LeadSourcemaster");
     } catch (error) {

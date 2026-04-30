@@ -22,10 +22,10 @@ import {
 } from "@/hooks/useMasters";
 import { isMasterActive } from "@/lib/utils/masterStatus";
 import type { PincodeRecord } from "@/types/master";
-import { updateMaster, deleteMaster } from "@/actions/masters";
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -101,7 +101,7 @@ export default function Page() {
   const handleToggle = async (p: PincodeRecord) => {
     try {
       const id = String(p.PincodeId ?? p.Id ?? "");
-      await updateMaster("pincode", id, {
+      await entityCall("pincode", "update", {
         ...p,
         Active: isMasterActive(p.Active) ? "0" : "1",
       } as any);
@@ -113,7 +113,7 @@ export default function Page() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await deleteMaster("pincode", deleteId);
+      await entityCall("pincode", "delete", { Id: deleteId });
       toast.success("Record removed.");
       setDeleteItem(null);
     } catch (error) {

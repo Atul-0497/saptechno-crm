@@ -1,6 +1,5 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useLocationMaster } from "@/hooks/useMasters";
 import type { VendorFormData } from "@/lib/validations/masterSchemas";
 import VendorForm from "@/components/masters-forms/VendorForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function Page() {
   const handleSubmit = async (form: VendorFormData) => {
     try {
       setSubmitting(true);
-      await createMaster("vendor", form as any);
+      await entityCall("vendor", "insert", form as any);
       toast.success("Vendor profile created.");
       router.push("/VendorMaster");
     } catch (error) {

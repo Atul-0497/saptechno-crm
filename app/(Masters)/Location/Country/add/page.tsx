@@ -1,12 +1,12 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { CountryFormData } from "@/lib/validations/masterSchemas";
 import CountryForm from "@/components/masters-forms/CountryForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function Page() {
     try {
       setSubmitting(true);
       // existing API expected CountryId: "0" for new countries
-      await createMaster("country", { ...form, CountryId: "0" } as any);
+      await entityCall("country", "insert", { ...form, CountryId: "0" } as any);
       toast.success("Country created.");
       router.push("/Location/Country");
     } catch (error) {

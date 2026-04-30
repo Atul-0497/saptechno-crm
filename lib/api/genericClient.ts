@@ -1,5 +1,5 @@
 export async function entityCall(entity: string, action: "select" | "insert" | "update" | "delete", data?: Record<string, any>) {
-  const res = await fetch(`/api/generic`, {
+  const res = await fetch(`/api/masters`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ entity, action, data }),

@@ -1,6 +1,5 @@
 "use client";
 
-import { updateMaster } from "@/actions/masters";
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useIndustryMaster } from "@/hooks/useMasters";
 import IndustryForm from "@/components/masters-forms/IndustryForm";
 import type { IndustryFormData } from "@/lib/validations/masterSchemas";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export default function Page() {
     try {
       if (!editing) return;
       setSubmitting(true);
-      await updateMaster("industry", id, form as any);
+      await entityCall("industry", "update", { ...form, Id: id } as any);
       toast.success("Industry updated.");
       router.push("/IndustryMaster");
     } catch (error) {

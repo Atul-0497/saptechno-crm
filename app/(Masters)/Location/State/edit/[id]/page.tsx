@@ -1,6 +1,5 @@
 "use client";
 
-import { updateMaster } from "@/actions/masters";
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useStateMaster, useCountryMaster } from "@/hooks/useMasters";
 import StateForm from "@/components/masters-forms/StateForm";
 import type { StateFormData } from "@/lib/validations/masterSchemas";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function Page() {
     try {
       if (!editing) return;
       setSubmitting(true);
-      await updateMaster("state", id, form as any);
+      await entityCall("state", "update", { ...form, Id: id } as any);
       toast.success("State updated.");
       router.push("/Location/State");
     } catch (error) {

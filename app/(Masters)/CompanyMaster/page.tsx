@@ -7,13 +7,13 @@ import { useRouter } from "next/navigation";
 import { Building2, CheckCircle2, Plus, Search, Sparkles, TrendingUp, UsersRound, } from "lucide-react";
 import { clsx } from "clsx";
 import { useCompanyMaster } from "@/hooks/useMasters";
-import { updateMaster, deleteMaster } from "@/actions/masters";
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 import { buildCompanyPayload } from "@/lib/utils/companyPayload";
 import { isCompanyActive } from "@/lib/utils/masterStatus";
 import type { CompanyRecord, CompanyFormValues } from "@/types/master";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -90,7 +90,7 @@ export default function Page() {
       const companyPayload = payload as any;
       const companyId = String(companyPayload.CompanyId || companyPayload.Id || "");
       const { CompanyId, ...rest } = payload as any;
-      await updateMaster("company", companyId, rest as any);
+      await entityCall("company", "update", { ...rest, Id: companyId } as any);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to update company.");
     }
@@ -114,7 +114,7 @@ export default function Page() {
     try {
       const companyPayload = payload as any;
       const companyId = String(companyPayload.CompanyId || companyPayload.Id || "");
-      await deleteMaster("company", companyId);
+      await entityCall("company", "delete", { Id: companyId });
       toast.success("Company deleted.");
       setDeleteItem(null);
     } catch (error) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useLocationMaster } from "@/hooks/useMasters";
 import type { DealerFormData } from "@/lib/validations/masterSchemas";
 import DealerForm from "@/components/masters-forms/DealerForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function Page() {
   const handleSubmit = async (form: DealerFormData) => {
     try {
       setSubmitting(true);
-      await createMaster("dealer", form as any);
+      await entityCall("dealer", "insert", form as any);
       toast.success("Dealer created.");
       router.push("/DealerMaster");
     } catch (error) {

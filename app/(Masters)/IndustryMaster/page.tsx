@@ -17,11 +17,11 @@ import { clsx } from "clsx";
 import { useIndustryMaster } from "@/hooks/useMasters";
 import { isMasterActive } from "@/lib/utils/masterStatus";
 import type { IndustryRecord } from "@/types/master";
-import { updateMaster, deleteMaster } from "@/actions/masters";
 
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -89,7 +89,7 @@ export default function Page() {
   const handleToggle = async (item: IndustryRecord) => {
     try {
       const id = String(item.IndustryId ?? item.Id ?? "");
-      await updateMaster("industry", id, {
+      await entityCall("industry", "update", {
         ...item,
         Active: isMasterActive(item.Active) ? "0" : "1",
       } as any);
@@ -101,7 +101,7 @@ export default function Page() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await deleteMaster("industry", deleteId);
+      await entityCall("industry", "delete", { Id: deleteId });
       toast.success("Record removed.");
       setDeleteItem(null);
     } catch (error) {

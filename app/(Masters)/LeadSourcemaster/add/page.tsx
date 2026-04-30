@@ -1,12 +1,12 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { LeadSourceFormData } from "@/lib/validations/masterSchemas";
 import LeadSourceForm from "@/components/masters-forms/LeadSourceForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function Page() {
   const handleSubmit = async (form: LeadSourceFormData) => {
     try {
       setSubmitting(true);
-      await createMaster("leadsource", form as any);
+      await entityCall("leadsource", "insert", form as any);
       toast.success("Lead source created.");
       router.push("/LeadSourcemaster");
     } catch (error) {

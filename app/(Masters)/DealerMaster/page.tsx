@@ -17,11 +17,11 @@ import { clsx } from "clsx";
 import { useDealerMaster } from "@/hooks/useMasters";
 import { isMasterActive } from "@/lib/utils/masterStatus";
 import type { DealerRecord } from "@/types/master";
-import { updateMaster, deleteMaster } from "@/actions/masters";
 
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -94,7 +94,7 @@ export default function Page() {
   const handleToggle = async (item: DealerRecord) => {
     try {
       const id = String(item.DealerId ?? item.Id ?? "");
-      await updateMaster("dealer", id, {
+      await entityCall("dealer", "update", {
         ...item,
         Active: isMasterActive(item.Active) ? "0" : "1",
       } as any);
@@ -106,7 +106,7 @@ export default function Page() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await deleteMaster("dealer", deleteId);
+      await entityCall("dealer", "delete", { Id: deleteId });
       toast.success("Record removed.");
       setDeleteItem(null);
     } catch (error) {

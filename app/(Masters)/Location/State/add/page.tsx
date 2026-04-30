@@ -1,6 +1,5 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import type { StateFormData } from "@/lib/validations/masterSchemas";
 import StateForm from "@/components/masters-forms/StateForm";
 import { useCountryMaster } from "@/hooks/useMasters";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function Page() {
   const handleSubmit = async (form: StateFormData) => {
     try {
       setSubmitting(true);
-      await createMaster("state", form as any);
+      await entityCall("state", "insert", form as any);
       toast.success("State created.");
       router.push("/Location/State");
     } catch (error) {

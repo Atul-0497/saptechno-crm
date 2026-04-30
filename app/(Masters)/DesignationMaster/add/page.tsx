@@ -1,12 +1,12 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { DesignationFormData } from "@/lib/validations/masterSchemas";
 import DesignationForm from "@/components/masters-forms/DesignationForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function Page() {
   const handleSubmit = async (form: DesignationFormData) => {
     try {
       setSubmitting(true);
-      await createMaster("designation", form as any);
+      await entityCall("designation", "insert", form as any);
       toast.success("Designation created.");
       router.push("/DesignationMaster");
     } catch (error) {

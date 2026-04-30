@@ -1,13 +1,13 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { masterKeys } from "@/hooks/useMasters";
+
 import type { DepartmentFormData } from "@/lib/validations/masterSchemas";
 import DepartmentForm from "@/components/masters-forms/DepartmentForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function Page() {
   const handleSubmit = async (form: DepartmentFormData) => {
     try {
       setSubmitting(true);
-      await createMaster("department", form as any);
+      await entityCall("department", "insert", form as any);
       toast.success("Department created.");
       router.push("/DepartmentMaster");
     } catch (error) {

@@ -1,6 +1,5 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useCityMaster } from "@/hooks/useMasters";
 import type { CityFormData } from "@/lib/validations/masterSchemas";
 import CityForm from "@/components/masters-forms/CityForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function Page() {
   const handleSubmit = async (form: CityFormData) => {
     try {
       setSubmitting(true);
-      await createMaster("city", { ...form, CityId: "0" } as any);
+      await entityCall("city", "insert", { ...form, CityId: "0" } as any);
       toast.success("City created.");
       router.push("/Location/City");
     } catch (error) {

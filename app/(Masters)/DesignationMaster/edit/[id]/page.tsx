@@ -1,6 +1,5 @@
 "use client";
 
-import { updateMaster } from "@/actions/masters";
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useDesignationMaster } from "@/hooks/useMasters";
 import DesignationForm from "@/components/masters-forms/DesignationForm";
 import type { DesignationFormData } from "@/lib/validations/masterSchemas";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function Page() {
     try {
       if (!editing) return;
       setSubmitting(true);
-      await updateMaster("designation", id, { ...form, Id: id } as any);
+      await entityCall("designation", "update", { ...form, Id: id } as any);
       toast.success("Designation updated.");
       router.push("/DesignationMaster");
     } catch (error) {

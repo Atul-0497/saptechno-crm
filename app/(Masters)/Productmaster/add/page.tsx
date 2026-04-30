@@ -1,6 +1,5 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import type { ProductFormData } from "@/lib/validations/masterSchemas";
 import ProductForm from "@/components/masters-forms/ProductForm";
 import type { ProductRecord } from "@/types/master";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function Page() {
         Active: form.Active === true ? "1" : "0",
       };
 
-      await createMaster("product", payload as any);
+      await entityCall("product", "insert", payload as any);
       toast.success("Product created successfully.");
       router.push("/Productmaster");
     } catch (error) {

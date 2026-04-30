@@ -17,11 +17,11 @@ import { clsx } from "clsx";
 import { useLeadSourceMaster } from "@/hooks/useMasters";
 import { isMasterActive } from "@/lib/utils/masterStatus";
 import type { LeadSourceRecord } from "@/types/master";
-import { updateMaster, deleteMaster } from "@/actions/masters";
 
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -89,7 +89,7 @@ export default function Page() {
   const handleToggle = async (item: LeadSourceRecord) => {
     try {
       const id = String(item.LeadSourceId ?? item.Id ?? "");
-      await updateMaster("leadsource", id, {
+      await entityCall("leadsource", "update", {
         ...item,
         Active: isMasterActive(item.Active) ? "0" : "1",
       } as any);
@@ -101,7 +101,7 @@ export default function Page() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await deleteMaster("leadsource", deleteId);
+      await entityCall("leadsource", "delete", { Id: deleteId });
       toast.success("Record removed.");
       setDeleteItem(null);
     } catch (error) {

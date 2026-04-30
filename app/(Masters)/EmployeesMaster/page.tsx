@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { useEmployeeMaster } from "@/hooks/useMasters";
-import { updateMaster, deleteMaster } from "@/actions/masters";
 import { isMasterActive, normalizeActiveFlag } from "@/lib/utils/masterStatus";
 import type { EmployeeRecord, EmployeeFormValues } from "@/types/master";
 import { type EmployeeFormData } from "@/lib/validations/masterSchemas";
@@ -23,6 +22,7 @@ import { type EmployeeFormData } from "@/lib/validations/masterSchemas";
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
+import { entityCall } from "@/lib/api/genericClient";
 
 const makePayload = (
   form: EmployeeFormData,
@@ -129,7 +129,7 @@ export default function Page() {
       } as any;
       const id = String(payload.EmployeeId || payload.Id || "");
       const { EmployeeId, ...rest } = payload as any;
-      await updateMaster("employee", id, rest as any);
+      await entityCall("employee", "update", { ...rest, Id: id } as any);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to toggle status.");
     }
@@ -138,7 +138,7 @@ export default function Page() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await deleteMaster("employee", String(deleteId));
+      await entityCall("employee", "delete", { Id: String(deleteId) });
       toast.success("Employee record removed.");
       setDeleteItem(null);
     } catch (error) {

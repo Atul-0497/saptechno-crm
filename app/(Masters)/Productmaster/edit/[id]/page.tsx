@@ -1,6 +1,5 @@
 "use client";
 
-import { updateMaster } from "@/actions/masters";
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -10,6 +9,7 @@ import ProductForm from "@/components/masters-forms/ProductForm";
 import type { ProductFormData } from "@/lib/validations/masterSchemas";
 import type { ProductRecord } from "@/types/master";
 import { useMemo } from "react";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function Page() {
         Active: form.Active === true ? "1" : "0",
       };
 
-      await updateMaster("product", id, { id, data: payload } as any);
+      await entityCall("product", "update", { id, data: payload } as any);
       toast.success("Product updated successfully.");
       router.push("/Productmaster");
     } catch (error) {

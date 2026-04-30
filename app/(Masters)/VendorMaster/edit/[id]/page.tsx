@@ -1,6 +1,5 @@
 "use client";
 
-import { updateMaster } from "@/actions/masters";
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -8,6 +7,7 @@ import toast from "react-hot-toast";
 import { useVendorMaster, useLocationMaster } from "@/hooks/useMasters";
 import VendorForm from "@/components/masters-forms/VendorForm";
 import type { VendorFormData } from "@/lib/validations/masterSchemas";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function Page() {
     try {
       if (!editing) return;
       setSubmitting(true);
-      await updateMaster("vendor", id, form as any);
+      await entityCall("vendor", "update", { ...form, Id: id } as any);
       toast.success("Vendor profile updated.");
       router.push("/VendorMaster");
     } catch (error) {

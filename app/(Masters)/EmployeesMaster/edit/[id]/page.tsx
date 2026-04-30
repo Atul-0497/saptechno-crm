@@ -1,6 +1,5 @@
 "use client";
 
-import { updateMaster } from "@/actions/masters";
 
 import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -12,6 +11,7 @@ import {
 } from "@/hooks/useMasters";
 import type { EmployeeFormData } from "@/lib/validations/masterSchemas";
 import EmployeeForm from "@/components/masters-forms/EmployeeForm";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function Page() {
     try {
       if (!editing) return;
       setSubmitting(true);
-      await updateMaster("employee", id, form as any);
+      await entityCall("employee", "update", { ...form, Id: id } as any);
       toast.success("Staff profile updated.");
       router.push("/EmployeesMaster");
     } catch (error) {

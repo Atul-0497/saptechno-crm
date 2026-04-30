@@ -1,18 +1,18 @@
 "use client";
 
-import { createMaster } from "@/actions/masters";
 
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import CompanyForm from "@/components/masters-forms/CompanyForm";
 import type { CompanyFormData } from "@/lib/validations/masterSchemas";
+import { entityCall } from "@/lib/api/genericClient";
 
 export default function Page() {
   const router = useRouter();
 
   const handleSubmit = async (form: CompanyFormData) => {
     try {
-      await createMaster("company", form as any);
+      await entityCall("company", "insert", form as any);
       toast.success("Company profile created.");
       router.push("/CompanyMaster");
     } catch (error) {
