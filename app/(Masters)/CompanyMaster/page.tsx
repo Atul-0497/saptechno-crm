@@ -10,7 +10,7 @@ import { useCompanyMaster } from "@/hooks/useMasters";
 import { updateMaster, deleteMaster } from "@/actions/masters";
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
-import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
+import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 import { buildCompanyPayload } from "@/lib/utils/companyPayload";
 import { isCompanyActive } from "@/lib/utils/masterStatus";
 import type { CompanyRecord, CompanyFormValues } from "@/types/master";

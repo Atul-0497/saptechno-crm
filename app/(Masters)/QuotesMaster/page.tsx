@@ -18,7 +18,7 @@ import { useQuotes } from "@/hooks/useQuotes";
 import type { QuoteRecord } from "@/types/quote";
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterTableColumns } from "@/components/masters/masterTableConfig";
-import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
+import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 
 export default function QuotesPage() {
   const router = useRouter();

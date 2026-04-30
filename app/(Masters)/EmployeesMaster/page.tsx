@@ -22,7 +22,7 @@ import { type EmployeeFormData } from "@/lib/validations/masterSchemas";
 
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
-import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
+import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 
 const makePayload = (
   form: EmployeeFormData,

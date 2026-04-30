@@ -8,7 +8,7 @@ import { clsx } from "clsx";
 import toast from "react-hot-toast";
 import { usePurchaseOrders } from "@/hooks/usePurchaseOrders";
 import type { PurchaseOrderRecord } from "@/types/purchaseOrder";
-import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
+import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 import UniversalTable from "@/components/tables/UniversalTable";
 import { masterTableColumns } from "@/components/masters/masterTableConfig";
 
