@@ -4,15 +4,7 @@ import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Building2,
-  CheckCircle2,
-  Plus,
-  Search,
-  Sparkles,
-  TrendingUp,
-  UsersRound,
-} from "lucide-react";
+import { Building2,CheckCircle2,Plus,Search,Sparkles,TrendingUp,UsersRound,} from "lucide-react";
 import { clsx } from "clsx";
 import { useCompanyMaster } from "@/hooks/useMasters";
 import { updateMaster, deleteMaster } from "@/actions/masters";
@@ -27,17 +19,14 @@ export default function Page() {
   const router = useRouter();
   const { data, isLoading } = useCompanyMaster();
   const companies: CompanyRecord[] = data || [];
-
   const [deleteItem, setDeleteItem] = useState<any>(null);
   const deleteId = deleteItem ? String(deleteItem.Id || deleteItem.ProductId || deleteItem.VendorId || deleteItem.CompanyId || deleteItem.LocationId || deleteItem.Code || deleteItem.DealerId || deleteItem.LeadSourceId || deleteItem.IndustryId || deleteItem.DepartmentId || deleteItem.DesignationId || deleteItem.PincodeId || deleteItem.StateId || deleteItem.CountryId || "") : null;
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
-
   const activeCompanies = companies.filter((company) => isCompanyActive(company.Active));
   const inactiveCompanies = companies.length - activeCompanies.length;
-
   const filteredCompanies = useMemo(() => {
-    const search = query.trim().toLowerCase();
+  const search = query.trim().toLowerCase();
 
     return companies.filter((company) => {
       const matchesStatus =
