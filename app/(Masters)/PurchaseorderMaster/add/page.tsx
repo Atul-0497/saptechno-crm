@@ -2,11 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useVendorMaster, useLocationMaster } from "@/app/hooks/useMasters";
-import { usePurchaseOrders } from "@/app/hooks/usePurchaseOrders";
-import type { PurchaseOrderFormData } from "@/app/lib/validations/masterSchemas";
-import type { PurchaseOrderRecord } from "@/app/types/purchaseOrder";
-import PurchaseOrderForm from "../components/PurchaseOrderForm";
+import { useVendorMaster, useLocationMaster } from "@/hooks/useMasters";
+import { usePurchaseOrders } from "@/hooks/usePurchaseOrders";
+import type { PurchaseOrderFormData } from "@/lib/validations/masterSchemas";
+import type { PurchaseOrderRecord } from "@/types/purchaseOrder";
+import PurchaseOrderForm from "@/components/masters/PurchaseOrderForm";
 
 export default function AddPurchaseOrderPage() {
   const router = useRouter();

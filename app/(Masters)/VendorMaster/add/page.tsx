@@ -1,35 +1,40 @@
 "use client";
 
+import { createMaster } from "@/actions/masters";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { masterKeys, useLocationMaster } from "@/app/hooks/useMasters";
-import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
-import { type VendorFormData } from "@/app/lib/validations/masterSchemas";
-import VendorForm from "../components/VendorForm";
+import { useLocationMaster } from "@/hooks/useMasters";
+import type { VendorFormData } from "@/lib/validations/masterSchemas";
+import VendorForm from "@/components/masters/VendorForm";
 
-export default function AddVendorPage() {
+export default function Page() {
   const router = useRouter();
-  const { create } = useGenericSubmit("vendor", [masterKeys.vendors()]);
   const { cities } = useLocationMaster();
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (form: VendorFormData) => {
     try {
-      await create.mutateAsync(form as any);
+      setSubmitting(true);
+      await createMaster("vendor", form as any);
       toast.success("Vendor profile created.");
       router.push("/VendorMaster");
     } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Unable to save record.");
+      toast.error(error instanceof Error ? error.message : "Unable to save record.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div >
+    <div>
       <VendorForm
         data={null}
         cities={cities || []}
         onSubmit={handleSubmit}
         onCancel={() => router.push("/VendorMaster")}
-        submitting={create.isPending}
+        submitting={submitting}
       />
     </div>
   );

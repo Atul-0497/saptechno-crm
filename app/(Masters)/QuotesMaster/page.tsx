@@ -14,17 +14,19 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import toast from "react-hot-toast";
-import { useQuotes } from "@/app/hooks/useQuotes";
-import type { QuoteRecord } from "@/app/types/quote";
-import QuoteTable from "./components/QuoteTable";
-import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import { useQuotes } from "@/hooks/useQuotes";
+import type { QuoteRecord } from "@/types/quote";
+import UniversalTable from "@/components/tables/UniversalTable";
+import { masterTableColumns } from "@/components/masters/masterTableConfig";
+import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
 
 export default function QuotesPage() {
   const router = useRouter();
   const { data, isLoading, deleteQuote } = useQuotes();
   const quotes: QuoteRecord[] = data;
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteItem, setDeleteItem] = useState<any>(null);
+  const deleteId = deleteItem ? String(deleteItem.Id || deleteItem.ProductId || deleteItem.VendorId || deleteItem.CompanyId || deleteItem.LocationId || deleteItem.Code || deleteItem.DealerId || deleteItem.LeadSourceId || deleteItem.IndustryId || deleteItem.DepartmentId || deleteItem.DesignationId || deleteItem.PincodeId || deleteItem.StateId || deleteItem.CountryId || "") : null;
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "draft" | "sent" | "approved">("all");
 
@@ -84,7 +86,7 @@ export default function QuotesPage() {
     try {
       await deleteQuote(deleteId);
       toast.success("Quote deleted.");
-      setDeleteId(null);
+      setDeleteItem(null);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to delete quote.");
     }
@@ -173,19 +175,23 @@ export default function QuotesPage() {
           </div>
         </div>
 
-        <QuoteTable
+        <UniversalTable
+          columns={masterTableColumns.quote}
+          idKey="id"
           data={filtered}
           loading={isLoading}
           onEdit={(item) => router.push(`/QuotesMaster/edit/${item.id}`)}
-          onDelete={(id) => setDeleteId(id)}
+          onDelete={(id, row) => setDeleteItem(row)}
         />
       </section>
 
       <DeleteConfirmModal
-        open={!!deleteId}
-        onClose={() => setDeleteId(null)}
+        open={!!deleteItem}
+        onClose={() => setDeleteItem(null)}
         onConfirm={handleDelete}
-        loading={false}
+        loading={isLoading}
+        itemName={deleteItem?.Name || deleteItem?.CompanyName || deleteItem?.EmployeeName || deleteItem?.LocationName || deleteItem?.Pincode || deleteItem?.CityName || deleteItem?.StateName || deleteItem?.CountryName || deleteItem?.Code}
+        entityName="Record"
       />
     </div>
   );

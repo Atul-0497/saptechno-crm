@@ -1,15 +1,15 @@
 import "./globals.css";
-import { Sidebar } from "./components/layout/Sidebar";
-import { Topbar } from "./components/layout/Topbar";
-import { MobileMenuProvider } from "./contexts/MobileMenuContext";
-import ReactQueryProvider from "./providers/ReactQueryProvider"; 
+import { Sidebar } from "@/components/layout/Sidebar";
+import { Topbar } from "@/components/layout/Topbar";
+import { MobileMenuProvider } from "@/contexts/MobileMenuContext";
+import ReactQueryProvider from "@/providers/ReactQueryProvider"; 
 import { Toaster } from "react-hot-toast";
 
-import { ThemeProvider } from "./components/providers/ThemeProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
-import { CustomizationProvider } from "./contexts/CustomizationContext";
+import { CustomizationProvider } from "@/contexts/CustomizationContext";
 
-import { MainLayout } from "./components/layout/MainLayout";
+import { MainLayout } from "@/components/layout/MainLayout";
 
 export default function RootLayout({
   children,

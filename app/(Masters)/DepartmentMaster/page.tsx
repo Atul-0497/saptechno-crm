@@ -14,19 +14,22 @@ import {
   UsersRound,
 } from "lucide-react";
 import { clsx } from "clsx";
-import { useSimpleMaster } from "@/app/hooks/useMasters";
-import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { DepartmentRecord } from "@/app/types/master";
+import { useSimpleMaster } from "@/hooks/useMasters";
+import { isMasterActive } from "@/lib/utils/masterStatus";
+import type { DepartmentRecord } from "@/types/master";
+import { updateMaster, deleteMaster } from "@/actions/masters";
 
-import DepartmentTable from "./components/DepartmentTable";
-import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import UniversalTable from "@/components/tables/UniversalTable";
+import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
+import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
 
 export default function Page() {
   const router = useRouter();
-  const { data, isLoading, update, remove } = useSimpleMaster<DepartmentRecord>("department");
+  const { data, isLoading } = useSimpleMaster<DepartmentRecord>("department");
   const departments: DepartmentRecord[] = data || [];
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteItem, setDeleteItem] = useState<any>(null);
+  const deleteId = deleteItem ? String(deleteItem.Id || deleteItem.ProductId || deleteItem.VendorId || deleteItem.CompanyId || deleteItem.LocationId || deleteItem.Code || deleteItem.DealerId || deleteItem.LeadSourceId || deleteItem.IndustryId || deleteItem.DepartmentId || deleteItem.DesignationId || deleteItem.PincodeId || deleteItem.StateId || deleteItem.CountryId || "") : null;
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
 
@@ -85,10 +88,11 @@ export default function Page() {
 
   const handleToggle = async (dept: DepartmentRecord) => {
     try {
-      await update.mutateAsync({
+      const id = String(dept.DepartmentId ?? dept.Id ?? "");
+      await updateMaster("department", id, {
         ...dept,
         Active: isMasterActive(dept.Active) ? "0" : "1",
-      });
+      } as any);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to toggle status.");
     }
@@ -97,9 +101,9 @@ export default function Page() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await remove.mutateAsync(deleteId);
-      toast.success("Department record removed.");
-      setDeleteId(null);
+      await deleteMaster("department", deleteId);
+      toast.success("Record removed.");
+      setDeleteItem(null);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
@@ -188,22 +192,26 @@ export default function Page() {
           </div>
         </div>
 
-        <DepartmentTable
+        <UniversalTable
+          columns={masterTableColumns.department}
+          idKey={masterIdKeys.department}
           data={filtered}
           loading={isLoading}
           onEdit={(dept) => {
             router.push(`/DepartmentMaster/edit/${dept.DepartmentId || dept.Id}`);
           }}
-          onDelete={(id) => setDeleteId(id)}
+          onDelete={(id, row) => setDeleteItem(row)}
           onToggleActive={handleToggle}
         />
       </section>
 
       <DeleteConfirmModal
-        open={!!deleteId}
-        onClose={() => setDeleteId(null)}
+        open={!!deleteItem}
+        onClose={() => setDeleteItem(null)}
         onConfirm={handleDelete}
         loading={isLoading}
+        itemName={deleteItem?.Name || deleteItem?.CompanyName || deleteItem?.EmployeeName || deleteItem?.LocationName || deleteItem?.Pincode || deleteItem?.CityName || deleteItem?.StateName || deleteItem?.CountryName || deleteItem?.Code}
+        entityName="Record"
       />
     </div>
   );

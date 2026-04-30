@@ -1,33 +1,33 @@
 "use client";
 
+import { createMaster } from "@/actions/masters";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useDesignationMaster } from "@/app/hooks/useMasters";
-import { type DesignationFormData } from "@/app/lib/validations/masterSchemas";
-import DesignationForm from "../components/DesignationForm";
+import type { DesignationFormData } from "@/lib/validations/masterSchemas";
+import DesignationForm from "@/components/masters/DesignationForm";
 
-export default function AddDesignationPage() {
+export default function Page() {
   const router = useRouter();
-  const { create } = useDesignationMaster();
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (form: DesignationFormData) => {
     try {
-      await create.mutateAsync(form as any);
+      setSubmitting(true);
+      await createMaster("designation", form as any);
       toast.success("Designation created.");
       router.push("/DesignationMaster");
     } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Unable to save record.");
+      toast.error(error instanceof Error ? error.message : "Unable to save record.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div >
-      <DesignationForm
-        data={null}
-        onSubmit={handleSubmit}
-        onCancel={() => router.push("/DesignationMaster")}
-        submitting={create.isPending}
-      />
+    <div>
+      <DesignationForm data={null} onSubmit={handleSubmit} onCancel={() => router.push("/DesignationMaster")} submitting={submitting} />
     </div>
   );
 }

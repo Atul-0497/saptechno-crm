@@ -2,11 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useVendorMaster, useLocationMaster } from "@/app/hooks/useMasters";
-import { useQuotes } from "@/app/hooks/useQuotes";
-import type { QuoteFormData } from "@/app/lib/validations/masterSchemas";
-import type { QuoteRecord } from "@/app/types/quote";
-import QuoteForm from "../components/QuoteForm";
+import { useVendorMaster, useLocationMaster } from "@/hooks/useMasters";
+import { useQuotes } from "@/hooks/useQuotes";
+import type { QuoteFormData } from "@/lib/validations/masterSchemas";
+import type { QuoteRecord } from "@/types/quote";
+import QuoteForm from "@/components/masters/QuoteForm";
 
 export default function AddQuotePage() {
   const router = useRouter();

@@ -14,19 +14,22 @@ import {
   UsersRound,
 } from "lucide-react";
 import { clsx } from "clsx";
-import { useProductMaster } from "@/app/hooks/useMasters";
-import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { ProductRecord } from "@/app/types/master";
+import { useProductMaster } from "@/hooks/useMasters";
+import { isMasterActive } from "@/lib/utils/masterStatus";
+import type { ProductRecord } from "@/types/master";
+import { updateMaster, deleteMaster } from "@/actions/masters";
 
-import ProductTable from "./components/ProductTable";
-import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import UniversalTable from "@/components/tables/UniversalTable";
+import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
+import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
 
 export default function Page() {
   const router = useRouter();
-  const { data, isLoading, update, remove } = useProductMaster();
+  const { data, isLoading } = useProductMaster();
   const products: ProductRecord[] = data || [];
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteItem, setDeleteItem] = useState<any>(null);
+  const deleteId = deleteItem ? String(deleteItem.Id || deleteItem.ProductId || deleteItem.VendorId || deleteItem.CompanyId || deleteItem.LocationId || deleteItem.Code || deleteItem.DealerId || deleteItem.LeadSourceId || deleteItem.IndustryId || deleteItem.DepartmentId || deleteItem.DesignationId || deleteItem.PincodeId || deleteItem.StateId || deleteItem.CountryId || "") : null;
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
 
@@ -85,11 +88,11 @@ export default function Page() {
 
   const handleToggle = async (item: ProductRecord) => {
     try {
-      await update.mutateAsync({
+      const id = String(item.ProductId ?? item.Id ?? "");
+      await updateMaster("product", id, {
         ...item,
-        ProductId: item.ProductId || item.Id,
         Active: isMasterActive(item.Active) ? "0" : "1",
-      });
+      } as any);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to toggle status.");
     }
@@ -98,11 +101,11 @@ export default function Page() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await remove.mutateAsync(deleteId);
-      toast.success("Product deleted.");
-      setDeleteId(null);
+      await deleteMaster("product", deleteId);
+      toast.success("Record removed.");
+      setDeleteItem(null);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to delete product.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -189,22 +192,26 @@ export default function Page() {
           </div>
         </div>
 
-        <ProductTable
+        <UniversalTable
+          columns={masterTableColumns.product}
+          idKey={masterIdKeys.product}
           data={filtered}
           loading={isLoading}
           onEdit={(item) => {
             router.push(`/Productmaster/edit/${item.ProductId || item.Id}`);
           }}
-          onDelete={(id) => setDeleteId(id)}
+          onDelete={(id, row) => setDeleteItem(row)}
           onToggleActive={handleToggle}
         />
       </section>
 
       <DeleteConfirmModal
-        open={!!deleteId}
-        onClose={() => setDeleteId(null)}
+        open={!!deleteItem}
+        onClose={() => setDeleteItem(null)}
         onConfirm={handleDelete}
         loading={isLoading}
+        itemName={deleteItem?.Name || deleteItem?.CompanyName || deleteItem?.EmployeeName || deleteItem?.LocationName || deleteItem?.Pincode || deleteItem?.CityName || deleteItem?.StateName || deleteItem?.CountryName || deleteItem?.Code}
+        entityName="Record"
       />
     </div>
   );

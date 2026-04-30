@@ -1,28 +1,29 @@
 "use client";
 
+import { updateMaster } from "@/actions/masters";
+
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useProductMaster, masterKeys } from "@/app/hooks/useMasters";
-import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
-import type { ProductRecord } from "@/app/types/master";
-import { type ProductFormData } from "@/app/lib/validations/masterSchemas";
-import ProductForm from "../../components/ProductForm";
+import { useProductMaster } from "@/hooks/useMasters";
+import ProductForm from "@/components/masters/ProductForm";
+import type { ProductFormData } from "@/lib/validations/masterSchemas";
+import type { ProductRecord } from "@/types/master";
+import { useMemo } from "react";
 
-export default function EditProductPage() {
-  const params = useParams();
+export default function Page() {
   const router = useRouter();
-  const id = params.id as string;
-  
+  const params = useParams<{ id: string }>();
+  const id = params.id;
   const { data, isLoading } = useProductMaster();
-  const { update } = useGenericSubmit("product", [masterKeys.products()]);
-  const editing =
-    (data as ProductRecord[] | undefined)?.find((product) => product.ProductId === id || product.Id === id) ||
-    null;
+  const [submitting, setSubmitting] = useState(false);
+
+  const editing = (data as ProductRecord[] | undefined)?.find((product) => product.ProductId === id || product.Id === id) || null;
 
   const handleSubmit = async (form: ProductFormData) => {
     try {
       if (!editing) return;
-
+      setSubmitting(true);
       const otherInfo = {
         unitPrice: form.UnitPrice,
         unit: form.Unit,
@@ -40,12 +41,14 @@ export default function EditProductPage() {
         Active: form.Active === true ? "1" : "0",
       };
 
-      await update.mutateAsync({ id, data: payload });
+      await updateMaster("product", id, { id, data: payload } as any);
       toast.success("Product updated successfully.");
       router.push("/Productmaster");
     } catch (error) {
-       console.error("Save error:", error);
-       toast.error(error instanceof Error ? error.message : "Unable to save product.");
+      console.error("Save error:", error);
+      toast.error(error instanceof Error ? error.message : "Unable to save product.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -61,10 +64,7 @@ export default function EditProductPage() {
     return (
       <div className="p-8 text-center">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Product not found</h2>
-        <button 
-          onClick={() => router.push("/Productmaster")}
-          className="mt-4 text-blue-500 hover:underline"
-        >
+        <button onClick={() => router.push("/Productmaster")} className="mt-4 text-blue-500 hover:underline">
           Return to catalog
         </button>
       </div>
@@ -72,11 +72,6 @@ export default function EditProductPage() {
   }
 
   return (
-    <ProductForm
-      data={editing}
-      onSubmit={handleSubmit}
-      onCancel={() => router.push("/Productmaster")}
-      submitting={update.isPending}
-    />
+    <ProductForm data={editing} onSubmit={handleSubmit} onCancel={() => router.push("/Productmaster")} submitting={submitting} />
   );
 }

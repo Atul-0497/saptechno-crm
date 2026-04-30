@@ -6,17 +6,19 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, ClipboardList, Plus, Search, ShoppingCart, TrendingUp, WalletCards } from "lucide-react";
 import { clsx } from "clsx";
 import toast from "react-hot-toast";
-import { usePurchaseOrders } from "@/app/hooks/usePurchaseOrders";
-import type { PurchaseOrderRecord } from "@/app/types/purchaseOrder";
-import DeleteConfirmModal from "./components/DeleteConfirmModal";
-import PurchaseOrderTable from "./components/PurchaseOrderTable";
+import { usePurchaseOrders } from "@/hooks/usePurchaseOrders";
+import type { PurchaseOrderRecord } from "@/types/purchaseOrder";
+import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
+import UniversalTable from "@/components/tables/UniversalTable";
+import { masterTableColumns } from "@/components/masters/masterTableConfig";
 
 export default function PurchaseOrderMasterPage() {
   const router = useRouter();
   const { data, isLoading, deletePurchaseOrder } = usePurchaseOrders();
   const purchaseOrders: PurchaseOrderRecord[] = data;
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteItem, setDeleteItem] = useState<any>(null);
+  const deleteId = deleteItem ? String(deleteItem.Id || deleteItem.ProductId || deleteItem.VendorId || deleteItem.CompanyId || deleteItem.LocationId || deleteItem.Code || deleteItem.DealerId || deleteItem.LeadSourceId || deleteItem.IndustryId || deleteItem.DepartmentId || deleteItem.DesignationId || deleteItem.PincodeId || deleteItem.StateId || deleteItem.CountryId || "") : null;
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "draft" | "issued" | "received">("all");
 
@@ -76,7 +78,7 @@ export default function PurchaseOrderMasterPage() {
     try {
       await deletePurchaseOrder(deleteId);
       toast.success("Purchase order deleted.");
-      setDeleteId(null);
+      setDeleteItem(null);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to delete purchase order.");
     }
@@ -165,19 +167,23 @@ export default function PurchaseOrderMasterPage() {
           </div>
         </div>
 
-        <PurchaseOrderTable
+        <UniversalTable
+          columns={masterTableColumns.purchaseOrder}
+          idKey="id"
           data={filtered}
           loading={isLoading}
           onEdit={(item) => router.push(`/PurchaseorderMaster/edit/${item.id}`)}
-          onDelete={(id) => setDeleteId(id)}
+          onDelete={(id, row) => setDeleteItem(row)}
         />
       </section>
 
       <DeleteConfirmModal
-        open={!!deleteId}
-        onClose={() => setDeleteId(null)}
+        open={!!deleteItem}
+        onClose={() => setDeleteItem(null)}
         onConfirm={handleDelete}
-        loading={false}
+        loading={isLoading}
+        itemName={deleteItem?.Name || deleteItem?.CompanyName || deleteItem?.EmployeeName || deleteItem?.LocationName || deleteItem?.Pincode || deleteItem?.CityName || deleteItem?.StateName || deleteItem?.CountryName || deleteItem?.Code}
+        entityName="Record"
       />
     </div>
   );

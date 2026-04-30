@@ -1,34 +1,36 @@
 "use client";
 
+import { updateMaster } from "@/actions/masters";
+
+import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { masterKeys, useDepartmentMaster } from "@/app/hooks/useMasters";
-import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
-import { type DepartmentFormData } from "@/app/lib/validations/masterSchemas";
-import DepartmentForm from "../../components/DepartmentForm";
-import { useMemo } from "react";
-import type { DepartmentRecord } from "@/app/types/master";
+import { useDepartmentMaster } from "@/hooks/useMasters";
+import DepartmentForm from "@/components/masters/DepartmentForm";
+import type { DepartmentFormData } from "@/lib/validations/masterSchemas";
 
-export default function EditDepartmentPage() {
-  const params = useParams();
+export default function Page() {
   const router = useRouter();
-  const id = params.id as string;
-  
+  const params = useParams<{ id: string }>();
+  const id = params.id;
   const { data: departments, isLoading } = useDepartmentMaster();
-  const { update } = useGenericSubmit("department", [masterKeys.departments()]);
+  const [submitting, setSubmitting] = useState(false);
 
   const editing = useMemo(() => {
-    return (departments || []).find(r => String(r.DepartmentId || r.Id) === id) || null;
+    return (departments || []).find((r) => String(r.DepartmentId || r.Id) === id) || null;
   }, [departments, id]);
 
   const handleSubmit = async (form: DepartmentFormData) => {
     try {
       if (!editing) return;
-      await update.mutateAsync({ id, data: { ...form, Id: id } } as any);
+      setSubmitting(true);
+      await updateMaster("department", id, { ...form, Id: id } as any);
       toast.success("Department updated.");
       router.push("/DepartmentMaster");
     } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Unable to update record.");
+      toast.error(error instanceof Error ? error.message : "Unable to update record.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -44,10 +46,7 @@ export default function EditDepartmentPage() {
     return (
       <div className="p-8 text-center">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Record not found</h2>
-        <button 
-          onClick={() => router.push("/DepartmentMaster")}
-          className="mt-4 text-blue-500 hover:underline"
-        >
+        <button onClick={() => router.push("/DepartmentMaster")} className="mt-4 text-blue-500 hover:underline">
           Return to list
         </button>
       </div>
@@ -56,12 +55,7 @@ export default function EditDepartmentPage() {
 
   return (
     <div className="p-8">
-      <DepartmentForm
-        data={editing}
-        onSubmit={handleSubmit}
-        onCancel={() => router.push("/DepartmentMaster")}
-        submitting={update.isPending}
-      />
+      <DepartmentForm data={editing} onSubmit={handleSubmit} onCancel={() => router.push("/DepartmentMaster")} submitting={submitting} />
     </div>
   );
 }

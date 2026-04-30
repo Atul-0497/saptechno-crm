@@ -1,42 +1,31 @@
 "use client";
 
+import { createMaster } from "@/actions/masters";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useStateMaster } from "@/app/hooks/useMasters";
-import { type StateFormData } from "@/app/lib/validations/masterSchemas";
-import StateForm from "../components/StateForm";
+import type { StateFormData } from "@/lib/validations/masterSchemas";
+import StateForm from "@/components/masters/StateForm";
+import { useCountryMaster } from "@/hooks/useMasters";
 
-export default function AddStatePage() {
+export default function Page() {
   const router = useRouter();
-  const { countries, create, isLoading } = useStateMaster();
+  const [submitting, setSubmitting] = useState(false);
+  const { data: countries } = useCountryMaster();
 
   const handleSubmit = async (form: StateFormData) => {
     try {
-      await create.mutateAsync({ ...form, StateId: "0" } as any);
+      setSubmitting(true);
+      await createMaster("state", form as any);
       toast.success("State created.");
       router.push("/Location/State");
     } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Unable to save record.");
+      toast.error(error instanceof Error ? error.message : "Unable to save record.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500/30 border-t-blue-500" />
-      </div>
-    );
-  }
-
-  return (
-    <div >
-      <StateForm
-        data={null}
-        countries={countries}
-        onSubmit={handleSubmit}
-        onCancel={() => router.push("/Location/State")}
-        submitting={create.isPending}
-      />
-    </div>
-  );
+  return <StateForm data={null} countries={countries || []} onSubmit={handleSubmit} onCancel={() => router.push("/Location/State")} submitting={submitting} />;
 }

@@ -1,36 +1,40 @@
 "use client";
 
+import { createMaster } from "@/actions/masters";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { 
+import {
   useEmployeeMaster,
-  useDepartmentMaster, 
+  useDepartmentMaster,
   useDesignationMaster,
-  masterKeys,
-} from "@/app/hooks/useMasters";
-import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
-import { type EmployeeFormData } from "@/app/lib/validations/masterSchemas";
-import EmployeeForm from "../components/EmployeeForm";
+} from "@/hooks/useMasters";
+import type { EmployeeFormData } from "@/lib/validations/masterSchemas";
+import EmployeeForm from "@/components/masters/EmployeeForm";
 
-export default function AddEmployeePage() {
+export default function Page() {
   const router = useRouter();
-  const { create } = useGenericSubmit("employee", [masterKeys.employees()]);
+  const [submitting, setSubmitting] = useState(false);
   const { data: employees } = useEmployeeMaster();
   const { data: departments } = useDepartmentMaster();
   const { data: designations } = useDesignationMaster();
 
   const handleSubmit = async (form: EmployeeFormData) => {
     try {
-      await create.mutateAsync(form as any);
+      setSubmitting(true);
+      await createMaster("employee", form as any);
       toast.success("Employee onboarding successful.");
       router.push("/EmployeesMaster");
     } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Unable to save record.");
+      toast.error(error instanceof Error ? error.message : "Unable to save record.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div >
+    <div>
       <EmployeeForm
         data={null}
         departments={departments || []}
@@ -38,7 +42,7 @@ export default function AddEmployeePage() {
         employees={employees || []}
         onSubmit={handleSubmit}
         onCancel={() => router.push("/EmployeesMaster")}
-        submitting={create.isPending}
+        submitting={submitting}
       />
     </div>
   );

@@ -1,35 +1,37 @@
 "use client";
 
+import { updateMaster } from "@/actions/masters";
+
+import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { masterKeys, useCompanyMaster } from "@/app/hooks/useMasters";
-import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
-import { type CompanyFormData } from "@/app/lib/validations/masterSchemas";
-import CompanyForm from "../../components/CompanyForm";
-import { useMemo } from "react";
-import type { CompanyRecord } from "@/app/types/master";
+import { masterKeys, useCompanyMaster } from "@/hooks/useMasters";
+import CompanyForm from "@/components/masters/CompanyForm";
+import type { CompanyFormData } from "@/lib/validations/masterSchemas";
 
-export default function EditCompanyPage() {
-  const params = useParams();
+export default function Page() {
   const router = useRouter();
-  const id = params.id as string;
-  
+  const params = useParams<{ id: string }>();
+  const id = params.id;
   const { data, isLoading } = useCompanyMaster();
-  const { update } = useGenericSubmit("company", [masterKeys.companies()]);
-  const records: CompanyRecord[] = data || [];
+  const [submitting, setSubmitting] = useState(false);
+  const records = data || [];
 
   const editing = useMemo(() => {
-    return records.find(r => String(r.CompanyId || r.Id) === id) || null;
+    return records.find((r) => String(r.CompanyId || r.Id) === id) || null;
   }, [records, id]);
 
   const handleSubmit = async (form: CompanyFormData) => {
     try {
       if (!editing) return;
-      await update.mutateAsync({ id, data: form } as any);
+      setSubmitting(true);
+      await updateMaster("company", id, form as any);
       toast.success("Company profile updated.");
       router.push("/CompanyMaster");
     } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Unable to update record.");
+      toast.error(error instanceof Error ? error.message : "Unable to update record.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -45,10 +47,7 @@ export default function EditCompanyPage() {
     return (
       <div className="p-8 text-center">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Record not found</h2>
-        <button 
-          onClick={() => router.push("/CompanyMaster")}
-          className="mt-4 text-blue-500 hover:underline"
-        >
+        <button onClick={() => router.push("/CompanyMaster")} className="mt-4 text-blue-500 hover:underline">
           Return to list
         </button>
       </div>
@@ -57,12 +56,7 @@ export default function EditCompanyPage() {
 
   return (
     <div className="p-8">
-      <CompanyForm
-        data={editing}
-        onSubmit={handleSubmit}
-        onCancel={() => router.push("/CompanyMaster")}
-        submitting={update.isPending}
-      />
+      <CompanyForm data={editing} onSubmit={handleSubmit} onCancel={() => router.push("/CompanyMaster")} submitting={submitting} />
     </div>
   );
 }

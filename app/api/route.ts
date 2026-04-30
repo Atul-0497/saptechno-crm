@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { fetchWithTimeout, safeParseResponse, handleApiError } from "@/lib/utils/apiHelpers";
 
 export async function POST(req: Request) {
   let body: unknown;
@@ -12,11 +13,8 @@ export async function POST(req: Request) {
     );
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
-
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       "http://saptechno-001-site17.anytempurl.com/api/CRMAPI/MagicSearch",
       {
         method: "POST",
@@ -25,20 +23,10 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify(body),
         cache: "no-store",
-        signal: controller.signal,
       }
     );
 
-    const text = await res.text();
-    let data: unknown = text;
-
-    if (text) {
-      try {
-        data = JSON.parse(text);
-      } catch {
-        data = text;
-      }
-    }
+    const data = await safeParseResponse(res);
 
     if (!res.ok) {
       return NextResponse.json(
@@ -53,13 +41,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json(data);
   } catch (error) {
-    const message =
-      error instanceof Error && error.name === "AbortError"
-        ? "Company service timed out."
-        : "Company service is not reachable.";
-
-    return NextResponse.json({ message }, { status: 503 });
-  } finally {
-    clearTimeout(timeout);
+    return handleApiError(error, "Company service");
   }
 }

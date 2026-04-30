@@ -14,19 +14,22 @@ import {
   UsersRound,
 } from "lucide-react";
 import { clsx } from "clsx";
-import { useCompanyMaster } from "@/app/hooks/useMasters";
-import CompanyTable from "./components/CompanyTable";
-import DeleteConfirmModal from "./components/DeleteConfirmModal";
-import { buildCompanyPayload } from "@/app/lib/utils/companyPayload";
-import { isCompanyActive } from "@/app/lib/utils/masterStatus";
-import type { CompanyRecord, CompanyFormValues } from "@/app/types/master";
+import { useCompanyMaster } from "@/hooks/useMasters";
+import { updateMaster, deleteMaster } from "@/actions/masters";
+import UniversalTable from "@/components/tables/UniversalTable";
+import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
+import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
+import { buildCompanyPayload } from "@/lib/utils/companyPayload";
+import { isCompanyActive } from "@/lib/utils/masterStatus";
+import type { CompanyRecord, CompanyFormValues } from "@/types/master";
 
 export default function Page() {
   const router = useRouter();
-  const { data, isLoading, update, remove } = useCompanyMaster();
+  const { data, isLoading } = useCompanyMaster();
   const companies: CompanyRecord[] = data || [];
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteItem, setDeleteItem] = useState<any>(null);
+  const deleteId = deleteItem ? String(deleteItem.Id || deleteItem.ProductId || deleteItem.VendorId || deleteItem.CompanyId || deleteItem.LocationId || deleteItem.Code || deleteItem.DealerId || deleteItem.LeadSourceId || deleteItem.IndustryId || deleteItem.DepartmentId || deleteItem.DesignationId || deleteItem.PincodeId || deleteItem.StateId || deleteItem.CountryId || "") : null;
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
 
@@ -95,7 +98,10 @@ export default function Page() {
     const payload = buildCompanyPayload(updated, original, "update");
 
     try {
-      await update.mutateAsync(payload);
+      const companyPayload = payload as any;
+      const companyId = String(companyPayload.CompanyId || companyPayload.Id || "");
+      const { CompanyId, ...rest } = payload as any;
+      await updateMaster("company", companyId, rest as any);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to update company.");
     }
@@ -117,9 +123,11 @@ export default function Page() {
     const payload = buildCompanyPayload(original, original, "delete");
 
     try {
-      await remove.mutateAsync(payload);
+      const companyPayload = payload as any;
+      const companyId = String(companyPayload.CompanyId || companyPayload.Id || "");
+      await deleteMaster("company", companyId);
       toast.success("Company deleted.");
-      setDeleteId(null);
+      setDeleteItem(null);
     } catch (error) {
        toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
@@ -209,23 +217,26 @@ export default function Page() {
           </div>
         </div>
 
-      <CompanyTable
+      <UniversalTable
+          columns={masterTableColumns.company}
+          idKey={masterIdKeys.company}
         data={filteredCompanies}
         loading={isLoading}
         onEdit={(c) => {
           router.push(`/CompanyMaster/edit/${c.CompanyId || c.Id}`);
         }}
-        onDelete={(id) => setDeleteId(id)}
-        onInlineUpdate={handleInlineUpdate}
+        onDelete={(id, row) => setDeleteItem(row)}
         onToggleActive={handleToggle}
       />
       </section>
 
       <DeleteConfirmModal
-        open={!!deleteId}
-        onClose={() => setDeleteId(null)}
+        open={!!deleteItem}
+        onClose={() => setDeleteItem(null)}
         onConfirm={handleDelete}
         loading={isLoading}
+        itemName={deleteItem?.Name || deleteItem?.CompanyName || deleteItem?.EmployeeName || deleteItem?.LocationName || deleteItem?.Pincode || deleteItem?.CityName || deleteItem?.StateName || deleteItem?.CountryName || deleteItem?.Code}
+        entityName="Record"
       />
     </div>
   );

@@ -14,19 +14,22 @@ import {
   UsersRound,
 } from "lucide-react";
 import { clsx } from "clsx";
-import { useCountryMaster } from "@/app/hooks/useMasters";
-import { isMasterActive } from "@/app/lib/utils/masterStatus";
-import type { CountryRecord } from "@/app/types/master";
+import { useCountryMaster } from "@/hooks/useMasters";
+import { isMasterActive } from "@/lib/utils/masterStatus";
+import type { CountryRecord } from "@/types/master";
+import { updateMaster, deleteMaster } from "@/actions/masters";
 
-import CountryTable from "./components/CountryTable";
-import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import UniversalTable from "@/components/tables/UniversalTable";
+import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
+import DeleteConfirmModal from "@/components/masters/DeleteConfirmModal";
 
 export default function Page() {
   const router = useRouter();
-  const { data, isLoading, update, remove } = useCountryMaster();
+  const { data, isLoading } = useCountryMaster();
   const countries: CountryRecord[] = data || [];
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteItem, setDeleteItem] = useState<any>(null);
+  const deleteId = deleteItem ? String(deleteItem.Id || deleteItem.ProductId || deleteItem.VendorId || deleteItem.CompanyId || deleteItem.LocationId || deleteItem.Code || deleteItem.DealerId || deleteItem.LeadSourceId || deleteItem.IndustryId || deleteItem.DepartmentId || deleteItem.DesignationId || deleteItem.PincodeId || deleteItem.StateId || deleteItem.CountryId || "") : null;
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "inactive">("all");
 
@@ -89,11 +92,11 @@ export default function Page() {
 
   const handleToggle = async (country: CountryRecord) => {
     try {
-      await update.mutateAsync({
+      const id = String(country.CountryId ?? country.Id ?? "");
+      await updateMaster("country", id, {
         ...country,
-        CountryId: String(country.CountryId ?? country.Id),
         Active: isMasterActive(country.Active) ? "0" : "1",
-      });
+      } as any);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to toggle status.");
     }
@@ -102,9 +105,9 @@ export default function Page() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await remove.mutateAsync(deleteId);
-      toast.success("Country record removed.");
-      setDeleteId(null);
+      await deleteMaster("country", deleteId);
+      toast.success("Record removed.");
+      setDeleteItem(null);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
@@ -193,22 +196,26 @@ export default function Page() {
           </div>
         </div>
 
-        <CountryTable
+        <UniversalTable
+          columns={masterTableColumns.country}
+          idKey={masterIdKeys.country}
           data={filtered}
           loading={isLoading}
           onEdit={(c) => {
             router.push(`/Location/Country/edit/${c.CountryId || c.Id}`);
           }}
-          onDelete={(id) => setDeleteId(id)}
+          onDelete={(id, row) => setDeleteItem(row)}
           onToggleActive={handleToggle}
         />
       </section>
 
       <DeleteConfirmModal
-        open={!!deleteId}
-        onClose={() => setDeleteId(null)}
+        open={!!deleteItem}
+        onClose={() => setDeleteItem(null)}
         onConfirm={handleDelete}
         loading={isLoading}
+        itemName={deleteItem?.Name || deleteItem?.CompanyName || deleteItem?.EmployeeName || deleteItem?.LocationName || deleteItem?.Pincode || deleteItem?.CityName || deleteItem?.StateName || deleteItem?.CountryName || deleteItem?.Code}
+        entityName="Record"
       />
     </div>
   );

@@ -1,32 +1,36 @@
 "use client";
 
+import { updateMaster } from "@/actions/masters";
+
+import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useLocationMaster } from "@/app/hooks/useMasters";
-import { type LocationFormData } from "@/app/lib/validations/masterSchemas";
-import LocationForm from "../../components/LocationForm";
-import { useMemo } from "react";
+import { useLocationMaster } from "@/hooks/useMasters";
+import LocationForm from "@/components/masters/LocationForm";
+import type { LocationFormData } from "@/lib/validations/masterSchemas";
 
-
-export default function EditLocationPage() {
-  const params = useParams();
+export default function Page() {
   const router = useRouter();
-  const id = params.id as string;
-  
-  const { countries: locations, isLoading, country: { update } } = useLocationMaster();
+  const params = useParams<{ id: string }>();
+  const id = params.id;
+  const { countries: locations, isLoading } = useLocationMaster();
+  const [submitting, setSubmitting] = useState(false);
 
   const editing = useMemo(() => {
-    return (locations || []).find(r => String((r as any).LocationId || r.Id) === id) || null;
+    return (locations || []).find((r: any) => String(r.LocationId || r.Id) === id) || null;
   }, [locations, id]);
 
   const handleSubmit = async (form: LocationFormData) => {
     try {
       if (!editing) return;
-      await update.mutateAsync({ ...form, Id: id } as any);
+      setSubmitting(true);
+      await updateMaster("country", id, { ...form, Id: id } as any);
       toast.success("Location updated.");
       router.push("/Location");
     } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Unable to update record.");
+      toast.error(error instanceof Error ? error.message : "Unable to update record.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -42,10 +46,7 @@ export default function EditLocationPage() {
     return (
       <div className="p-8 text-center">
         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Record not found</h2>
-        <button 
-          onClick={() => router.push("/Location")}
-          className="mt-4 text-blue-500 hover:underline"
-        >
+        <button onClick={() => router.push("/Location")} className="mt-4 text-blue-500 hover:underline">
           Return to list
         </button>
       </div>
@@ -54,12 +55,7 @@ export default function EditLocationPage() {
 
   return (
     <div className="p-8">
-      <LocationForm
-        data={editing}
-        onSubmit={handleSubmit}
-        onCancel={() => router.push("/Location")}
-        submitting={update.isPending}
-      />
+      <LocationForm data={editing} onSubmit={handleSubmit} onCancel={() => router.push("/Location")} submitting={submitting} />
     </div>
   );
 }

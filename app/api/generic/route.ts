@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { entityRegistry } from "@/app/config/entityConfig";
-import { operationTypes } from "@/app/lib/api/operationTypes";
-import { preparePayloadFor } from "@/app/lib/api/preparePayloadFor";
+import { entityRegistry } from "@/config/entityConfig";
+import { operationTypes } from "@/lib/api/operationTypes";
+import { preparePayloadFor } from "@/lib/api/preparePayloadFor";
 
 const EXTERNAL_URL = "http://saptechno-001-site17.anytempurl.com/api/CRMAPI/MagicSearch";
 

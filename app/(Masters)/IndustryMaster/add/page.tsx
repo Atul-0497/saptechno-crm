@@ -1,33 +1,29 @@
 "use client";
 
+import { createMaster } from "@/actions/masters";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { useIndustryMaster } from "@/app/hooks/useMasters";
-import { type IndustryFormData } from "@/app/lib/validations/masterSchemas";
-import IndustryForm from "../components/IndustryForm";
+import type { IndustryFormData } from "@/lib/validations/masterSchemas";
+import IndustryForm from "@/components/masters/IndustryForm";
 
-export default function AddIndustryPage() {
+export default function Page() {
   const router = useRouter();
-  const { create } = useIndustryMaster();
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (form: IndustryFormData) => {
     try {
-      await create.mutateAsync(form as any);
+      setSubmitting(true);
+      await createMaster("industry", form as any);
       toast.success("Industry created.");
       router.push("/IndustryMaster");
     } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Unable to save record.");
+      toast.error(error instanceof Error ? error.message : "Unable to save record.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  return (
-    <div >
-      <IndustryForm
-        data={null}
-        onSubmit={handleSubmit}
-        onCancel={() => router.push("/IndustryMaster")}
-        submitting={create.isPending}
-      />
-    </div>
-  );
+  return <IndustryForm data={null} onSubmit={handleSubmit} onCancel={() => router.push("/IndustryMaster")} submitting={submitting} />;
 }

@@ -1,19 +1,21 @@
 "use client";
 
+import { createMaster } from "@/actions/masters";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { masterKeys } from "@/app/hooks/useMasters";
-import { useGenericSubmit } from "@/app/hooks/useGenericSubmit";
-import type { ProductRecord } from "@/app/types/master";
-import { type ProductFormData } from "@/app/lib/validations/masterSchemas";
-import ProductForm from "../components/ProductForm";
+import type { ProductFormData } from "@/lib/validations/masterSchemas";
+import ProductForm from "@/components/masters/ProductForm";
+import type { ProductRecord } from "@/types/master";
 
-export default function AddProductPage() {
+export default function Page() {
   const router = useRouter();
-  const { create } = useGenericSubmit("product", [masterKeys.products()]);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (form: ProductFormData) => {
     try {
+      setSubmitting(true);
       const otherInfo = {
         unitPrice: form.UnitPrice,
         unit: form.Unit,
@@ -30,23 +32,20 @@ export default function AddProductPage() {
         Active: form.Active === true ? "1" : "0",
       };
 
-      await create.mutateAsync(payload);
+      await createMaster("product", payload as any);
       toast.success("Product created successfully.");
       router.push("/Productmaster");
     } catch (error) {
-       console.error("Save error:", error);
-       toast.error(error instanceof Error ? error.message : "Unable to save product.");
+      console.error("Save error:", error);
+      toast.error(error instanceof Error ? error.message : "Unable to save product.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <div>
-      <ProductForm
-        data={null}
-        onSubmit={handleSubmit}
-        onCancel={() => router.push("/Productmaster")}
-        submitting={create.isPending}
-      />
+      <ProductForm data={null} onSubmit={handleSubmit} onCancel={() => router.push("/Productmaster")} submitting={submitting} />
     </div>
   );
 }
