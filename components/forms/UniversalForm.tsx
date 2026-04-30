@@ -1,18 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/**
- * UniversalForm.tsx
- * ─────────────────────────────────────────────────────────────
- * Single source of truth for all reusable form primitives.
- *
- * Named exports (import what you need):
- *   UniversalForm            — full form wrapper with header + sections
- *   UniversalAddressSection  — billing + shipping address block
- *   UniversalQuotedItemsSection — line-items table + financial summary
- *   TermsAndConditionsCheckbox  — styled T&C acceptance checkbox
- *
- * Types:
- *   FormFieldConfig, FormSectionConfig
- */
 "use client";
 
 import React from "react";
@@ -380,7 +365,7 @@ export function UniversalQuotedItemsSection({
                   className={clsx(
                     "w-32 rounded-lg border px-3 py-2 text-right text-sm outline-none transition-all dark:bg-slate-900 dark:text-white",
                     highlight ? "border-indigo-300 bg-indigo-50 font-extrabold text-indigo-700 dark:border-indigo-700 dark:text-indigo-300"
-                              : "border-indigo-200/60 bg-white/90 font-medium text-slate-800",
+                      : "border-indigo-200/60 bg-white/90 font-medium text-slate-800",
                     readOnly ? "cursor-not-allowed" : "focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/15"
                   )}
                 />
