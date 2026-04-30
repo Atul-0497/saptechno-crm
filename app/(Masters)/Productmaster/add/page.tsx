@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { ProductFormData } from "@/lib/validations/masterSchemas";
-import ProductForm from "@/components/masters/ProductForm";
+import ProductForm from "@/components/masters-forms/ProductForm";
 import type { ProductRecord } from "@/types/master";
 
 export default function Page() {

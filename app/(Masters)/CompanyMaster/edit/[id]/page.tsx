@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { masterKeys, useCompanyMaster } from "@/hooks/useMasters";
-import CompanyForm from "@/components/masters/CompanyForm";
+import CompanyForm from "@/components/masters-forms/CompanyForm";
 import type { CompanyFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

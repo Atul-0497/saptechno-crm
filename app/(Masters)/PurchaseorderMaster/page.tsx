@@ -10,7 +10,7 @@ import { usePurchaseOrders } from "@/hooks/usePurchaseOrders";
 import type { PurchaseOrderRecord } from "@/types/purchaseOrder";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 import UniversalTable from "@/components/tables/UniversalTable";
-import { masterTableColumns } from "@/components/masters/masterTableConfig";
+import { masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 
 export default function PurchaseOrderMasterPage() {
   const router = useRouter();

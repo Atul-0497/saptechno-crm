@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLeadSourceMaster } from "@/hooks/useMasters";
-import LeadSourceForm from "@/components/masters/LeadSourceForm";
+import LeadSourceForm from "@/components/masters-forms/LeadSourceForm";
 import type { LeadSourceFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

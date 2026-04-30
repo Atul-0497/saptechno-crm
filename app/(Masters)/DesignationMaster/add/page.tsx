@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { DesignationFormData } from "@/lib/validations/masterSchemas";
-import DesignationForm from "@/components/masters/DesignationForm";
+import DesignationForm from "@/components/masters-forms/DesignationForm";
 
 export default function Page() {
   const router = useRouter();

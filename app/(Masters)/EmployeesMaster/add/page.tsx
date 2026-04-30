@@ -11,7 +11,7 @@ import {
   useDesignationMaster,
 } from "@/hooks/useMasters";
 import type { EmployeeFormData } from "@/lib/validations/masterSchemas";
-import EmployeeForm from "@/components/masters/EmployeeForm";
+import EmployeeForm from "@/components/masters-forms/EmployeeForm";
 
 export default function Page() {
   const router = useRouter();

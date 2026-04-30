@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { masterKeys } from "@/hooks/useMasters";
 import type { DepartmentFormData } from "@/lib/validations/masterSchemas";
-import DepartmentForm from "@/components/masters/DepartmentForm";
+import DepartmentForm from "@/components/masters-forms/DepartmentForm";
 
 export default function Page() {
   const router = useRouter();

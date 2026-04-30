@@ -7,7 +7,7 @@ import { useVendorMaster, useLocationMaster } from "@/hooks/useMasters";
 import { useQuotes } from "@/hooks/useQuotes";
 import type { QuoteFormData } from "@/lib/validations/masterSchemas";
 import type { QuoteRecord } from "@/types/quote";
-import QuoteForm from "@/components/masters/QuoteForm";
+import QuoteForm from "@/components/masters-forms/QuoteForm";
 
 export default function EditQuotePage() {
   const params = useParams();

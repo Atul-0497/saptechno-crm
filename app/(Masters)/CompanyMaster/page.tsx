@@ -4,12 +4,12 @@ import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2,CheckCircle2,Plus,Search,Sparkles,TrendingUp,UsersRound,} from "lucide-react";
+import { Building2, CheckCircle2, Plus, Search, Sparkles, TrendingUp, UsersRound, } from "lucide-react";
 import { clsx } from "clsx";
 import { useCompanyMaster } from "@/hooks/useMasters";
 import { updateMaster, deleteMaster } from "@/actions/masters";
 import UniversalTable from "@/components/tables/UniversalTable";
-import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
+import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 import { buildCompanyPayload } from "@/lib/utils/companyPayload";
 import { isCompanyActive } from "@/lib/utils/masterStatus";
@@ -26,7 +26,7 @@ export default function Page() {
   const activeCompanies = companies.filter((company) => isCompanyActive(company.Active));
   const inactiveCompanies = companies.length - activeCompanies.length;
   const filteredCompanies = useMemo(() => {
-  const search = query.trim().toLowerCase();
+    const search = query.trim().toLowerCase();
 
     return companies.filter((company) => {
       const matchesStatus =
@@ -118,7 +118,7 @@ export default function Page() {
       toast.success("Company deleted.");
       setDeleteItem(null);
     } catch (error) {
-       toast.error(error instanceof Error ? error.message : "Unable to delete record.");
+      toast.error(error instanceof Error ? error.message : "Unable to delete record.");
     }
   };
 
@@ -206,17 +206,17 @@ export default function Page() {
           </div>
         </div>
 
-      <UniversalTable
+        <UniversalTable
           columns={masterTableColumns.company}
           idKey={masterIdKeys.company}
-        data={filteredCompanies}
-        loading={isLoading}
-        onEdit={(c) => {
-          router.push(`/CompanyMaster/edit/${c.CompanyId || c.Id}`);
-        }}
-        onDelete={(id, row) => setDeleteItem(row)}
-        onToggleActive={handleToggle}
-      />
+          data={filteredCompanies}
+          loading={isLoading}
+          onEdit={(c) => {
+            router.push(`/CompanyMaster/edit/${c.CompanyId || c.Id}`);
+          }}
+          onDelete={(id, row) => setDeleteItem(row)}
+          onToggleActive={handleToggle}
+        />
       </section>
 
       <DeleteConfirmModal

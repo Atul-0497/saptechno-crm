@@ -4,7 +4,7 @@ import { createMaster } from "@/actions/masters";
 
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import CompanyForm from "@/components/masters/CompanyForm";
+import CompanyForm from "@/components/masters-forms/CompanyForm";
 import type { CompanyFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

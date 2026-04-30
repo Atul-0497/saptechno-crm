@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDepartmentMaster } from "@/hooks/useMasters";
-import DepartmentForm from "@/components/masters/DepartmentForm";
+import DepartmentForm from "@/components/masters-forms/DepartmentForm";
 import type { DepartmentFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

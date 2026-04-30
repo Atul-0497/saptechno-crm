@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDealerMaster, useLocationMaster } from "@/hooks/useMasters";
-import DealerForm from "@/components/masters/DealerForm";
+import DealerForm from "@/components/masters-forms/DealerForm";
 import type { DealerFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

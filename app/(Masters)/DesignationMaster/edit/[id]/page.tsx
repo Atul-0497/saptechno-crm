@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDesignationMaster } from "@/hooks/useMasters";
-import DesignationForm from "@/components/masters/DesignationForm";
+import DesignationForm from "@/components/masters-forms/DesignationForm";
 import type { DesignationFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLocationMaster } from "@/hooks/useMasters";
 import type { VendorFormData } from "@/lib/validations/masterSchemas";
-import VendorForm from "@/components/masters/VendorForm";
+import VendorForm from "@/components/masters-forms/VendorForm";
 
 export default function Page() {
   const router = useRouter();

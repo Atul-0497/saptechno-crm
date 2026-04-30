@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useVendorMaster, useLocationMaster } from "@/hooks/useMasters";
-import VendorForm from "@/components/masters/VendorForm";
+import VendorForm from "@/components/masters-forms/VendorForm";
 import type { VendorFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

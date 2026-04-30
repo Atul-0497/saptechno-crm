@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useCountryMaster } from "@/hooks/useMasters";
-import CountryForm from "@/components/masters/CountryForm";
+import CountryForm from "@/components/masters-forms/CountryForm";
 import type { CountryFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

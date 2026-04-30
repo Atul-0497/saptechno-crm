@@ -19,7 +19,7 @@ import { isMasterActive } from "@/lib/utils/masterStatus";
 import type { DesignationRecord } from "@/types/master";
 import { updateMaster, deleteMaster } from "@/actions/masters";
 import UniversalTable from "@/components/tables/UniversalTable";
-import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
+import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 
 export default function Page() {

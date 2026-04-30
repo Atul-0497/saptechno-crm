@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { LocationFormData } from "@/lib/validations/masterSchemas";
-import LocationForm from "@/components/masters/LocationForm";
+import LocationForm from "@/components/masters-forms/LocationForm";
 
 export default function Page() {
   const router = useRouter();

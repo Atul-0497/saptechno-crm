@@ -7,7 +7,7 @@ import { useVendorMaster, useLocationMaster } from "@/hooks/useMasters";
 import { usePurchaseOrders } from "@/hooks/usePurchaseOrders";
 import type { PurchaseOrderFormData } from "@/lib/validations/masterSchemas";
 import type { PurchaseOrderRecord } from "@/types/purchaseOrder";
-import PurchaseOrderForm from "@/components/masters/PurchaseOrderForm";
+import PurchaseOrderForm from "@/components/masters-forms/PurchaseOrderForm";
 
 export default function EditPurchaseOrderPage() {
   const params = useParams();

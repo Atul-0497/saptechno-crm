@@ -20,7 +20,7 @@ import type { IndustryRecord } from "@/types/master";
 import { updateMaster, deleteMaster } from "@/actions/masters";
 
 import UniversalTable from "@/components/tables/UniversalTable";
-import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
+import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 
 export default function Page() {
@@ -198,7 +198,7 @@ export default function Page() {
           data={filtered}
           loading={isLoading}
           onEdit={(item) => {
-             router.push(`/IndustryMaster/edit/${item.IndustryId || item.Id}`);
+            router.push(`/IndustryMaster/edit/${item.IndustryId || item.Id}`);
           }}
           onDelete={(id, row) => setDeleteItem(row)}
           onToggleActive={handleToggle}

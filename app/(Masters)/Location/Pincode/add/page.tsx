@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useCountryMaster, useStateMaster, useCityMaster } from "@/hooks/useMasters";
 import type { PincodeFormData } from "@/lib/validations/masterSchemas";
-import PincodeForm from "@/components/masters/PincodeForm";
+import PincodeForm from "@/components/masters-forms/PincodeForm";
 
 export default function Page() {
   const router = useRouter();

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useProductMaster } from "@/hooks/useMasters";
-import ProductForm from "@/components/masters/ProductForm";
+import ProductForm from "@/components/masters-forms/ProductForm";
 import type { ProductFormData } from "@/lib/validations/masterSchemas";
 import type { ProductRecord } from "@/types/master";
 import { useMemo } from "react";

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { CountryFormData } from "@/lib/validations/masterSchemas";
-import CountryForm from "@/components/masters/CountryForm";
+import CountryForm from "@/components/masters-forms/CountryForm";
 
 export default function Page() {
   const router = useRouter();

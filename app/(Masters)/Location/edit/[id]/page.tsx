@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLocationMaster } from "@/hooks/useMasters";
-import LocationForm from "@/components/masters/LocationForm";
+import LocationForm from "@/components/masters-forms/LocationForm";
 import type { LocationFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

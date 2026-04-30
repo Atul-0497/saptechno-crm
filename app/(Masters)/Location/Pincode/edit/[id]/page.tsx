@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { usePincodeMaster, useCountryMaster, useStateMaster, useCityMaster } from "@/hooks/useMasters";
-import PincodeForm from "@/components/masters/PincodeForm";
+import PincodeForm from "@/components/masters-forms/PincodeForm";
 import type { PincodeFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

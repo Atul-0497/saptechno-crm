@@ -21,7 +21,7 @@ import type { EmployeeRecord, EmployeeFormValues } from "@/types/master";
 import { type EmployeeFormData } from "@/lib/validations/masterSchemas";
 
 import UniversalTable from "@/components/tables/UniversalTable";
-import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
+import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 
 const makePayload = (

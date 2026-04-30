@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { StateFormData } from "@/lib/validations/masterSchemas";
-import StateForm from "@/components/masters/StateForm";
+import StateForm from "@/components/masters-forms/StateForm";
 import { useCountryMaster } from "@/hooks/useMasters";
 
 export default function Page() {

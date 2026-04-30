@@ -17,7 +17,7 @@ import toast from "react-hot-toast";
 import { useQuotes } from "@/hooks/useQuotes";
 import type { QuoteRecord } from "@/types/quote";
 import UniversalTable from "@/components/tables/UniversalTable";
-import { masterTableColumns } from "@/components/masters/masterTableConfig";
+import { masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 
 export default function QuotesPage() {

@@ -20,7 +20,7 @@ import type { StateRecord } from "@/types/master";
 import { updateMaster, deleteMaster } from "@/actions/masters";
 
 import UniversalTable from "@/components/tables/UniversalTable";
-import { masterIdKeys, masterTableColumns } from "@/components/masters/masterTableConfig";
+import { masterIdKeys, masterTableColumns } from "@/components/masters-forms/masterTableConfig";
 import DeleteConfirmModal from "@/components/modal/DeleteConfirmModal";
 
 export default function Page() {
@@ -203,7 +203,7 @@ export default function Page() {
           data={filtered}
           loading={isLoading}
           onEdit={(s) => {
-             router.push(`/Location/State/edit/${s.StateId || s.Id}`);
+            router.push(`/Location/State/edit/${s.StateId || s.Id}`);
           }}
           onDelete={(id, row) => setDeleteItem(row)}
           onToggleActive={handleToggle}

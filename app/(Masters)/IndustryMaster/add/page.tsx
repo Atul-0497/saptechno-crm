@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { IndustryFormData } from "@/lib/validations/masterSchemas";
-import IndustryForm from "@/components/masters/IndustryForm";
+import IndustryForm from "@/components/masters-forms/IndustryForm";
 
 export default function Page() {
   const router = useRouter();

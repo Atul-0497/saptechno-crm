@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useIndustryMaster } from "@/hooks/useMasters";
-import IndustryForm from "@/components/masters/IndustryForm";
+import IndustryForm from "@/components/masters-forms/IndustryForm";
 import type { IndustryFormData } from "@/lib/validations/masterSchemas";
 
 export default function Page() {

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { LeadSourceFormData } from "@/lib/validations/masterSchemas";
-import LeadSourceForm from "@/components/masters/LeadSourceForm";
+import LeadSourceForm from "@/components/masters-forms/LeadSourceForm";
 
 export default function Page() {
   const router = useRouter();

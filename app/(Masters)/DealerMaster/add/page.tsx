@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useLocationMaster } from "@/hooks/useMasters";
 import type { DealerFormData } from "@/lib/validations/masterSchemas";
-import DealerForm from "@/components/masters/DealerForm";
+import DealerForm from "@/components/masters-forms/DealerForm";
 
 export default function Page() {
   const router = useRouter();

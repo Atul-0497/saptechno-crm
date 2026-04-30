@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useCityMaster } from "@/hooks/useMasters";
 import type { CityFormData } from "@/lib/validations/masterSchemas";
-import CityForm from "@/components/masters/CityForm";
+import CityForm from "@/components/masters-forms/CityForm";
 
 export default function Page() {
   const router = useRouter();
