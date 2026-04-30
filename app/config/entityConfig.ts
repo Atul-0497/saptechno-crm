@@ -131,6 +131,36 @@ export const productConfig: EntityDefinition = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// COMPANY
+// ─────────────────────────────────────────────────────────────────────────────
+export const companyConfig: EntityDefinition = {
+  apiKey: "company",
+  sections: [
+    {
+      title: "Company Details",
+      subtitle: "Tenant profile and contact information",
+      fields: [
+        { name: "CompanyId", label: "Company ID", type: "text", placeholder: "Auto-generated", required: false },
+        { name: "Name", label: "Company Name", type: "text", required: true, colSpan: 2, placeholder: "e.g. Acme Corp" },
+        { name: "Email", label: "Email", type: "email", placeholder: "contact@example.com" },
+        { name: "Mobile", label: "Mobile", type: "text", placeholder: "+91 98765 43210" },
+        { name: "Website", label: "Website", type: "text", placeholder: "https://example.com" },
+        { name: "Address", label: "Address", type: "textarea", colSpan: 2, placeholder: "Street, City, State, Pincode" },
+        { name: "PlanStart", label: "Plan Start", type: "date" },
+        { name: "PlanEnd", label: "Plan End", type: "date" },
+        { name: "Active", label: "Status", type: "select", options: [{ label: "Active", value: "1" }, { label: "Inactive", value: "0" }] },
+      ],
+    },
+  ],
+  tableColumns: [
+    { key: "Name", label: "Company" },
+    { key: "Email", label: "Email" },
+    { key: "Mobile", label: "Mobile" },
+    { key: "Active", label: "Status", type: "status" },
+  ],
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // LEAD SOURCE
 // ─────────────────────────────────────────────────────────────────────────────
 export const leadSourceConfig: EntityDefinition = {
@@ -280,6 +310,7 @@ export const countryConfig: EntityDefinition = {
 // ENTITY REGISTRY — lookup by key
 // ─────────────────────────────────────────────────────────────────────────────
 export const entityRegistry: Record<string, EntityDefinition> = {
+  company: companyConfig,
   department: departmentConfig,
   designation: designationConfig,
   product: productConfig,

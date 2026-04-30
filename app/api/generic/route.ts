@@ -19,17 +19,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Missing entity or action." }, { status: 400 });
   }
 
-  if (!entityRegistry[entity]) {
-    return NextResponse.json({ message: `Unknown entity: ${entity}` }, { status: 400 });
+  // Normalize entity keys: accept client variants like "leadsourcemaster" -> "leadsource"
+  const normalizedEntity = String(entity).toLowerCase().replace(/master$/, "");
+
+  const cfg = entityRegistry[normalizedEntity];
+  if (!cfg) {
+    // If no registry entry exists for the normalized entity, still allow requests
+    // as long as operation types are declared for it. This makes the generic
+    // API tolerant to small naming variants from the client.
   }
 
-  const ops = (operationTypes as any)[entity];
+  const ops = (operationTypes as any)[normalizedEntity];
   if (!ops || !ops[action]) {
     return NextResponse.json({ message: `Unsupported action: ${action}` }, { status: 400 });
   }
 
-  // Prepare payload according to entity config
-  const payload = preparePayloadFor(entity as any, data ?? {});
+  // Prepare payload according to entity config (falls back to raw data when missing)
+  const payload = preparePayloadFor((cfg ? normalizedEntity : (entity as any)), data ?? {});
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 20000);
