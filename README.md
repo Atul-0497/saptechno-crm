@@ -67,7 +67,7 @@ These two modules currently persist data in `localStorage` instead of the backen
 
 ### 1. App Router layout
 
-The root layout lives in [app/layout.tsx](/d:/NextJS%20Projects/saptechno-crm/app/layout.tsx:1).
+The root layout lives in [app/layout.tsx](layout.tsx).
 
 It wraps the entire app with:
 
@@ -77,7 +77,7 @@ It wraps the entire app with:
 - `MobileMenuProvider`
 - `MainLayout`
 
-The visible shell is rendered by [MainLayout.tsx](/d:/NextJS%20Projects/saptechno-crm/app/components/layout/MainLayout.tsx:1), which combines:
+The visible shell is rendered by [MainLayout.tsx](components/layout/MainLayout.tsx), which combines:
 
 - `Sidebar`
 - `Topbar`
@@ -98,7 +98,7 @@ Because route groups are organizational only, `(Masters)` does not appear in the
 
 ### 3. Navigation
 
-Navigation is centralized in [app/constants/navigation.ts](/d:/NextJS%20Projects/saptechno-crm/app/constants/navigation.ts:1).
+Navigation is centralized in [constants/navigation.ts](constants/navigation.ts).
 
 Important exports:
 
@@ -133,7 +133,7 @@ Most of these have:
 - `edit/[id]/page.tsx`
 - `components/` for module-specific form/table/modal UI
 
-### `app/components`
+### `components`
 
 Shared UI and layout building blocks:
 
@@ -143,15 +143,15 @@ Shared UI and layout building blocks:
 - `providers/` for theme wrapper
 - `search/` for global search-related UI
 
-### `app/hooks`
+### `hooks`
 
 Main data-access and client-state hooks:
 
-- [useMasters.ts](/d:/NextJS%20Projects/saptechno-crm/app/hooks/useMasters.ts:1)
-- [useQuotes.ts](/d:/NextJS%20Projects/saptechno-crm/app/hooks/useQuotes.ts:1)
-- [usePurchaseOrders.ts](/d:/NextJS%20Projects/saptechno-crm/app/hooks/usePurchaseOrders.ts:1)
+- [useMasters.ts](hooks/useMasters.ts)
+- [useQuotes.ts](hooks/useQuotes.ts)
+- [usePurchaseOrders.ts](hooks/usePurchaseOrders.ts)
 
-### `app/lib`
+### `lib`
 
 Contains:
 
@@ -161,10 +161,10 @@ Contains:
 
 Most important files:
 
-- [app/lib/api/masters/masters.ts](/d:/NextJS%20Projects/saptechno-crm/app/lib/api/masters/masters.ts:1)
-- [app/lib/validations/masterSchemas.ts](/d:/NextJS%20Projects/saptechno-crm/app/lib/validations/masterSchemas.ts:1)
+- [lib/api/masters/masters.ts](lib/api/masters/masters.ts)
+- [lib/validations/masterSchemas.ts](lib/validations/masterSchemas.ts)
 
-### `app/types`
+### `types`
 
 Type definitions for:
 
@@ -175,7 +175,7 @@ Type definitions for:
 
 ### `app/api`
 
-The API route lives at [app/api/route.ts](/d:/NextJS%20Projects/saptechno-crm/app/api/route.ts:1).
+The API route lives at [app/api/route.ts](api/route.ts).
 
 It proxies requests to:
 
@@ -238,7 +238,7 @@ This makes these modules fast to prototype, but also means:
 
 ### Universal Form System
 
-The reusable form engine is [app/components/forms/UniversalForm.tsx](/d:/NextJS%20Projects/saptechno-crm/app/components/forms/UniversalForm.tsx:1).
+The reusable form engine is [components/forms/UniversalForm.tsx](components/forms/UniversalForm.tsx).
 
 It accepts:
 
@@ -251,7 +251,7 @@ This gives the project a consistent add/edit page design.
 
 ### Universal Form Blocks
 
-[app/components/forms/UniversalFormBlocks.tsx](/d:/NextJS%20Projects/saptechno-crm/app/components/forms/UniversalFormBlocks.tsx:1) contains reusable complex sections:
+[components/forms/UniversalFormBlocks.tsx](components/forms/UniversalFormBlocks.tsx) contains reusable complex sections:
 
 - `UniversalAddressSection`
 - `UniversalQuotedItemsSection`
@@ -263,7 +263,7 @@ These are currently used by:
 
 ### Navigation and layout state
 
-Layout customization is managed in [app/contexts/CustomizationContext.tsx](/d:/NextJS%20Projects/saptechno-crm/app/contexts/CustomizationContext.tsx:1).
+Layout customization is managed in [contexts/CustomizationContext.tsx](contexts/CustomizationContext.tsx).
 
 It stores the following in `localStorage`:
 
@@ -275,7 +275,7 @@ It stores the following in `localStorage`:
 
 ### Dashboard
 
-[app/dashboard/page.tsx](/d:/NextJS%20Projects/saptechno-crm/app/dashboard/page.tsx:1) is a UI-focused overview page with stat cards and charts.
+[app/dashboard/page.tsx](dashboard/page.tsx) is a UI-focused overview page with stat cards and charts.
 
 ### Auth
 
@@ -313,11 +313,11 @@ Route:
 
 Key files:
 
-- [app/(Masters)/QuotesMaster/page.tsx](/d:/NextJS%20Projects/saptechno-crm/app/(Masters)/QuotesMaster/page.tsx:1)
-- [app/(Masters)/QuotesMaster/add/page.tsx](/d:/NextJS%20Projects/saptechno-crm/app/(Masters)/QuotesMaster/add/page.tsx:1)
-- [app/(Masters)/QuotesMaster/edit/[id]/page.tsx](/d:/NextJS%20Projects/saptechno-crm/app/(Masters)/QuotesMaster/edit/[id]/page.tsx:1)
-- [app/hooks/useQuotes.ts](/d:/NextJS%20Projects/saptechno-crm/app/hooks/useQuotes.ts:1)
-- [app/types/quote.ts](/d:/NextJS%20Projects/saptechno-crm/app/types/quote.ts:1)
+- [app/(Masters)/QuotesMaster/page.tsx]((Masters)/QuotesMaster/page.tsx)
+- [app/(Masters)/QuotesMaster/add/page.tsx]((Masters)/QuotesMaster/add/page.tsx)
+- [app/(Masters)/QuotesMaster/edit/[id]/page.tsx]((Masters)/QuotesMaster/edit/[id]/page.tsx)
+- [hooks/useQuotes.ts](hooks/useQuotes.ts)
+- [types/quote.ts](types/quote.ts)
 
 Summary:
 
@@ -337,12 +337,12 @@ Route:
 
 Key files:
 
-- [app/(Masters)/PurchaseorderMaster/page.tsx](/d:/NextJS%20Projects/saptechno-crm/app/(Masters)/PurchaseorderMaster/page.tsx:1)
-- [app/(Masters)/PurchaseorderMaster/add/page.tsx](/d:/NextJS%20Projects/saptechno-crm/app/(Masters)/PurchaseorderMaster/add/page.tsx:1)
-- [app/(Masters)/PurchaseorderMaster/edit/[id]/page.tsx](/d:/NextJS%20Projects/saptechno-crm/app/(Masters)/PurchaseorderMaster/edit/[id]/page.tsx:1)
-- [app/(Masters)/PurchaseorderMaster/components/PurchaseOrderForm.tsx](/d:/NextJS%20Projects/saptechno-crm/app/(Masters)/PurchaseorderMaster/components/PurchaseOrderForm.tsx:1)
-- [app/hooks/usePurchaseOrders.ts](/d:/NextJS%20Projects/saptechno-crm/app/hooks/usePurchaseOrders.ts:1)
-- [app/types/purchaseOrder.ts](/d:/NextJS%20Projects/saptechno-crm/app/types/purchaseOrder.ts:1)
+- [app/(Masters)/PurchaseorderMaster/page.tsx]((Masters)/PurchaseorderMaster/page.tsx)
+- [app/(Masters)/PurchaseorderMaster/add/page.tsx]((Masters)/PurchaseorderMaster/add/page.tsx)
+- [app/(Masters)/PurchaseorderMaster/edit/[id]/page.tsx]((Masters)/PurchaseorderMaster/edit/[id]/page.tsx)
+- [app/(Masters)/PurchaseorderMaster/components/PurchaseOrderForm.tsx]((Masters)/PurchaseorderMaster/components/PurchaseOrderForm.tsx)
+- [hooks/usePurchaseOrders.ts](hooks/usePurchaseOrders.ts)
+- [types/purchaseOrder.ts](types/purchaseOrder.ts)
 
 Summary:
 
@@ -357,7 +357,7 @@ Summary:
 
 ## Validation
 
-Validation is centralized in [app/lib/validations/masterSchemas.ts](/d:/NextJS%20Projects/saptechno-crm/app/lib/validations/masterSchemas.ts:1).
+Validation is centralized in [lib/validations/masterSchemas.ts](lib/validations/masterSchemas.ts).
 
 This file contains:
 
@@ -376,7 +376,7 @@ When adding a new module, the current project pattern is:
 
 ## Database Notes
 
-The file [schema.sql](/d:/NextJS%20Projects/saptechno-crm/schema.sql:1) documents the intended SQL Server schema for the core master tables.
+The file [schema.sql](schema.sql) documents the intended SQL Server schema for the core master tables.
 
 It currently covers the backend-oriented master entities such as:
 
@@ -397,7 +397,7 @@ Quotes and Purchase Orders are not yet represented in this SQL file.
 
 ## Important Routing Notes
 
-The project includes redirects in [next.config.ts](/d:/NextJS%20Projects/saptechno-crm/next.config.ts:1) for legacy paths:
+The project includes redirects in [next.config.ts](next.config.ts) for legacy paths:
 
 - `/quotes` -> `/QuotesMaster`
 - `/quotes/add` -> `/QuotesMaster/add`
@@ -408,7 +408,7 @@ The project includes redirects in [next.config.ts](/d:/NextJS%20Projects/saptech
 
 If you change route names again, update both:
 
-- `app/constants/navigation.ts`
+- `constants/navigation.ts`
 - `next.config.ts`
 
 ## How To Add A New CRUD Module
@@ -418,11 +418,11 @@ Recommended approach for a new master-style module:
 1. Create a route folder under `app/(Masters)/NewModule`
 2. Add `page.tsx`, `add/page.tsx`, and `edit/[id]/page.tsx`
 3. Add module-specific `components/`
-4. Add types in `app/types`
-5. Add a schema in `app/lib/validations/masterSchemas.ts`
-6. Add hook logic in `app/hooks`
-7. If backend-backed, extend `app/lib/api/masters/masters.ts`
-8. Add the navigation entry in `app/constants/navigation.ts`
+4. Add types in `types`
+5. Add a schema in `lib/validations/masterSchemas.ts`
+6. Add hook logic in `hooks`
+7. If backend-backed, extend `lib/api/masters/masters.ts`
+8. Add the navigation entry in `constants/navigation.ts`
 9. If renaming routes, add redirects in `next.config.ts`
 
 ## Known Architecture Gaps
@@ -447,11 +447,11 @@ These are useful to know before expanding the project:
 
 If you are changing:
 
-- navigation: edit `app/constants/navigation.ts`
-- backend master requests: edit `app/lib/api/masters/masters.ts`
-- master data hooks: edit `app/hooks/useMasters.ts`
-- shared form engine: edit `app/components/forms/UniversalForm.tsx`
-- shared address/item blocks: edit `app/components/forms/UniversalFormBlocks.tsx`
+- navigation: edit `constants/navigation.ts`
+- backend master requests: edit `lib/api/masters/masters.ts`
+- master data hooks: edit `hooks/useMasters.ts`
+- shared form engine: edit `components/forms/UniversalForm.tsx`
+- shared address/item blocks: edit `components/forms/UniversalFormBlocks.tsx`
 - route redirects: edit `next.config.ts`
 - master table schema reference: edit `schema.sql`
 
